@@ -1,0 +1,41 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2.2.0                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      fvSolution;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+field T.water;
+
+file "T01.csv";
+readerType csv;
+hasHeaderLine false;
+timeColumn 0;
+valueColumns (1);
+
+function sphere;
+scale  -1;
+origin (0 0 0);
+radius 50e-6;
+
+
+
+
+
+
+
+
+
+
+
+// ************************************************************************* //

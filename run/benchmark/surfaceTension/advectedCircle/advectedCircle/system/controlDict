@@ -1,0 +1,94 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2.3.0                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+application     interFlow;
+
+//startFrom       startTime;
+startFrom       latestTime;
+
+startTime       0;
+
+stopAt          endTime;
+
+endTime         2;
+
+deltaT          1e-7;
+
+writeControl    adjustableRunTime;
+
+writeInterval   0.1;
+
+//writeControl    timeStep;
+
+//writeInterval   10;
+
+purgeWrite      0;
+
+writeFormat     ascii;
+
+writePrecision  6;
+
+writeCompression compressed;
+
+timeFormat      general;
+
+timePrecision   6;
+
+runTimeModifiable yes;
+
+adjustTimeStep  yes;
+
+maxCo           0.1;
+maxAlphaCo      0.1;
+
+maxDeltaT       1;
+maxCapillaryNum 0.5;
+
+libs
+(
+    "libtwoPhaseProperties.so"
+);
+
+functions
+{
+
+    reconSurfaces
+    {
+        type            surfaces;
+        libs            ("libpostProcess.so");
+        writeControl    adjustableRunTime;
+        writeInterval   1e-2;
+
+        surfaceFormat   raw;
+        fields          (K_ alpha.water);
+
+        interpolationScheme cell;
+
+        surfaces
+        (
+
+            freeSurf
+            {
+                type            interface;
+                interpolate     false;
+            }
+
+        );
+    }
+}
+
+// ************************************************************************* //

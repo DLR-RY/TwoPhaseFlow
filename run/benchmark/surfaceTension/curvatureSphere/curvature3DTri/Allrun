@@ -1,0 +1,13 @@
+#!/bin/sh
+cd ${0%/*} || exit 1    # Run from this directory
+
+. $WM_PROJECT_DIR/bin/tools/RunFunctions
+
+touch curv3d.foam
+restore0Dir
+
+runApplication gmshv306 -3 -optimize_netgen triBlock.geo
+#sbatch Allrun_Slurm
+runApplication gmshToFoam triBlock.msh
+runApplication reconstructInterface
+#runApplication $(getApplication)

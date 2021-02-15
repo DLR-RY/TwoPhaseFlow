@@ -1,0 +1,4 @@
+VoFphaseCompressibleTurbulenceModels.C
+compressibleInterPhaseTransportModel.C
+
+LIB = $(FOAM_USER_LIBBIN)/libVoFphaseModelCompressibleTurbulenceModels

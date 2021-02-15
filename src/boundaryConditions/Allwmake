@@ -1,0 +1,6 @@
+#! /bin/bash
+
+wmake libso dynContactAngleModel
+wmake libso dynContactAngleModelComp
+
+

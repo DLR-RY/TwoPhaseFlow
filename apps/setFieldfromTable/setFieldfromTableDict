@@ -1,0 +1,57 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2.2.0                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      setFieldfromTableDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+field p;
+
+file "p.csv";
+readerType csv;
+hasHeaderLine false;
+timeColumn 0;
+valueColumns (1);
+
+function composedFunction;
+mode add;
+composedFunctions
+{
+    plane
+    {
+        function plane;
+        centre (0 1. 0);
+        normal (0 1 0);
+
+    }
+
+    sphere
+    {
+        function impSphere;
+        radius 0.4;
+        centre (0.5 0.8 0.5);
+        scale 1;
+    }
+
+    sphere2
+    {
+        function impSphere;
+        radius 0.4;
+        centre (0.5 0.5 0.5);
+    }
+
+
+}
+
+
+// ************************************************************************* //

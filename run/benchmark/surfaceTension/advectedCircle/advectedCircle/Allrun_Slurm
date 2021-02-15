@@ -1,0 +1,13 @@
+#!/bin/bash
+#
+#SBATCH --output=log.interFlow
+#
+#SBATCH --ntasks=1
+#SBATCH --partition=orbit
+
+#decomposePar
+#sleep $((RANDOM%15))
+#srun interFlow -parallel
+srun interFlow
+#reconstructPar
+#sleep 2

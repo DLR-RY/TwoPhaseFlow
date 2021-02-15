@@ -1,0 +1,13 @@
+#!/bin/bash
+#
+#SBATCH --job-name=curv3DTri
+#SBATCH --output=log.reconstructInterface
+#
+#SBATCH --ntasks=1
+#SBATCH --partition=orbit
+
+
+gmshToFoam triBlock.msh
+reconstructInterface
+#reconstructPar
+#sleep 2

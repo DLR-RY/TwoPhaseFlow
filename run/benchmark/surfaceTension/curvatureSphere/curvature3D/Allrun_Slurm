@@ -1,0 +1,12 @@
+#!/bin/bash
+#
+#SBATCH --job-name=curv3D
+#SBATCH --output=log.reconstructInterface
+#
+#SBATCH --ntasks=1
+#SBATCH --partition=orbit
+
+blockMesh
+reconstructInterface
+#reconstructPar
+#sleep 2

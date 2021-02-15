@@ -1,0 +1,12 @@
+#!/bin/sh
+cd ${0%/*} || exit 1    # Run from this directory
+
+# Source tutorial clean functions
+. $WM_PROJECT_DIR/bin/tools/CleanFunctions
+
+cleanCase
+rm -rf 0 isoFaces AlphaInit
+rm -rf 0 constant/fluid/polyMesh
+rm -rf 0 constant/solid/polyMesh
+
+#------------------------------------------------------------------------------

@@ -1,0 +1,35 @@
+#!/bin/sh
+cd ${0%/*} || exit 1    # Run from this directory
+
+# Source tutorial run functions
+. $WM_PROJECT_DIR/bin/tools/RunFunctions
+
+restore0Dir
+cp system/meshDict.solid system/meshDict
+runApplication -s solid cartesian2DMesh > log.meshSolid
+mv constant/polyMesh constant/solid/
+
+cp system/meshDict.fluid system/meshDict
+runApplication -s fluid cartesian2DMesh
+mv constant/polyMesh constant/fluid/
+
+runApplication -s solid transformPoints -region solid -scale 0.001
+runApplication -s fluid transformPoints -region fluid -scale 0.001
+
+
+touch coffeePot.foam
+
+runApplication -s solid changeDictionary -region solid -subDict dictionaryReplacement
+runApplication -s fluid changeDictionary -region fluid -subDict dictionaryReplacement
+
+runApplication initAlphaField -region fluid
+runApplication -s fluid setFields -region fluid
+runApplication -s solid setFields -region solid
+
+runApplication -s solid renumberMesh -region solid -overwrite
+runApplication -s fluid renumberMesh -region fluid -overwrite
+
+runApplication  decomposePar -allRegions
+runParallel $(getApplication)
+
+#------------------------------------------------------------------------------

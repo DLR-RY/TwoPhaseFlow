@@ -1,0 +1,22 @@
+surfaceForces.C
+
+curvature/curvatureModel.C
+curvature/newCurvatureModel.C
+curvature/RDF/RDF.C
+curvature/gradAlpha/gradAlpha.C
+curvature/fitParaboloid/fitParaboloid.C
+curvature/heightFunction/heightFuncStencil/HFStencil.C
+curvature/heightFunction/twoDimFDStencil/twoDimFDStencil.C
+curvature/heightFunction/heightFunction.C
+curvature/constantCurvature/constantCurvature.C
+
+
+acceleration/accelerationModel.C
+acceleration/newAccelerationModel.C
+acceleration/gravity/gravity.C
+
+deltaFunctions/deltaFunctionModel.C
+deltaFunctions/newDeltaFunctionModel.C
+deltaFunctions/alphaCSF/alphaCSF.C
+
+LIB = $(FOAM_USER_LIBBIN)/libsurfaceForces

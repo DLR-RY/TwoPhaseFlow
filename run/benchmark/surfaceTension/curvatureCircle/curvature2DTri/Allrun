@@ -1,0 +1,13 @@
+#!/bin/sh
+cd ${0%/*} || exit 1    # Run from this directory
+
+. $WM_PROJECT_DIR/bin/tools/RunFunctions
+
+touch curvature.foam
+runApplication gmshv306 -3 triSquare.geo 
+runApplication gmshToFoam triSquare.msh 
+runApplication changeDictionary
+restore0Dir 
+
+runApplication $(getApplication)
+

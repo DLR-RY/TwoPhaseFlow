@@ -1,0 +1,36 @@
+diff --git a/src/meshTools/mappedPatches/mappedPolyPatch/mappedPatchBaseI.H b/src/meshTools/mappedPatches/mappedPolyPatch/mappedPatchBaseI.H
+index 0fbdbd5e..8fcdcbd5 100644
+--- a/src/meshTools/mappedPatches/mappedPolyPatch/mappedPatchBaseI.H
++++ b/src/meshTools/mappedPatches/mappedPolyPatch/mappedPatchBaseI.H
+@@ -143,6 +143,14 @@ inline bool Foam::mappedPatchBase::sameRegion() const
+ 
+ inline const Foam::mapDistribute& Foam::mappedPatchBase::map() const
+ {
++    const polyMesh& thisMesh = patch_.boundaryMesh().mesh();
++    bool topoChange = sampleMesh().topoChanging() || thisMesh.topoChanging();
++
++    if (topoChange)
++    {
++        mapPtr_.clear();
++    }
++
+     if (mapPtr_.empty())
+     {
+         calcMapping();
+@@ -157,7 +165,15 @@ inline const Foam::AMIPatchToPatchInterpolation& Foam::mappedPatchBase::AMI
+     bool forceUpdate
+ ) const
+ {
+-    if (forceUpdate || AMIPtr_.empty())
++    const polyMesh& thisMesh = patch_.boundaryMesh().mesh();
++    bool topoChange = sampleMesh().topoChanging() || thisMesh.topoChanging();
++
++    if (topoChange || forceUpdate)
++    {
++        AMIPtr_.clear();
++    }
++
++    if (AMIPtr_.empty())
+     {
+         calcAMI();
+     }

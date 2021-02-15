@@ -1,0 +1,57 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  plus                                  |
+|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volScalarField;
+    object      p;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [1 -1 -2 0 0 0 0];
+
+internalField   uniform 1e5;
+
+boundaryField
+{
+  sideWalls
+  {
+      type            fixedFluxPressure;
+  }
+
+  faceWall
+  {
+      type            symmetryPlane;
+  }
+
+  outlet
+  {
+      type            fixedValue;
+      value           uniform 1e5;
+  }
+
+  front
+  {
+      type            wedge;
+  }
+
+  back
+  {
+      type            wedge;
+  }
+
+  axis
+  {
+      type            empty;
+      nFaces 0;
+      startFace 22819;
+  }
+}
+
+// ************************************************************************* //

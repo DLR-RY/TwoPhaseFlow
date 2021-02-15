@@ -1,0 +1,28 @@
+#!/bin/sh
+cd ${0%/*} || exit 1    # Run from this directory
+
+# Source tutorial run functions
+. $WM_PROJECT_DIR/bin/tools/RunFunctions
+
+# generate mesh
+runApplication blockMesh -region fluid
+restore0Dir
+
+# map temperature profile
+runApplication setFieldfromTable -region fluid
+
+mv 0 0.00032
+#cp 0.00032/fluid/T.gz 0.00032/fluid/T.air.gz
+#cp 0.00032/fluid/T.gz 0.00032/fluid/T.water.gz
+#runApplication setFields -region fluid
+runApplication initAlphaField -region fluid
+
+touch scriven3D.foam
+runApplication decomposePar -allRegions
+
+# run solver
+# runApplication $(getApplication)
+sbatch ./Allrun.slurm
+#sbatch ./Allrun.slurm
+
+#------------------------------------------------------------------------------

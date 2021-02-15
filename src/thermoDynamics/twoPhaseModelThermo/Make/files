@@ -1,0 +1,9 @@
+twoPhaseMixtureThermo.C
+
+phaseModel/phaseModel/phaseModel.C
+phaseModel/phaseModel/phaseModelNew.C
+phaseModel/phaseModel/phaseModels.C
+
+twoPhaseModelThermo.C
+
+LIB = $(FOAM_USER_LIBBIN)/libtwoPhaseModelThermo

@@ -1,0 +1,3 @@
+[submodule "modules/multiDimAMR"]
+	path = modules/multiDimAMR
+	url = https://github.com/HenningScheufler/multiDimAMR.git

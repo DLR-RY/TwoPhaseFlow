@@ -1,0 +1,37 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  plus                                  |
+|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      changeDictionaryDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+alpha.phase1
+{
+    boundaryField
+    {
+
+        wall
+        {
+            type            constantAlphaContactAngle;
+            theta0          0;
+            uTheta          10;
+            thetaA          10;
+            thetaR          10;
+            ct              72;
+            limit           zeroGradient;
+            value           uniform 0;
+        }
+
+    }
+}
+
+// ************************************************************************* //

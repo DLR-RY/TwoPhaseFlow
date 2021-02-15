@@ -1,0 +1,110 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  plus                                  |
+|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+application     multiRegionPhaseChangeFlow;
+
+startFrom       latestTime;
+
+startTime       0;
+
+stopAt          endTime;
+
+endTime         0.002;
+
+deltaT          1e-6;
+
+writeControl    adjustableRunTime;
+
+writeInterval   0.0005;
+
+purgeWrite      0;
+
+writeFormat     ascii;
+
+writePrecision  8;
+
+writeCompression on;
+
+timeFormat      general;
+
+timePrecision   10;
+
+runTimeModifiable yes;
+
+adjustTimeStep  yes;
+
+maxCo           0.02;
+maxAlphaCo      0.02;
+maxDeltaT       1e-6;
+maxCapillaryNum 0.5;
+
+functions
+{
+    energyFluxes
+    {
+        type            interfaceEnergyFluxes;
+        libs ("libpostProcess.so");
+
+        // Write at same frequency as fields
+        writeControl    timeStep;
+        writeInterval   1;
+        region fluid;
+    }
+
+    surfaces
+    {
+        type            surfaces;
+        libs
+        (
+            "libsampling.so"
+            "libpostProcess.so"
+        );
+        writeControl    adjustableRunTime;
+	    writeInterval   0.0001;
+        region fluid;
+
+        surfaceFormat   raw;
+        fields          (interfaceEnergyFluxLiquid interfaceEnergyFluxGas);
+
+        interpolationScheme cell;
+
+        surfaces
+        (
+
+            freeSurf
+            {
+                type            interface;
+                interpolate     false;
+            }
+
+        );
+    }
+
+    intPsi
+    {
+        type            fieldIntegrate;
+        libs ("libpostProcess.so");
+
+        // Write at same frequency as fields
+        writeControl    timeStep;
+        writeInterval   10;
+        region fluid;
+        field psi0_;
+    }
+
+}
+// ************************************************************************* //

@@ -1,0 +1,18 @@
+#!/bin/sh
+cd ${0%/*} || exit 1                        # Run from this directory
+. $WM_PROJECT_DIR/bin/tools/RunFunctions    # Tutorial run functions
+
+restore0Dir
+
+runApplication blockMesh
+#runApplication setSet -batch createObstacle.setSet
+runApplication topoSet
+runApplication subsetMesh -overwrite c0 -patch walls
+runApplication setFields
+
+runApplication decomposePar
+runParallel $(getApplication)
+
+#runApplication $(getApplication)
+
+#------------------------------------------------------------------------------

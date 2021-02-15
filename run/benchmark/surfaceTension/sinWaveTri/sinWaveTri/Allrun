@@ -1,0 +1,17 @@
+#!/bin/sh
+cd ${0%/*} || exit 1    # Run from this directory
+
+# Source tutorial run functions
+. $WM_PROJECT_DIR/bin/tools/RunFunctions
+restore0Dir
+touch sinwavetri.foam
+runApplication gmshv306 -3 triSquare.geo
+runApplication gmshToFoam triSquare.msh
+runApplication changeDictionary
+runApplication transformPoints -rollPitchYaw '(90 0 0)'
+runApplication setFields
+runApplication setAlphaField
+#runApplication $(getApplication)
+sbatch Allrun_Slurm
+
+#------------------------------------------------------------------------------

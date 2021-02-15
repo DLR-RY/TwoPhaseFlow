@@ -1,0 +1,15 @@
+#!/bin/sh
+cd ${0%/*} || exit 1    # Run from this directory
+
+# Source tutorial run functions
+. $WM_PROJECT_DIR/bin/tools/RunFunctions
+restore0Dir
+touch sinwavetri.foam
+runApplication blockMesh
+#runApplication transformPoints -rollPitchYaw '(90 0 0)'
+#runApplication setFields
+runApplication initAlphaField
+runApplication $(getApplication)
+#sbatch Allrun_Slurm
+
+#------------------------------------------------------------------------------

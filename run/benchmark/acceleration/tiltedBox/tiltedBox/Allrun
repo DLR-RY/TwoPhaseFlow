@@ -1,0 +1,20 @@
+#!/bin/sh
+cd ${0%/*} || exit 1    # Run from this directory
+
+. $WM_PROJECT_DIR/bin/tools/RunFunctions
+application=$(sed -ne "s/^application\s*\(.*\);/\1/p" system/controlDict)
+
+runApplication blockMesh
+restore0Dir
+cp 0/alpha.org 0/alpha.phase1
+
+runApplication transformPoints -yawPitchRoll '(0 30 0)'
+runApplication initAlphaField
+
+runApplication $(getApplication)
+
+
+#if [ -n "$application" ]
+#then
+#    foamToVTK -surfaceFields
+#fi

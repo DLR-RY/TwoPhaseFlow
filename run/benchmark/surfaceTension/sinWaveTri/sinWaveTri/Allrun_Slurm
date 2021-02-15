@@ -1,0 +1,12 @@
+#!/bin/bash
+#
+#SBATCH --job-name=sinWaveTri
+#SBATCH --output=log.interFlow
+#
+#SBATCH --ntasks=32
+#SBATCH --partition=orbit
+
+decomposePar
+mpirun interFlow -parallel
+#reconstructPar
+#sleep 2

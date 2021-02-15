@@ -1,0 +1,12 @@
+#!/bin/sh
+cd ${0%/*} || exit 1    # Run from this directory
+
+. $WM_PROJECT_DIR/bin/tools/RunFunctions
+application=$(sed -ne "s/^application\s*\(.*\);/\1/p" system/controlDict)
+
+touch curvature.foam
+runApplication blockMesh
+restore0Dir 
+
+runApplication $(getApplication)
+

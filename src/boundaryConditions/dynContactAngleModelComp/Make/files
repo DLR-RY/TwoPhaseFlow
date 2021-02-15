@@ -1,0 +1,4 @@
+dynamicAlphaContactAngleVoxVoinov/compdynamicAlphaContactAngleVoxVoinovFvPatchScalarField.C
+dynamicAlphaContactAngleJiang/dynamicAlphaContactAngleJiangFvPatchScalarField.C
+
+LIB = $(FOAM_USER_LIBBIN)/libdynContactAngleModelComp

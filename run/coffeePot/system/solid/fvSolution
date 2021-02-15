@@ -1,0 +1,151 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  plus                                  |
+|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      fvSolution;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+solvers
+{
+    alpha.water
+    {
+        nAlphaCorr      2;
+        nAlphaSubCycles 2;
+        cAlpha          2;
+
+        MULESCorr       no;
+        nLimiterIter    5;
+
+        solver          smoothSolver;
+        smoother        symGaussSeidel;
+        tolerance       1e-8;
+        relTol          0;
+        advectionScheme isoAdvection;
+        reconstructionScheme isoAlpha;
+        vof2IsoTol 1e-8;
+        surfCellTol 1e-8;
+        writeVTK true;
+    }
+
+    psiFinal
+    {
+        solver           PCG;
+        preconditioner   DIC;
+        tolerance        1e-7;
+        relTol           0.00;
+    }
+
+    rhoCpLFinal
+    {
+        solver           diagonal;
+        preconditioner   DILU;
+        tolerance        1e-7;
+        relTol           0.1;
+    }
+
+    rhoCpVFinal
+    {
+        solver           diagonal;
+        preconditioner   DILU;
+        tolerance        1e-7;
+        relTol           0.1;
+    }
+
+    rho
+    {
+        solver          PCG;
+        preconditioner  DIC;
+        tolerance       1e-7;
+        relTol          0.1;
+    }
+
+    rhoFinal
+    {
+        $rho;
+        tolerance       1e-7;
+        relTol          0;
+    }
+
+    p_rgh
+    {
+        solver           GAMG;
+        tolerance        1e-7;
+        relTol           0.01;
+        smoother         GaussSeidel;
+        minIter 10;
+        maxIter 50;
+    }
+
+    p_rghFinal
+    {
+        $p_rgh;
+        tolerance        1e-7;
+        relTol           0;
+        minIter 10;
+        maxIter 50;
+    }
+
+/*    e
+    {
+        solver          PBiCGStab;
+        preconditioner  DILU;
+        nSweeps         2;
+        tolerance       1e-06;
+        relTol          0.1;
+        minIter         1;
+    }
+
+    eFinal
+    {
+        $e;
+        tolerance       1e-05;
+        relTol          0;
+        minIter         1;
+    }*/
+
+    "(U|h|T.*|k|epsilon|R)"
+    {
+        solver           smoothSolver; //PBiCGStab;
+        smoother        symGaussSeidel;
+        //preconditioner   DILU;
+        tolerance        1e-7;
+        relTol           0.;
+        minIter          15;
+        maxIter          50;
+    }
+
+    "(U|h|T.*|k|epsilon|R)Final"
+    {
+        $U;
+        tolerance        1e-7;
+        relTol           0;
+        maxIter          50;
+    }
+}
+
+PIMPLE
+{
+    momentumPredictor   yes;
+    nCorrectors         8;
+    nNonOrthogonalCorrectors 0;
+}
+
+relaxationFactors
+{
+    equations
+    {
+        "h.*"           1;
+        "U.*"           1;
+    }
+}
+
+// ************************************************************************* //

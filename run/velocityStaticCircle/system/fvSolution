@@ -1,0 +1,109 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2.1.1                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      fvSolution;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+solvers
+{
+    "alpha.*"
+    {
+    //advectionScheme advectionIso;
+
+    //reconstructionScheme RDFadvect; //RDFadvect isoInverseDistance
+        advectionScheme isoAdvection;
+
+        reconstructionScheme plicRDF; //RDFadvect isoInverseDistance
+
+
+        vof2IsoTol 1e-8;
+        surfCellTol 1e-8;
+        writeVTK true;
+
+
+        isoFaceTol      1e-8;
+        surfCellTol     1e-8;
+        nAlphaBounds    3;
+        snapTol         1e-12;
+        clip            true;
+
+        nAlphaSubCycles 2;
+        nAlphaCorr 1;
+        cAlpha          1;
+        writeIsoFaces false;
+
+    }
+
+    "pcorr.*"
+    {
+        solver          GAMG;
+        smoother        DICGaussSeidel;
+        tolerance       1e-10;
+        relTol          0;
+    }
+
+    p_rgh
+    {
+        solver          GAMG;
+        smoother        DICGaussSeidel;
+ //       solver          PCG;
+ //       preconditioner  DIC;
+        tolerance       1e-10;
+        relTol          0.00001;
+        maxIter 20;
+        minIter 5;
+    }
+
+    p_rghFinal
+    {
+        $p_rgh;
+        tolerance       1e-12;
+        relTol          0;
+        maxIter 40;
+        minIter 5;
+    }
+
+    U
+    {
+        solver          PBiCGStab;
+        preconditioner  DILU;
+        tolerance       1e-20;
+        relTol          0;
+        minIter 10;
+    }
+
+    UFinal
+    {
+        solver          PBiCGStab;
+        preconditioner  DILU;
+        tolerance       1e-20;
+        relTol          0;
+        minIter 10;
+    }
+}
+
+PIMPLE
+{
+    // significantly higher error with the momentumPredictor
+    momentumPredictor no;
+    nCorrectors     4;
+    nNonOrthogonalCorrectors 0;
+    correctPhi      yes;
+
+    pRefCell        0;
+    pRefValue       0;
+}
+
+
+// ************************************************************************* //

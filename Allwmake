@@ -1,0 +1,22 @@
+#!/bin/bash
+
+wmake libso src/VoF
+wmake all src/boundaryConditions
+wmake all src/thermoDynamics
+
+wmake libso src/turbulence/VoFphaseCompressibleTurbulenceModels
+wmake libso src/phaseChange
+wmake libso src/surfaceForces
+
+wmake libso src/postProcessing
+
+wmake apps/setFieldfromTable
+wmake apps/initAlphaField
+
+wmake apps/benchmark/advectorVoF
+wmake apps/benchmark/reconstructInterface
+
+wmake solver/multiRegionPhaseChangeFlow
+wmake solver/interFlow
+wmake solver/compressibleInterFlow
+
