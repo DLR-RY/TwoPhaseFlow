@@ -1,6 +1,6 @@
 # twophaseflow
 
-the twophaseflow adds new surface tension and phase change models to OpenFOAM and provides benchmark cases for verification
+the TwoPhaseFlow Library adds new surface tension and phase change models to OpenFOAM and provides benchmark cases for verification
 
 ## Getting Started
 
@@ -17,7 +17,7 @@ https://www.openfoam.com/download/release-history.php
 
 ```
 git clone https://github.com/DLR-RY/TwoPhaseFlow
-cd twophaseflow
+cd TwoPhaseFlow
 ./Allwmake
 # for AMR
 git submodule update --init
@@ -48,7 +48,3 @@ https://develop.openfoam.com/Development/openfoam/-/issues/1676
 ## License
 
 This project is licensed under the GPL v3 License - see the [LICENSE.md](LICENSE.md) file for details
-
-
-
-

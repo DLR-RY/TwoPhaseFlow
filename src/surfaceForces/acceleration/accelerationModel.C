@@ -40,7 +40,7 @@ Foam::accelerationModel::accelerationModel
     (
         IOobject
         (
-            "accf_",
+            "ghf",
             mesh.time().timeName(),
             mesh
         ),
@@ -51,7 +51,7 @@ Foam::accelerationModel::accelerationModel
     (
         IOobject
         (
-            "acc_",
+            "gh",
             mesh.time().timeName(),
             mesh
         ),

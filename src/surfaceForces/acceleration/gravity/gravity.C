@@ -89,8 +89,6 @@ void Foam::gravity::calculateAcc()
       : dimensionedScalar("ghRef", g_.dimensions()*dimLength, 0)
     );
 
-    //Info<< "ghRef dim" << ghRef.dimensions() << endl;
-
     acc_ = (g_ & mesh.C()) - ghRef;
     accf_ = (g_ & mesh.Cf()) - ghRef;
 }
