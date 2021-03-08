@@ -1,0 +1,15 @@
+diff --git a/src/OpenFOAM/primitives/functions/Function1/Table/TableBase.C b/src/OpenFOAM/primitives/functions/Function1/Table/TableBase.C
+index cf21e6ec..84de1aed 100644
+--- a/src/OpenFOAM/primitives/functions/Function1/Table/TableBase.C
++++ b/src/OpenFOAM/primitives/functions/Function1/Table/TableBase.C
+@@ -90,8 +90,8 @@ Foam::Function1Types::TableBase<Type>::TableBase(const TableBase<Type>& tbl)
+     bounding_(tbl.bounding_),
+     interpolationScheme_(tbl.interpolationScheme_),
+     table_(tbl.table_),
+-    tableSamplesPtr_(tbl.tableSamplesPtr_),
+-    interpolatorPtr_(tbl.interpolatorPtr_)
++    tableSamplesPtr_(nullptr),
++    interpolatorPtr_(nullptr)
+ {}
+ 
+ 

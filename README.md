@@ -38,13 +38,17 @@ To fix this apply the patch (assumes openfoam is already source):
 
 ```
 cp  patches/multiRegionAMR.patch $WM_PROJECT_DIR
+cp  patches/tableBase.patch $WM_PROJECT_DIR
 cd $WM_PROJECT_DIR
 git apply multiRegionAMR.patch
+git apply tableBase.patch
 
 ```
 details see:
 
 https://develop.openfoam.com/Development/openfoam/-/issues/1676
+
+https://develop.openfoam.com/Development/openfoam/-/issues/1753
 ## License
 
 This project is licensed under the GPL v3 License - see the [LICENSE.md](LICENSE.md) file for details
