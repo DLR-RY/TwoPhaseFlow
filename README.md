@@ -20,7 +20,7 @@ git clone https://github.com/DLR-RY/TwoPhaseFlow
 cd TwoPhaseFlow
 ./Allwmake
 # for AMR
-git submodule update --init
+git submodule update --init --recursive
 cd modules/multiDimAMR/
 ./Allwmake
 ```
