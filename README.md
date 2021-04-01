@@ -39,9 +39,11 @@ To fix this apply the patch (assumes openfoam is already source):
 ```
 cp  patches/multiRegionAMR.patch $WM_PROJECT_DIR
 cp  patches/tableBase.patch $WM_PROJECT_DIR
+cp  patches/surfaceFieldValue.patch $WM_PROJECT_DIR
 cd $WM_PROJECT_DIR
 git apply multiRegionAMR.patch
 git apply tableBase.patch
+git apply surfaceFieldValue.patch
 
 ```
 details see:

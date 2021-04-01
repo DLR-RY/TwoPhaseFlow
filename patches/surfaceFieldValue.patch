@@ -1,0 +1,16 @@
+diff --git a/src/functionObjects/field/fieldValues/surfaceFieldValue/surfaceFieldValue.C b/src/functionObjects/field/fieldValues/surfaceFieldValue/surfaceFieldValue.C
+index a398e720..9498c0ba 100644
+--- a/src/functionObjects/field/fieldValues/surfaceFieldValue/surfaceFieldValue.C
++++ b/src/functionObjects/field/fieldValues/surfaceFieldValue/surfaceFieldValue.C
+@@ -984,6 +984,11 @@ bool Foam::functionObjects::fieldValues::surfaceFieldValue::write()
+         surfacePtr_().update();
+     }
+ 
++    if (mesh_.topoChanging())
++    {
++        read(dict_);
++    }
++
+     if (operation_ != opNone)
+     {
+         fieldValue::write();
