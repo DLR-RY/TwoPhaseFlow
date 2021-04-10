@@ -46,7 +46,7 @@ Foam::curvatureModel::curvatureModel
     (
         IOobject
         (
-            "nHatf",
+            "nHatf_",
             alpha1_.time().timeName(),
             alpha1_.mesh()
         ),
