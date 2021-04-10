@@ -2,6 +2,12 @@
 
 the TwoPhaseFlow Library adds new surface tension and phase change models to OpenFOAM and provides benchmark cases for verification
 
+## Documentation 
+
+The available models and solvers are documentated in:
+
+https://arxiv.org/abs/2103.00870
+
 ## Getting Started
 
 
