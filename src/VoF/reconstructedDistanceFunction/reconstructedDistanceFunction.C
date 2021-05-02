@@ -303,6 +303,9 @@ const Foam::volScalarField&  Foam::reconstructedDistanceFunction::constructRDF
     {
         if (nextToInterface[celli])
         {
+            // in Scheufler Roenby 2019 the RDF for cells that contain an
+            // interface was weighted calculating the RDF only from an interface
+            // cell shows better performance not well resolved intefaces
             if (mag(normal[celli]) != 0) // interface cell
             {
                 vector n = -normal[celli]/mag(normal[celli]);

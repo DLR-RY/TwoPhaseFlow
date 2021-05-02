@@ -120,8 +120,7 @@ bool Foam::functionObjects::volumeFractionError::read(const dictionary& dict)
     }
 
 
-     cutCellIso cutCell(mesh_,f); // changes f
-    //cutCellImpFunc cutCell(mesh_,f,func); // changes f
+    cutCellIso cutCell(mesh_,f);
 
     volScalarField alphaExact
     (
@@ -157,10 +156,9 @@ bool Foam::functionObjects::volumeFractionError::read(const dictionary& dict)
         }
 
     }
+    const volScalarField& alpha = lookupObject<volScalarField>(Field_);
 
-
-    initMass_ = fvc::domainIntegrate(alphaExact.internalField()).value();
-
+    initMass_ = fvc::domainIntegrate(alpha.internalField()).value();
 
     return true;
 }

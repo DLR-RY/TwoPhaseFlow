@@ -50,39 +50,15 @@ Author
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-
-void setAlpha(const fvMesh& mesh, const dictionary& initAlphaFieldDict, volScalarField& alpha1)
+template<class T>
+void setAlpha
+(
+    T& cutCell,
+    const fvMesh& mesh,
+    const dictionary& initAlphaFieldDict,
+    volScalarField& alpha1
+)
 {
-//    Info<< "Reading initAlphaFieldDict" << endl;
-//    Info << "set Alpha Dict centre " << initAlphaFieldDict.lookup("centre") << endl;
-
-    Foam::autoPtr<Foam::implicitFunction> func
-    (
-        implicitFunction::New
-        (
-            word(initAlphaFieldDict.lookup("function")),
-            initAlphaFieldDict
-        )
-    );
-
-    scalarField f(mesh.nPoints(),0.0);
-
-   forAll(f,pI)
-   {
-       f[pI] =  func->value(mesh.points()[pI]);
-   }
-
-
-    //  cutCellIso cutCell(mesh,f); // changes f
-
-    cutCellImpFunc cutCell(mesh,f,func.ref()); // changes f
-//     isoCutCell cutCell(mesh,f); // changes f
-    DynamicList< List<point> > facePts;
-
-    DynamicList <triSurface> surface;
-
-    surfaceScalarField cellToCellDist(mag(mesh.delta()));
-
 
     forAll(alpha1,cellI)
     {
@@ -105,7 +81,6 @@ void setAlpha(const fvMesh& mesh, const dictionary& initAlphaFieldDict, volScala
         }
     }
 
-
     alpha1.correctBoundaryConditions();
 
 }
@@ -116,9 +91,7 @@ int main(int argc, char *argv[])
     #include "setRootCase.H"
     #include "createTime.H"
     #include "createMesh.H"
-//    #include "createNamedMesh.H"
     #include "createControl.H"
-//    #include "createTimeControls.H"
 
 
     IOdictionary initAlphaFieldDict
@@ -180,49 +153,57 @@ int main(int argc, char *argv[])
 
     reconstructionError recErr( mesh,mesh,initAlphaFieldDict);
 
-
-
-// advect and errors
-// note: centre has to be in the correct position
-
     #include "createTimeControls.H"
-        #include "readTimeControls.H"
-        #include "CourantNo.H"
-        #include "setInitialDeltaT.H"
+    #include "readTimeControls.H"
+    #include "CourantNo.H"
+    #include "setInitialDeltaT.H"
 
     //Setting velocity field and face fluxes for next time step
-      IOdictionary fvSolutionDict
-      (
-          IOobject
-          (
-              "fvSolution",
-              alpha1.time().system(),
-              alpha1.db(),
-              IOobject::MUST_READ_IF_MODIFIED,
-              IOobject::NO_WRITE
-          )
-      );
+    IOdictionary fvSolutionDict
+    (
+        IOobject
+        (
+            "fvSolution",
+            alpha1.time().system(),
+            alpha1.db(),
+            IOobject::MUST_READ_IF_MODIFIED,
+            IOobject::NO_WRITE
+        )
+    );
 
-        vector centre = initAlphaFieldDict.lookup("origin");
+    vector centre = initAlphaFieldDict.lookup("origin");
     //    scalar radius = readScalar(initAlphaFieldDict.lookup("radius"));
 
-        Random rndCentre(1234567);
+    Random rndCentre(1234567);
 
-        autoPtr<reconstructionSchemes> surf =
-            reconstructionSchemes::New(alpha1,phi,U,fvSolutionDict);
-        surfaceForces surfForces(alpha1,phi,U,transportProperties);
+    autoPtr<reconstructionSchemes> surf =
+        reconstructionSchemes::New(alpha1,phi,U,fvSolutionDict);
+    surfaceForces surfForces(alpha1,phi,U,transportProperties);
 
     //    label nIter = 100;
-        label nIter = 1;
 
-        word functionType (initAlphaFieldDict.lookup("function"));
-        bool twoDim = (functionType == "cylinder");
-        Info << "twoDim = " << twoDim << endl;
-        Info << "functionType = " << functionType << endl;
 
-        scalar recTime = 0;
-        vector centreMin = centre - 0.1*centre;
-        vector centreMax = centre + 0.1*centre;
+    dictionary reconDict = fvSolutionDict.subDict("reconstruction");
+
+    // lookup of relevevant parameters
+    label nIter = reconDict.get<label>("nIter");
+    word setAlphaMethod = reconDict.get<word>("setAlphaMethod");
+    if (setAlphaMethod != "cutCellImpFunc" && setAlphaMethod != "cutCellIso")
+    {
+        FatalError  << "valid choice are only cutCellImpFunc or cutCellIso"
+                    << abort(FatalError);
+    }
+
+    word functionType (initAlphaFieldDict.lookup("function"));
+    bool twoDim = (functionType == "cylinder");
+    Info << "twoDim = " << twoDim << endl;
+    Info << "functionType = " << functionType << endl;
+
+    scalar recTime = 0;
+    vector centreMin = centre - 0.1*centre;
+    vector centreMax = centre + 0.1*centre;
+
+
 
     while (runTime.run())
     {
@@ -231,28 +212,47 @@ int main(int argc, char *argv[])
 
         for(int iteration = 0;iteration < nIter;iteration++)
         {
-            // 3D
+
             vector centrePos = rndCentre.globalPosition < vector > (centreMin,centreMax); //vector::zero;
-    //        if(twoDim)
-    //        {
-    //            centrePos = rndCentre.globalPosition < vector > (centreMin,centreMax);
-    //        }
-    //        else
-    //        {
-    //            centrePos = rndCentre.globalPosition < vector > (centreMin,centreMax);
-    //        }
 
 
-            // 2D
-    //
-            // initAlphaFieldDict.set<vector>("origin",centrePos);
+            if (nIter > 1)
+            {
+                initAlphaFieldDict.set<vector>("origin",centrePos);
+            }
 
             centre = initAlphaFieldDict.lookup("origin");
 
-           Info << "centre " <<  centre << endl;
+            Info << "centre " <<  centre << endl;
+
+            Foam::autoPtr<Foam::implicitFunction> func
+            (
+                implicitFunction::New
+                (
+                    word(initAlphaFieldDict.lookup("function")),
+                    initAlphaFieldDict
+                )
+            );
+
+            scalarField f(mesh.nPoints(),0.0);
+
+            forAll(f,pI)
+            {
+                f[pI] =  func->value(mesh.points()[pI]);
+            }
 
 
-            setAlpha(mesh,initAlphaFieldDict,alpha1);
+            if (setAlphaMethod == "cutCellImpFunc")
+            {
+                cutCellImpFunc cutCell(mesh,f,func.ref());
+                setAlpha(cutCell,mesh,initAlphaFieldDict,alpha1);
+            }
+            else
+            {
+                cutCellIso cutCell(mesh,f);
+                setAlpha(cutCell,mesh,initAlphaFieldDict,alpha1);
+            }
+
             mesh.time().cpuTimeIncrement();
 
 

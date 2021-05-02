@@ -139,7 +139,7 @@ void Foam::reconstructionError::calcError
         if(mag(normal[cellI]) != 0)
         {
            vector centreCellI = centre[cellI];
-           vector normalCellI = -normal[cellI];
+           vector normalCellI = normal[cellI];
            normalCellI /= mag(normalCellI);
 
            vector exactNormal = func->grad(centreCellI);

@@ -114,6 +114,8 @@ int main(int argc, char *argv[])
         Info<< "Time = " << runTime.timeName() << nl << endl;
 
         //Advance alpha1 from time t to t+dt
+        // #include "alphaSuSp.H"
+        // advector->advect(Sp,(Su + divU*min(alpha1(), scalar(1)))());
         advector->advect();
 
         //Write total VOF and discrepancy from original VOF to log
