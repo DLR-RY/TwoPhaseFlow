@@ -100,4 +100,5 @@ doc/Doxygen/DTAGS
 # python
 __pychache__
 *.pyc
+env
 # end-of-file

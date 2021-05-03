@@ -1,0 +1,79 @@
+/*---------------------------------------------------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v1812                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+Build  : 945f446c-20210216 OPENFOAM=1812
+Arch   : "LSB;label=32;scalar=64"
+Exec   : blockMesh
+Date   : May 02 2021
+Time   : 18:40:49
+Host   : henning-AB350M-HD3
+PID    : 7299
+I/O    : uncollated
+Case   : /media/henning/ssd1linux/libsAndApps/release/TwoPhaseFlow/testsuite/advection/test-discUniFlow
+nProcs : 1
+trapFpe: Floating point exception trapping enabled (FOAM_SIGFPE).
+fileModificationChecking : Monitoring run-time modified files using timeStampMaster (fileModificationSkew 10)
+allowSystemOperations : Allowing user-supplied system call operations
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+Create time
+
+--> FOAM Warning : 
+    From function static Foam::IOstreamOption::compressionType Foam::IOstreamOption::compressionEnum(const Foam::word&)
+    in file db/IOstreams/IOstreams/IOstreamOption.C at line 86
+    Unknown compression specifier 'compressed', assuming no compression
+Creating block mesh from
+    "/media/henning/ssd1linux/libsAndApps/release/TwoPhaseFlow/testsuite/advection/test-discUniFlow/system/blockMeshDict"
+Creating block edges
+No non-planar block faces defined
+Creating topology blocks
+Creating topology patches
+
+Creating block mesh topology
+
+Check topology
+
+	Basic statistics
+		Number of internal faces : 0
+		Number of boundary faces : 6
+		Number of defined boundary faces : 6
+		Number of undefined boundary faces : 0
+	Checking patch -> block consistency
+
+Creating block offsets
+Creating merge list .
+
+Creating polyMesh from blockMesh
+Creating patches
+Creating cells
+Creating points with scale 1
+    Block 0 cell size :
+        i : 0.05 .. 0.05
+        j : 1 .. 1
+        k : 0.05 .. 0.05
+
+
+There are no merge patch pairs
+
+Writing polyMesh with 0 cellZones
+----------------
+Mesh Information
+----------------
+  boundingBox: (0 -0.5 0) (5 0.5 3)
+  nPoints: 12322
+  nCells: 6000
+  nFaces: 24160
+  nInternalFaces: 11840
+----------------
+Patches
+----------------
+  patch 0 (start: 11840 size: 320) name: rim
+  patch 1 (start: 12160 size: 6000) name: front
+  patch 2 (start: 18160 size: 6000) name: back
+
+End
+

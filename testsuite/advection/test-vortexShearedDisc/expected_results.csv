@@ -1,0 +1,11 @@
+err_shape,reconScheme,Res
+6.511E-02,isoAlpha,32
+9.411E-03,isoAlpha,64
+1.469E-03,isoAlpha,128
+4.343E-04,isoAlpha,256
+1.045E-04,isoAlpha,512
+3.530E-02,plicRDF,32
+8.157E-03,plicRDF,64
+2.334E-03,plicRDF,128
+5.366E-04,plicRDF,256
+1.220E-04,plicRDF,512

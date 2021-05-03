@@ -2,7 +2,7 @@
 
 the TwoPhaseFlow Library adds new surface tension and phase change models to OpenFOAM and provides benchmark cases for verification
 
-## Documentation 
+## Documentation
 
 The available models and solvers are documentated in:
 
@@ -29,6 +29,16 @@ cd TwoPhaseFlow
 git submodule update --init --recursive
 cd modules/multiDimAMR/
 ./Allwmake
+```
+### running testsuite
+
+assuming you have installed python version >= 3.6 (miniconda is a great option)
+
+```
+python -m venv env
+pip install oftest
+
+py.test # runs the tests
 ```
 
 ## Authors

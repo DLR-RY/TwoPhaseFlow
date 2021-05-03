@@ -1,0 +1,77 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2.0.1                                 |
+|   \\  /    A nd           | Web:      http://www.openfoam.org               |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+
+FoamFile
+{
+    version         2.0;
+    format          ascii;
+    class           dictionary;
+	location		"system";
+    object          controlDict;
+}
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+application     advectorVoF;
+
+startFrom       startTime;
+
+startTime       0.0;
+
+stopAt          endTime;
+
+endTime         4;
+
+writeControl    adjustableRunTime;
+
+writeInterval   1;
+
+deltaT          1e-3;
+
+purgeWrite      0;
+
+writeFormat     ascii;
+
+writePrecision  14;
+
+writeCompression compressed;
+
+timeFormat      general;
+
+timePrecision   6;
+
+graphFormat     raw;
+
+runTimeModifiable no;
+
+adjustTimeStep  yes;
+
+maxCo           1e10;
+maxAlphaCo      0.1;
+
+maxDeltaT       1e6;
+
+functions
+{
+	volumeFractionError
+	{
+		type volumeFractionError;
+		libs ("libpostProcess.so");
+		field alpha.water;
+        function cylinder;
+        radius 0.25;
+        direction (0 1 0);
+        origin (0.5 0 0.5);
+		writeControl    adjustableRunTime;
+		writeInterval   1;
+		writePrecision 	16;
+	}
+}
+
+
+// ************************************************************************* //

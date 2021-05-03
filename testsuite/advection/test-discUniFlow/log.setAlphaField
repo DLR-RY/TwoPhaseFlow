@@ -1,0 +1,40 @@
+/*---------------------------------------------------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v1812                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+Build  : 945f446c-20210216 OPENFOAM=1812
+Arch   : "LSB;label=32;scalar=64"
+Exec   : setAlphaField
+Date   : May 02 2021
+Time   : 18:40:49
+Host   : henning-AB350M-HD3
+PID    : 7302
+I/O    : uncollated
+Case   : /media/henning/ssd1linux/libsAndApps/release/TwoPhaseFlow/testsuite/advection/test-discUniFlow
+nProcs : 1
+trapFpe: Floating point exception trapping enabled (FOAM_SIGFPE).
+fileModificationChecking : Monitoring run-time modified files using timeStampMaster (fileModificationSkew 10)
+allowSystemOperations : Allowing user-supplied system call operations
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+Create time
+
+--> FOAM Warning : 
+    From function static Foam::IOstreamOption::compressionType Foam::IOstreamOption::compressionEnum(const Foam::word&)
+    in file db/IOstreams/IOstreams/IOstreamOption.C at line 86
+    Unknown compression specifier 'compressed', assuming no compression
+Create mesh for time = 0
+
+Reading setAlphaFieldDict
+
+Reading field alpha.water
+
+Processing type 'cylinder'
+
+Phase-1 volume fraction = 0.012968910267779  Min(alpha.water) = 0  Max(alpha.water) - 1 = 8.8817841970013e-16
+
+End
+
