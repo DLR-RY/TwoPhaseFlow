@@ -168,6 +168,9 @@ class isoAdvection
 
         // Advection functions
 
+            //- Extend markedCell with cell-face-cell.
+            void extendMarkedCells(bitSet& markedCell) const;
+
             void setProcessorPatches();
 
             //- For each face calculate volumetric face transport during dt
@@ -193,7 +196,7 @@ class isoAdvection
             template < class SpType, class SuType >
             void boundFlux
             (
-                const scalarField& alpha1,
+                const bitSet& nextToInterface,
                 surfaceScalarField& dVfcorrectionValues,
                 DynamicLabelList& correctedFaces,
                 const SpType& Sp,

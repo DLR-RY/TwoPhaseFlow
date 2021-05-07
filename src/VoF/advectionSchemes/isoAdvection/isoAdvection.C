@@ -38,6 +38,7 @@ License
 #include "cellSet.H"
 #include "meshTools.H"
 #include "OBJstream.H"
+#include "syncTools.H"
 
 #include "addToRunTimeSelectionTable.H"
 
@@ -163,6 +164,39 @@ void Foam::advection::isoAdvection::setProcessorPatches()
         )
         {
             procPatchLabels_.append(patchi);
+        }
+    }
+}
+
+void Foam::advection::isoAdvection::extendMarkedCells
+(
+    bitSet& markedCell
+) const
+{
+    // Mark faces using any marked cell
+    bitSet markedFace(mesh_.nFaces());
+
+    for (const label celli : markedCell)
+    {
+        markedFace.set(mesh_.cells()[celli]);  // set multiple faces
+    }
+
+    syncTools::syncFaceList(mesh_, markedFace, orEqOp<unsigned int>());
+
+    // Update cells using any markedFace
+    for (label facei = 0; facei < mesh_.nInternalFaces(); ++facei)
+    {
+        if (markedFace.test(facei))
+        {
+            markedCell.set(mesh_.faceOwner()[facei]);
+            markedCell.set(mesh_.faceNeighbour()[facei]);
+        }
+    }
+    for (label facei = mesh_.nInternalFaces(); facei < mesh_.nFaces(); ++facei)
+    {
+        if (markedFace.test(facei))
+        {
+            markedCell.set(mesh_.faceOwner()[facei]);
         }
     }
 }

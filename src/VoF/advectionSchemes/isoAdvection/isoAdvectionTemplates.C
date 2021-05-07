@@ -133,6 +133,10 @@ void Foam::advection::isoAdvection::limitFluxes
 
     surfaceScalarField dVfcorrectionValues("dVfcorrectionValues", dVf_*0.0);
 
+    bitSet needBounding(mesh_.nCells(),false);
+    needBounding.set(surfCells_);
+
+    extendMarkedCells(needBounding);
 
     // Loop number of bounding steps
     for (label n = 0; n < nAlphaBounds_; n++)
@@ -143,7 +147,7 @@ void Foam::advection::isoAdvection::limitFluxes
 
             DynamicList<label> correctedFaces(3*nOvershoots);
             dVfcorrectionValues = dimensionedScalar("0",dimVolume,0.0);
-            boundFlux(alpha1In_, dVfcorrectionValues, correctedFaces,Sp,Su);
+            boundFlux(needBounding, dVfcorrectionValues, correctedFaces,Sp,Su);
 
             correctedFaces.append
             (
@@ -211,7 +215,7 @@ void Foam::advection::isoAdvection::limitFluxes
 template < class SpType, class SuType >
 void Foam::advection::isoAdvection::boundFlux
 (
-    const scalarField& alpha1,
+    const bitSet& nextToInterface,
     surfaceScalarField& dVfcorrectionValues,
     DynamicList<label>& correctedFaces,
     const SpType& Sp,
@@ -233,14 +237,16 @@ void Foam::advection::isoAdvection::boundFlux
     DynamicList<scalar> phi(downwindFaces.size());
     const volScalarField& alphaOld = alpha1_.oldTime();
 
+
+
     // Loop through alpha cell centred field
-    forAll(alpha1, celli)
+    for(label celli: nextToInterface)
     {
-        if (alpha1[celli] < -aTol || alpha1[celli] > 1 + aTol)
+        if (alpha1_[celli] < -aTol || alpha1_[celli] > 1 + aTol)
         {
             const scalar Vi = meshV[celli];
-            scalar alphaOvershoot = pos0(alpha1[celli]-1)*(alpha1[celli]-1)
-                + neg0(alpha1[celli])*alpha1[celli];
+            scalar alphaOvershoot = pos0(alpha1_[celli]-1)*(alpha1_[celli]-1)
+                + neg0(alpha1_[celli])*alpha1_[celli];
             scalar fluidToPassOn = alphaOvershoot*Vi;
             label nFacesToPassFluidThrough = 1;
 
