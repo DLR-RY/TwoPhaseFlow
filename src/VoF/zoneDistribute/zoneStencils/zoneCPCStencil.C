@@ -2,12 +2,11 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2019-2019 OpenCFD Ltd.
+    \\  /    A nd           | www.openfoam.com
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
-                            | Copyright (C) 2019-2019 DLR
+    Copyright (C) 2020 DLR
 -------------------------------------------------------------------------------
-
 License
     This file is part of OpenFOAM.
 
@@ -28,10 +27,11 @@ License
 
 #include "zoneCPCStencil.H"
 #include "syncTools.H"
+#include "ListOps.H"
 #include "dummyTransform.H"
 #include "emptyPolyPatch.H"
 
-// * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
+// * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
 {
@@ -39,7 +39,9 @@ namespace Foam
 }
 
 
-Foam::Map<bool> Foam::zoneCPCStencil::syncCouledBoundaryPoints
+// * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
+
+Foam::Map<bool> Foam::zoneCPCStencil::syncCoupledBoundaryPoints
 (
     const boolList& zone,
     const labelList& boundaryPoints
@@ -49,31 +51,26 @@ Foam::Map<bool> Foam::zoneCPCStencil::syncCouledBoundaryPoints
 
     Map<bool> syncPoints;
 
-    forAll(boundaryPoints, i)
+    for (const label pointi : boundaryPoints)
     {
-        label pointi = boundaryPoints[i];
-
         bool updatePoint = false;
 
-        // check if point need to be updated
-        forAll(pCells[pointi],j)
+        // Check if point needs to be updated
+        for (const label celli : pCells[pointi])
         {
-            const label& celli = pCells[pointi][j];
-            if(zone[celli])
+            if (zone[celli])
             {
                 updatePoint = true;
                 break;
             }
-
         }
 
-        if(updatePoint)
+        if (updatePoint)
         {
-            syncPoints.insert(pointi,true);
+            syncPoints.insert(pointi, true);
         }
     }
 
-    // sync syncPoints
     syncTools::syncPointMap
     (
         mesh_,
@@ -82,9 +79,9 @@ Foam::Map<bool> Foam::zoneCPCStencil::syncCouledBoundaryPoints
         Foam::dummyTransform()
     );
 
-
     return syncPoints;
 }
+
 
 void Foam::zoneCPCStencil::calcPointBoundaryData
 (
@@ -98,10 +95,8 @@ void Foam::zoneCPCStencil::calcPointBoundaryData
 
     labelHashSet pointGlobals;
 
-    forAll(boundaryPoints, i)
+    for (const label pointi : boundaryPoints)
     {
-        label pointi = boundaryPoints[i];
-
         neiGlobal.insert
         (
             pointi,
@@ -114,15 +109,15 @@ void Foam::zoneCPCStencil::calcPointBoundaryData
         );
     }
 
-
     syncTools::syncPointMap
     (
         mesh_,
         neiGlobal,
         unionEqOp(),
-        Foam::dummyTransform()      // dummy transformation
+        Foam::dummyTransform()
     );
 }
+
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
@@ -131,7 +126,7 @@ Foam::zoneCPCStencil::zoneCPCStencil(const fvMesh& mesh)
     MeshObject<fvMesh, Foam::TopologicalMeshObject, zoneCPCStencil>(mesh),
     zoneCellStencils(mesh),
     nonEmptyBoundaryPoints_(nonEmptyFacesPatch()().meshPoints()),
-    uptodate_(mesh.nCells(),false)
+    uptodate_(mesh.nCells(), false)
 {
     // Mark boundary faces to be included in stencil (i.e. not coupled or empty)
     validBoundaryFaces(isValidBFace_);
@@ -170,13 +165,13 @@ void Foam::zoneCPCStencil::calculateStencil
 )
 {
     // Swap pointCells for coupled points
-    Map<bool> syncPoints  = syncCouledBoundaryPoints
+    Map<bool> syncPoints = syncCoupledBoundaryPoints
     (
         zone,
         nonEmptyBoundaryPoints_
     );
 
-    labelList boundaryPoints = syncPoints.toc();
+    labelList boundaryPoints(syncPoints.toc());
 
     Map<labelList> neiGlobal;
     calcPointBoundaryData
@@ -189,21 +184,17 @@ void Foam::zoneCPCStencil::calculateStencil
 
     // add boundary Points first
 
-    forAll(boundaryPoints, i)
+    for (const label pointi : boundaryPoints)
     {
-        label pointi = boundaryPoints[i];
-
         const labelList& pGlobals = neiGlobal[pointi];
 
         // Distribute to all pointCells
         const labelList& pCells = mesh_.pointCells(pointi);
 
-        forAll(pCells, j)
+        for (const label celli : pCells)
         {
-            label celli = pCells[j];
-
             // Insert pGlobals into globalCellCells
-            if(zone[celli] && !uptodate_[celli])
+            if (zone[celli] && !uptodate_[celli])
             {
                 merge
                 (
@@ -212,10 +203,9 @@ void Foam::zoneCPCStencil::calculateStencil
                     globalCellCells[celli]
                 );
 
-                forAll(globalCellCells[celli],idx)
+                for (const label gblIdx : globalCellCells[celli])
                 {
-                    const label& gblIdx = globalCellCells[celli][idx];
-                    if(!globalNumbering().isLocal(gblIdx))
+                    if (!globalNumbering().isLocal(gblIdx))
                     {
                         needComm_.insert(celli);
                     }
@@ -223,7 +213,7 @@ void Foam::zoneCPCStencil::calculateStencil
             }
         }
     }
- 
+
 
     neiGlobal.clear();
 
@@ -232,22 +222,18 @@ void Foam::zoneCPCStencil::calculateStencil
 
     forAll(zone,celli)
     {
-
-        if(zone[celli] && !uptodate_[celli])
+        if (zone[celli] && !uptodate_[celli])
         {
-            forAll(cPoints[celli],j)
+            for (const label pointi : cPoints[celli])
             {
-                const label& pointi = cPoints[celli][j];
-
                 labelList pCells = mesh_.pointCells(pointi);
 
-                forAll(pCells, cpi)
+                for (label& neiCelli : pCells)
                 {
-                    label neiCelli = pCells[cpi];
-                    pCells[cpi] = globalNumbering().toGlobal(neiCelli);
+                    neiCelli = globalNumbering().toGlobal(neiCelli);
                 }
 
-                if(!uptodate_[celli])
+                if (!uptodate_[celli])
                 {
                     merge
                     (
@@ -256,29 +242,12 @@ void Foam::zoneCPCStencil::calculateStencil
                         globalCellCells[celli]
                     );
                 }
-
             }
 
             uptodate_[celli] = true;
         }
-
     }
-
 }
 
-// void Foam::zoneCPCStencil::updateMesh(const mapPolyMesh& mpm)
-// {
-//     if(mesh_.topoChanging())
-//     { 
-//         // resize map and globalIndex
-//         zoneCellStencils::updateMesh(mpm);
-        
-//         nonEmptyBoundaryPoints_ = nonEmptyFacesPatch()().meshPoints();
-//         uptodate_.resize(mesh_.nCells());
-//         uptodate_ = false;
-//         validBoundaryFaces(isValidBFace_);
-//     } 
-
-// }
 
 // ************************************************************************* //

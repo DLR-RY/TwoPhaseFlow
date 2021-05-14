@@ -5,7 +5,7 @@
     \\  /    A nd           | www.openfoam.com
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
-    Copyright (C) 2019 DLR
+    Copyright (C) 2019-2020 DLR
 -------------------------------------------------------------------------------
 License
     This file is part of OpenFOAM.
@@ -32,12 +32,12 @@ Description
     are estimated by inverse distance interpolation of the VoF (alpha) field.
 
     Reference:
-        \verbatim
-            Roenby, J., Bredmose, H. and Jasak, H. (2016).
-            A computational method for sharp interface advection
-            Royal Society Open Science, 3
-            doi 10.1098/rsos.160405
-        \endverbatim
+    \verbatim
+        Roenby, J., Bredmose, H. and Jasak, H. (2016).
+        A computational method for sharp interface advection
+        Royal Society Open Science, 3
+        doi 10.1098/rsos.160405
+    \endverbatim
 
     Original code supplied by Johan Roenby, DHI (2016)
 
@@ -77,7 +77,7 @@ class isoAlpha
 :
     public reconstructionSchemes
 {
-    // Private data
+    // Private Data
 
         //- Reference to mesh
         const fvMesh& mesh_;
@@ -98,13 +98,13 @@ class isoAlpha
         surfaceIteratorIso sIterIso_;
 
 
-        // Private Member Functions
+    // Private Member Functions
 
-            //- No copy construct
-            isoAlpha(const isoAlpha&) = delete;
+        //- No copy construct
+        isoAlpha(const isoAlpha&) = delete;
 
-            //- No copy assignment
-            void operator=(const isoAlpha&) = delete;
+        //- No copy assignment
+        void operator=(const isoAlpha&) = delete;
 
 
 public:

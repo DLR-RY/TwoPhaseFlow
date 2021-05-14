@@ -2,14 +2,13 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2016-2017 OpenCFD Ltd.
+    \\  /    A nd           | www.openfoam.com
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
-                isoAdvector | Copyright (C) 2016-2017 DHI
-              Modified work | Copyright (C) 2018-2019 Johan Roenby
-              Modified work | Copyright (C) 2019 DLR
+    Copyright (C) 2016-2017 DHI
+    Copyright (C) 2018-2019 Johan Roenby
+    Copyright (C) 2019-2020 DLR
 -------------------------------------------------------------------------------
-
 License
     This file is part of OpenFOAM.
 
@@ -37,8 +36,8 @@ Foam::cutFaceIso::cutFaceIso(const fvMesh& mesh, scalarField& f)
     cutFace(mesh),
     mesh_(mesh),
     f_(f),
-    subFaceCentre_(vector::zero),
-    subFaceArea_(vector::zero),
+    subFaceCentre_(Zero),
+    subFaceArea_(Zero),
     subFacePoints_(10),
     surfacePoints_(4),
     pointStatus_(10),
@@ -91,8 +90,8 @@ Foam::label Foam::cutFaceIso::calcSubFace
     else if (inLiquid == 0) // gas face
     {
         faceStatus_ = 1;
-        subFaceCentre_ = vector::zero;
-        subFaceArea_ = vector::zero;
+        subFaceCentre_ = Zero;
+        subFaceArea_ = Zero;
         return faceStatus_;
     }
 
@@ -138,8 +137,8 @@ const Foam::DynamicList<Foam::point>& Foam::cutFaceIso::surfacePoints() const
 
 void Foam::cutFaceIso::clearStorage()
 {
-    subFaceCentre_ = vector::zero;
-    subFaceArea_ = vector::zero;
+    subFaceCentre_ = Zero;
+    subFaceArea_ = Zero;
     subFacePoints_.clear();
     surfacePoints_.clear();
     pointStatus_.clear();

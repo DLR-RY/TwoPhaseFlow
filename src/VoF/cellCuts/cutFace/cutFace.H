@@ -2,14 +2,13 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2016-2017 OpenCFD Ltd.
+    \\  /    A nd           | www.openfoam.com
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
-                isoAdvector | Copyright (C) 2016-2017 DHI
-              Modified work | Copyright (C) 2018-2019 Johan Roenby
-              Modified work | Copyright (C) 2019 DLR
+    Copyright (C) 2016-2017 DHI
+    Copyright (C) 2018-2019 Johan Roenby
+    Copyright (C) 2019-2020 DLR
 -------------------------------------------------------------------------------
-
 License
     This file is part of OpenFOAM.
 
@@ -26,7 +25,6 @@ License
     You should have received a copy of the GNU General Public License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
-
 Class
     Foam::cutFace
 
@@ -38,8 +36,6 @@ Description
         Johan Roenby, DHI (2016)
         Henning Scheufler, DLR (2019)
 
-
-
 SourceFiles
     cutFace.C
 
@@ -48,7 +44,6 @@ SourceFiles
 #ifndef cutFace_H
 #define cutFace_H
 
-#include "OFstream.H"
 #include "fvMesh.H"
 #include "surfaceFields.H"
 #include "volFields.H"
@@ -64,7 +59,7 @@ namespace Foam
 
 class cutFace
 {
-    // Private data
+    // Private Data
 
         //- Reference to mesh
         const fvMesh& mesh_;
@@ -75,11 +70,11 @@ protected:
     //- Calculate cut points along edges of face with pointStatus, pointfield
     //- and computes geometric information and the face status where:
     // -  -1: faceStatus is fully below the isosurface
-    // -   0: faceStatus is cut, i.e. has values larger and smaller than isoValue
+    // -   0: faceStatus is cut (has values larger and smaller than isoValue)
     // -  +1: faceStatus is fully above the isosurface
     void calcSubFace
     (
-        const label& faceI,
+        const label faceI,
         const scalarList& pointStatus,
         label firstFullySubmergedPoint,
         DynamicList<point>& subFacePoints,
@@ -89,14 +84,14 @@ protected:
         vector& subFaceArea
      );
 
-    //- Calculate cut points along edges of face with pointStatus, pointfield, 
+    //- Calculate cut points along edges of face with pointStatus, pointfield,
     //- weights and computes geometric information and the face status where:
     // -  -1: faceStatus is fully below the isosurface
-    // -   0: faceStatus is cut, i.e. has values larger and smaller than isoValue
+    // -   0: faceStatus is cut (has values larger and smaller than isoValue)
     // -  +1: faceStatus is fully above the isosurface
     void calcSubFace
     (
-        const label& faceI,
+        const label faceI,
         const scalarList& pointStatus,
         const scalarList& weights,
         label firstFullySubmergedPoint,
@@ -118,7 +113,7 @@ protected:
     //- Calculate cut points along edges of face with pointStatus, pointfield
     //- and computes geometric information and the face status where:
     // -  -1: faceStatus is fully below the isosurface
-    // -   0: faceStatus is cut, i.e. has values larger and smaller than isoValue
+    // -   0: faceStatus is cut (has values larger and smaller than isoValue)
     // -  +1: faceStatus is fully above the isosurface
     void calcSubFace
     (
@@ -136,12 +131,14 @@ protected:
 
 public:
 
-    //- Construct from fvMesh
-    cutFace(const fvMesh& mesh);
-
-    // Static data
-  
+    // Static Data
     static int debug;
+
+
+    // Constructors
+
+        //- Construct from fvMesh
+        explicit cutFace(const fvMesh& mesh);
 };
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

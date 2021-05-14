@@ -2,12 +2,11 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2019-2019 OpenCFD Ltd.
+    \\  /    A nd           | www.openfoam.com
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
-                            | Copyright (C) 2019-2019 DLR
+    Copyright (C) 2019-2020 DLR
 -------------------------------------------------------------------------------
-
 License
     This file is part of OpenFOAM.
 
@@ -29,7 +28,6 @@ License
 #include "reconstructionSchemes.H"
 #include "messageStream.H"
 
-
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 Foam::autoPtr<Foam::reconstructionSchemes>
@@ -41,22 +39,20 @@ Foam::reconstructionSchemes::New
     const dictionary& dict
 )
 {
-    if(!dict.found("reconstructionScheme"))
+    word schemeType("isoAlpha");
+
+    if (!dict.readIfPresent("reconstructionScheme", schemeType))
     {
-        Warning 
-            << "Entry '" 
+        Warning
+            << "Entry '"
             << "reconstructionScheme" << "' not found in dictionary "
             << dict.name() << nl
-            << "using default " << endl;
+            << "using default" << nl;
     }
-    const word schemeType
-    (
-        dict.lookupOrDefault<word>("reconstructionScheme", "isoAlpha")
-    );
-    
+
     Info<< "Selecting reconstructionScheme: " << schemeType << endl;
 
-    auto cstrIter = componentsConstructorTablePtr_->find(schemeType);
+    auto cstrIter = componentsConstructorTablePtr_->cfind(schemeType);
 
     if (!cstrIter.found())
     {
@@ -68,7 +64,7 @@ Foam::reconstructionSchemes::New
             << exit(FatalError);
     }
 
-    return autoPtr<reconstructionSchemes>(cstrIter()( alpha1, phi, U, dict));
+    return autoPtr<reconstructionSchemes>(cstrIter()(alpha1, phi, U, dict));
 }
 
 

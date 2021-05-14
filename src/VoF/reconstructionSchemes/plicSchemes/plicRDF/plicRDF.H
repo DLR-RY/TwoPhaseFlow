@@ -2,12 +2,11 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2019 OpenCFD Ltd.
+    \\  /    A nd           | www.openfoam.com
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
-                            | Copyright (C) 2019 DLR
+    Copyright (C) 2019-2020 DLR
 -------------------------------------------------------------------------------
-
 License
     This file is part of OpenFOAM.
 
@@ -79,6 +78,14 @@ class plicRDF
 {
     // Private Data
 
+        //-  residuals storage
+        struct normalRes
+        {
+            label celli;
+            scalar normalResidual;
+            scalar avgAngle;
+        };
+
         //- Reference to mesh
         const fvMesh& mesh_;
 
@@ -101,7 +108,8 @@ class plicRDF
         //- Relative tolerance
         scalar relTol_;
 
-        //- Number of times that the interface ist reconstructed has to be bigger than 2
+        //- Number of times that the interface is reconstructed
+        //- has to be bigger than 2
         label iteration_;
 
         //- Interpolated normal from previous time step
@@ -116,12 +124,6 @@ class plicRDF
 
     // Private Member Functions
 
-        //- No copy construct
-        plicRDF(const plicRDF&) = delete;
-
-        //- No copy assignment
-        void operator=(const plicRDF&) = delete;
-
         //- Set initial normals by interpolation from the previous
         //- timestep or with the Young method
         void setInitNormals(bool interpolate);
@@ -132,8 +134,7 @@ class plicRDF
         //- compute the normal residuals
         void calcResidual
         (
-            Map<scalar>& normalResidual,
-            Map<scalar>& avgAngle
+            List<normalRes>& normalResidual
         );
 
         //- interpolation of the normals from the previous time step
@@ -141,6 +142,13 @@ class plicRDF
 
         //- update boundary points is case of a specified contact angle
         void centreAndNormalBC();
+
+
+        //- No copy construct
+        plicRDF(const plicRDF&) = delete;
+
+        //- No copy assignment
+        void operator=(const plicRDF&) = delete;
 
 
 public:
@@ -165,7 +173,7 @@ public:
 
     // Member Functions
 
-        //- Reconstruct  interface
+        //- Reconstruct interface
         virtual void reconstruct(bool forceUpdate = true);
 
         //- Map VoF Field in case of refinement

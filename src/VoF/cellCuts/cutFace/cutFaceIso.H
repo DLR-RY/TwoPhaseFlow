@@ -2,14 +2,13 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2016-2017 OpenCFD Ltd.
+    \\  /    A nd           | www.openfoam.com
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
-                isoAdvector | Copyright (C) 2016-2017 DHI
-              Modified work | Copyright (C) 2018-2019 Johan Roenby
-              Modified work | Copyright (C) 2019 DLR
+    Copyright (C) 2016-2017 DHI
+    Copyright (C) 2018-2019 Johan Roenby
+    Copyright (C) 2019-2020 DLR
 -------------------------------------------------------------------------------
-
 License
     This file is part of OpenFOAM.
 
@@ -56,7 +55,6 @@ SourceFiles
 #include "fvMesh.H"
 #include "volFields.H"
 #include "surfaceFields.H"
-#include "OFstream.H"
 #include "cutFace.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -72,10 +70,10 @@ class cutFaceIso
 :
     public cutFace
 {
-    // Private data
+    // Private Data
 
         //- Mesh whose cells and faces to cut at their intersection with an
-        //  isoface
+        //- isoface
         const fvMesh& mesh_;
 
         //- Isofunction values at mesh points. f_size() = mesh_.nPoints().
@@ -113,10 +111,10 @@ public:
 
         //- Construct from fvMesh and a scalarField
         //  length of scalarField should equal number of mesh points
-        cutFaceIso(const fvMesh& mesh,scalarField& f);
+        cutFaceIso(const fvMesh& mesh, scalarField& f);
 
 
-    // Member functions
+    // Member Functions
 
         //- Calculate cut points along edges of faceI
         label calcSubFace

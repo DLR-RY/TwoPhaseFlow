@@ -2,14 +2,13 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2016-2017 OpenCFD Ltd.
+    \\  /    A nd           | www.openfoam.com
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
-                isoAdvector | Copyright (C) 2016-2017 DHI
-              Modified work | Copyright (C) 2018-2019 Johan Roenby
-              Modified work | Copyright (C) 2019 DLR
+    Copyright (C) 2016-2017 DHI
+    Copyright (C) 2018-2019 Johan Roenby
+    Copyright (C) 2019-2020 DLR
 -------------------------------------------------------------------------------
-
 License
     This file is part of OpenFOAM.
 
@@ -37,16 +36,16 @@ Foam::cutCellPLIC::cutCellPLIC(const fvMesh& mesh)
     cutCell(mesh),
     mesh_(mesh),
     cellI_(-1),
-    normal_(vector::zero),
+    normal_(Zero),
     cutValue_(0),
     cutFace_(mesh_),
     cutFaceCentres_(10),
     cutFaceAreas_(10),
     plicFaceEdges_(10),
     facePoints_(10),
-    faceCentre_(vector::zero),
-    faceArea_(vector::zero),
-    subCellCentre_(vector::zero),
+    faceCentre_(Zero),
+    faceArea_(Zero),
+    subCellCentre_(Zero),
     subCellVolume_(-10),
     VOF_(-10),
     cellStatus_(-1)
@@ -59,8 +58,8 @@ Foam::cutCellPLIC::cutCellPLIC(const fvMesh& mesh)
 
 Foam::label Foam::cutCellPLIC::calcSubCell
 (
-    const label& celli,
-    const scalar& cutValue,
+    const label celli,
+    const scalar cutValue,
     const vector& normal
 )
 {
@@ -118,13 +117,13 @@ Foam::label Foam::cutCellPLIC::calcSubCell
         // In the rare but occuring cases where a cell is only touched at a
         // point or a line the isoFaceArea_ will have zero length and here the
         // cell should be treated as either completely empty or full.
-        if (mag(faceArea_) < ROOTVSMALL)
+        if (mag(faceArea_) < 10*SMALL)
         {
             if (nFaceBelowInterface == 0)
             {
                 // Cell fully above isosurface
                 cellStatus_ = 1;
-                subCellCentre_ = vector::zero;
+                subCellCentre_ = Zero;
                 subCellVolume_ = 0;
                 VOF_ = 0;
                 return cellStatus_;
@@ -157,7 +156,7 @@ Foam::label Foam::cutCellPLIC::calcSubCell
     else if (fullyAbove) // cell fully above isosurface
     {
         cellStatus_ = 1;
-        subCellCentre_ = vector::zero;
+        subCellCentre_ = Zero;
         subCellVolume_ = 0;
         VOF_ = 0;
     }
@@ -241,11 +240,13 @@ void Foam::cutCellPLIC::clearStorage()
     cutFaceAreas_.clear();
     plicFaceEdges_.clear();
     facePoints_.clear();
-    faceCentre_ = vector::zero;
-    faceArea_ = vector::zero;
-    subCellCentre_ = vector::zero;
+    faceCentre_ = Zero;
+    faceArea_ = Zero;
+    subCellCentre_ = Zero;
     subCellVolume_ = -10;
     VOF_ = -10;
     cellStatus_ = -1;
 }
+
+
 // ************************************************************************* //

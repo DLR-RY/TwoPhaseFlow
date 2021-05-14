@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           |  www.openfoam.com
+    \\  /    A nd           | www.openfoam.com
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
     Copyright (C) 2016-2017 DHI
@@ -29,13 +29,12 @@ Class
     Foam::cutCell
 
 Description
-    Base Class for cutting a cell, celli, of an fvMesh, mesh_, at its intersection
-    with a surface
+    Service routines for cutting a cell, celli, of an fvMesh, mesh_,
+    at its intersection with a surface
 
     Original code supplied by
         Johan Roenby, DHI (2016)
         Henning Scheufler, DLR (2019)
-
 
 SourceFiles
     cutCell.C
@@ -48,8 +47,6 @@ SourceFiles
 #include "fvMesh.H"
 #include "volFields.H"
 #include "surfaceFields.H"
-#include "OFstream.H"
-#include "scalarMatrices.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -62,19 +59,12 @@ namespace Foam
 
 class cutCell
 {
-    // Private data
-
-        //- Mesh whose cells and faces to cut at their intersection with an
-        //  isosurface.
-        const fvMesh& mesh_;
-
-
 protected:
 
     // Protected Member Functions
 
         //- Calculates volume and centre of the cutted cell
-        void calcCellData
+        static void calcCellData
         (
             const DynamicList<point>& cutFaceCentres,
             const DynamicList<vector>& cutFaceAreas,
@@ -83,16 +73,16 @@ protected:
         );
 
         //- Calculates area and centre of the cutting face
-        void calcGeomDataCutFace
+        static void calcGeomDataCutFace
         (
-            const DynamicList<DynamicList<point> >& faceEdges,
+            const DynamicList<DynamicList<point>>& faceEdges,
             const vector& subCellCentre,
             vector& faceArea,
             vector& faceCentre
         );
 
         //- Calculates the point of the cutting face
-        void calcIsoFacePointsFromEdges
+        static void calcIsoFacePointsFromEdges
         (
             const vector& faceArea,
             const vector& faceCentre,
@@ -102,12 +92,14 @@ protected:
 
 public:
 
-    //- Construct from fvMesh
-    cutCell(const fvMesh&);
-
-    // Static data
-  
+    // Static Data
     static int debug;
+
+
+    // Constructors
+
+        //- Construct from fvMesh
+        explicit cutCell(const fvMesh& mesh);
 };
 
 

@@ -2,12 +2,11 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2019 OpenCFD Ltd.
+    \\  /    A nd           | www.openfoam.com
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
-                            | Copyright (C) 2019 DLR
+    Copyright (C) 2019-2020 DLR
 -------------------------------------------------------------------------------
-
 License
     This file is part of OpenFOAM.
 
@@ -31,12 +30,12 @@ Description
     Finds the isovalue that matches the volume fraction
 
     Reference:
-        \verbatim
-            Roenby, J., Bredmose, H. and Jasak, H. (2016).
-            A computational method for sharp interface advection
-            Royal Society Open Science, 3
-            doi 10.1098/rsos.160405
-        \endverbatim
+    \verbatim
+        Roenby, J., Bredmose, H. and Jasak, H. (2016).
+        A computational method for sharp interface advection
+        Royal Society Open Science, 3
+        doi 10.1098/rsos.160405
+    \endverbatim
 
 Author
     Johan Roenby, DHI, all rights reserved.
@@ -52,9 +51,7 @@ SourceFiles
 #include "fvMesh.H"
 #include "volFields.H"
 #include "surfaceFields.H"
-#include "OFstream.H"
 #include "cutCellIso.H"
-#include "scalarMatrices.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -67,10 +64,10 @@ namespace Foam
 
 class surfaceIteratorIso
 {
-    // Private data
+    // Private Data
 
         //- Mesh whose cells and faces to cut at their intersection with an
-        //  isosurface.
+        //- isosurface.
         const fvMesh& mesh_;
 
         //- Reference to the point values
@@ -89,16 +86,16 @@ public:
     // Constructors
 
         //- Construct from fvMesh and a scalarField
-        //  Length of scalarField should equal number of mesh points
+        //  The scalarField size should equal the number of mesh points
         surfaceIteratorIso
         (
-            const fvMesh&,
+            const fvMesh& mesh,
             scalarField& pointVal,
             const scalar tol
         );
 
 
-    // Member functions
+    // Member Functions
 
         //- Determine if a cell is a surface cell
         bool isASurfaceCell(const scalar alpha1) const
@@ -120,26 +117,25 @@ public:
             const label maxIter
         );
 
-        //- Returns the centre point of cutted volume
+        //- The centre point of cutted volume
         const point& subCellCentre() const
         {
             return cutCell_.subCellCentre();
         }
 
-
-        //- Returns the volume of cutted volume
+        //- The volume of cutted volume
         scalar subCellVolume() const
         {
             return cutCell_.subCellVolume();
         }
 
-        //- Returns the centre of cutting isosurface
+        //- The centre of cutting isosurface
         const point& surfaceCentre() const
         {
             return cutCell_.faceCentre();
         }
 
-        //- Returns the area vector of cutting isosurface
+        //- The area vector of cutting isosurface
         const vector& surfaceArea() const
         {
             return cutCell_.faceArea();
@@ -151,19 +147,19 @@ public:
             return cutCell_.VolumeOfFluid();
         }
 
-        //- Returns the cutValue
+        //- The cutValue
         scalar cutValue() const
         {
             return cutCell_.cutValue();
         }
 
-        //- Returns the cellStatus
+        //- The cellStatus
         label cellStatus()
         {
             return cutCell_.cellStatus();
         }
 
-        //- Returns the points of the cutting isosurface in sorted order
+        //- The points of the cutting isosurface in sorted order
         const DynamicList<point>& facePoints()
         {
             return cutCell_.facePoints();

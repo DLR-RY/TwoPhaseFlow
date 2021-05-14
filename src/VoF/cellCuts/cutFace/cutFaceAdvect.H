@@ -2,14 +2,13 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2016-2017 OpenCFD Ltd.
+    \\  /    A nd           | www.openfoam.com
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
-                isoAdvector | Copyright (C) 2016-2017 DHI
-              Modified work | Copyright (C) 2018-2019 Johan Roenby
-              Modified work | Copyright (C) 2019 DLR
+    Copyright (C) 2016-2017 DHI
+    Copyright (C) 2018-2019 Johan Roenby
+    Copyright (C) 2019-2020 DLR
 -------------------------------------------------------------------------------
-
 License
     This file is part of OpenFOAM.
 
@@ -26,12 +25,11 @@ License
     You should have received a copy of the GNU General Public License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
-
 Class
     Foam::cutFaceAdvect
 
 Description
-    calculates the face fluxes
+    Calculates the face fluxes
 
     Reference:
     \verbatim
@@ -41,7 +39,6 @@ Description
         doi 10.1098/rsos.160405
 
     \endverbatim
-
 
     Original code supplied by Johan Roenby, DHI (2016)
 
@@ -53,7 +50,6 @@ SourceFiles
 #ifndef cutFaceAdvect_H
 #define cutFaceAdvect_H
 
-#include "OFstream.H"
 #include "cutFace.H"
 #include "fvMesh.H"
 #include "surfaceFields.H"
@@ -72,14 +68,15 @@ class cutFaceAdvect
 :
     public cutFace
 {
-    // Private data
+    // Private Data
 
         typedef DynamicList<label> DynamicLabelList;
         typedef DynamicList<scalar> DynamicScalarList;
         typedef DynamicList<vector> DynamicVectorList;
         typedef DynamicList<point> DynamicPointList;
 
-        //- Mesh whose cells and faces to cut at their intersection with an isoface
+        //- Mesh whose cells and faces to cut at their intersection
+        //- with an isoface
         const fvMesh& mesh_;
 
         //- Reference to VoF field
@@ -113,12 +110,15 @@ class cutFaceAdvect
         //   +1: face is fully above the isosurface
         label faceStatus_;
 
+
+    // Private Member Functions
+
         //- Write faces to vtk files
         void isoFacesToFile
         (
             const DynamicList<List<point>>& isoFacePts,
-            const word fileName,
-            const word fileDir
+            const word& fileName,
+            const word& fileDir
         ) const;
 
 
@@ -130,34 +130,35 @@ class cutFaceAdvect
         //  Length of scalarField should equal number of mesh points
         cutFaceAdvect(const fvMesh& mesh, const volScalarField& alpha1);
 
-    // Member functions
 
-        //- Calculates cut centre and cut area (plicReconstruction) and return
-        //  face status
+    // Member Functions
+
+        //- Calculates cut centre and cut area (plicReconstruction)
+        //  \return face status
         label calcSubFace
         (
-            const label& faceI,
+            const label faceI,
             const vector& normal,
             const vector& base
         );
 
-        //- Calculates cut centre and cut area (iso reconstruction) and return
-        //  face status
+        //- Calculates cut centre and cut area (iso reconstruction)
+        //  \return face status
         label calcSubFace
         (
             const face& f,
             const pointField& points,
             const scalarField& val,
-            const scalar& cutValue
+            const scalar cutValue
         );
 
-        //- Calculates cut centre and cut area (iso reconstruction) and return
-        //  face status
+        //- Calculates cut centre and cut area (iso reconstruction)
+        //  \return face status
         label calcSubFace
         (
-            const label& faceI,
+            const label faceI,
             const label sign,
-            const scalar& cutValue
+            const scalar cutValue
         );
 
         //- Calculate time integrated flux for a face
@@ -186,7 +187,7 @@ class cutFaceAdvect
         //- Calculate time integrated area for a face
         scalar timeIntegratedArea
         (
-            const label& faceI,
+            const label faceI,
             const scalar dt,
             const scalar magSf,
             const scalar Un0
@@ -216,10 +217,10 @@ class cutFaceAdvect
         //- Get cutPoints of face
         void cutPoints
         (
-            const label& faceI,
+            const label faceI,
             const scalar f0,
             DynamicList<point>& cutPoints
-         );
+        );
 
         //- Get cutPoints of face
         void cutPoints

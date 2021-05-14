@@ -2,14 +2,13 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2016-2017 OpenCFD Ltd.
+    \\  /    A nd           | www.openfoam.com
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
-                isoAdvector | Copyright (C) 2016-2017 DHI
-              Modified work | Copyright (C) 2018-2019 Johan Roenby
-              Modified work | Copyright (C) 2019 DLR
+    Copyright (C) 2016-2017 DHI
+    Copyright (C) 2018-2019 Johan Roenby
+    Copyright (C) 2019-2020 DLR
 -------------------------------------------------------------------------------
-
 License
     This file is part of OpenFOAM.
 
@@ -26,20 +25,19 @@ License
     You should have received a copy of the GNU General Public License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
-
 \*---------------------------------------------------------------------------*/
 
 #include "cutFace.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
-  
+
 int Foam::cutFace::debug = 0;
 
 // * * * * * * * * * * * * * Protected Member Functions  * * * * * * * * * * *
 
 void Foam::cutFace::calcSubFace
 (
-    const label& faceI,
+    const label faceI,
     const scalarList& pointStatus,
     label firstFullySubmergedPoint,
     DynamicList<point>& subFacePoints,
@@ -55,8 +53,8 @@ void Foam::cutFace::calcSubFace
     if (firstFullySubmergedPoint == -1) // is in gasPhase
     {
         faceStatus = 1;
-        subFaceCentre = vector::zero;
-        subFaceArea = vector::zero;
+        subFaceCentre = Zero;
+        subFaceArea = Zero;
         return;
     }
 
@@ -64,7 +62,7 @@ void Foam::cutFace::calcSubFace
     // loop starts at firstFullySubmergedPoint
     for
     (
-        int i = firstFullySubmergedPoint;
+        label i = firstFullySubmergedPoint;
         i < firstFullySubmergedPoint + f.size();
         ++i
     )
@@ -116,7 +114,7 @@ void Foam::cutFace::calcSubFace
 
 void Foam::cutFace::calcSubFace
 (
-    const label& faceI,
+    const label faceI,
     const scalarList& pointStatus,
     const scalarList& weights,
     label firstFullySubmergedPoint,
@@ -133,8 +131,8 @@ void Foam::cutFace::calcSubFace
     if (firstFullySubmergedPoint == -1) // is in gasPhase
     {
         faceStatus = 1;
-        subFaceCentre = vector::zero;
-        subFaceArea = vector::zero;
+        subFaceCentre = Zero;
+        subFaceArea = Zero;
         return;
     }
 
@@ -142,9 +140,9 @@ void Foam::cutFace::calcSubFace
     // loop starts at firstFullySubmergedPoint
     for
     (
-        int i = firstFullySubmergedPoint;
+        label i = firstFullySubmergedPoint;
         i < firstFullySubmergedPoint + f.size();
-      ++i
+        ++i
     )
     {
         // max two points are appended during one cycle
@@ -205,15 +203,15 @@ void Foam::cutFace::calcSubFace
     if (firstFullySubmergedPoint == -1) // in Gas
     {
         faceStatus = 1;
-        subFaceCentre = vector::zero;
-        subFaceArea = vector::zero;
+        subFaceCentre = Zero;
+        subFaceArea = Zero;
         return;
     }
 
     // loop face and append the cuts
     for
     (
-        int i = firstFullySubmergedPoint;
+        label i = firstFullySubmergedPoint;
         i < firstFullySubmergedPoint + f.size();
         ++i
     )
@@ -284,9 +282,9 @@ void Foam::cutFace::calcSubFaceCentreAndArea
     }
     else if (nPoints > 0)
     {
-        vector sumN = vector::zero;
-        scalar sumA = 0.0;
-        vector sumAc = vector::zero;
+        vector sumN{Zero};
+        scalar sumA{0};
+        vector sumAc{Zero};
 
         point fCentre = subFacePoints[0];
         // initial guess of centre as average of subFacePoints
@@ -317,7 +315,7 @@ void Foam::cutFace::calcSubFaceCentreAndArea
         if (sumA < ROOTVSMALL)
         {
             subFaceCentre = fCentre;
-            subFaceArea = vector::zero;
+            subFaceArea = Zero;
         }
         else
         {

@@ -2,12 +2,11 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2019-2019 OpenCFD Ltd.
+    \\  /    A nd           | www.openfoam.com
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
-                            | Copyright (C) 2019-2019 DLR
+    Copyright (C) 2019-2020 DLR
 -------------------------------------------------------------------------------
-
 License
     This file is part of OpenFOAM.
 
@@ -27,6 +26,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "surfaceIteratorPLIC.H"
+#include "scalarMatrices.H"
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
@@ -57,11 +57,9 @@ Foam::label Foam::surfaceIteratorPLIC::vofCutCell
     {
         WarningInFunction
             << "normal length is zero in cell: " << celli << nl
-            << "try to increase to nCorrectors "
-            << endl;
+            << "try increasing nCorrectors" << endl;
 
         return sign(alpha1-0.5);
-
     }
 
     normal.normalise();
@@ -73,6 +71,7 @@ Foam::label Foam::surfaceIteratorPLIC::vofCutCell
     {
         fvert[pi] = (mesh_.points()[pLabels[pi]] - mesh_.C()[celli]) & (normal);
     }
+
     labelList order(fvert.size());
     sortedOrder(fvert, order);
     scalar f1 = fvert[order.first()];

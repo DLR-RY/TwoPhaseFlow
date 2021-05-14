@@ -5,7 +5,7 @@
     \\  /    A nd           | www.openfoam.com
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
-    Copyright (C) 2019 DLR
+    Copyright (C) 2019-2020 DLR
 -------------------------------------------------------------------------------
 License
     This file is part of OpenFOAM.
@@ -238,8 +238,7 @@ void Foam::reconstruction::plicRDF::setInitNormals(bool interpolate)
 
 void Foam::reconstruction::plicRDF::calcResidual
 (
-    Map<scalar>& normalResidual,
-    Map<scalar>& avgAngle
+    List<normalRes>& normalResidual
 )
 {
     zoneDistribute& exchangeFields = zoneDistribute::New(mesh_);
@@ -252,12 +251,10 @@ void Foam::reconstruction::plicRDF::calcResidual
 
     const labelListList& stencil = exchangeFields.getStencil();
 
-    normalResidual.clear();
-
     forAll(interfaceLabels_, i)
     {
         const label celli = interfaceLabels_[i];
-        if (mag(normal_[celli]) == 0 || mag(interfaceNormal_[i]) == 0 )
+        if (mag(normal_[celli]) == 0 || mag(interfaceNormal_[i]) == 0)
         {
             continue;
         }
@@ -278,7 +275,7 @@ void Foam::reconstruction::plicRDF::calcResidual
                 scalar cosAngle = max(min((cellNormal & n), 1), -1);
                 avgDiffNormal += acos(cosAngle) * mag(normal);
                 weight += mag(normal);
-                if(cosAngle < maxDiffNormal)
+                if (cosAngle < maxDiffNormal)
                 {
                     maxDiffNormal = cosAngle;
                 }
@@ -294,11 +291,12 @@ void Foam::reconstruction::plicRDF::calcResidual
             avgDiffNormal = 0;
         }
 
-        vector newCellNormal = interfaceNormal_[i];
-        newCellNormal /= mag(newCellNormal);
+        vector newCellNormal = normalised(interfaceNormal_[i]);
+
         scalar normalRes = (1 - (cellNormal & newCellNormal));
-        avgAngle.insert(celli, avgDiffNormal);
-        normalResidual.insert(celli, normalRes);
+        normalResidual[i].celli = celli;
+        normalResidual[i].normalResidual = normalRes;
+        normalResidual[i].avgAngle = avgDiffNormal;
     }
 }
 
@@ -442,8 +440,8 @@ Foam::reconstruction::plicRDF::plicRDF
 {
     setInitNormals(false);
 
-    centre_ = dimensionedVector("centre", dimLength, vector::zero);
-    normal_ = dimensionedVector("normal", dimArea, vector::zero);
+    centre_ = dimensionedVector("centre", dimLength, Zero);
+    normal_ = dimensionedVector("normal", dimArea, Zero);
 
     forAll(interfaceLabels_, i)
     {
@@ -467,17 +465,16 @@ Foam::reconstruction::plicRDF::plicRDF
             centre_[celli] = sIterPLIC_.surfaceCentre();
             if (mag(normal_[celli]) == 0)
             {
-                normal_[celli] = vector::zero;
-                centre_[celli] = vector::zero;
+                normal_[celli] = Zero;
+                centre_[celli] = Zero;
             }
         }
         else
         {
-            normal_[celli] = vector::zero;
-            centre_[celli] = vector::zero;
+            normal_[celli] = Zero;
+            centre_[celli] = Zero;
         }
     }
-
 }
 
 
@@ -496,30 +493,30 @@ void Foam::reconstruction::plicRDF::reconstruct(bool forceUpdate)
     if (mesh_.topoChanging())
     {
         // Introduced resizing to cope with changing meshes
-        if(interfaceCell_.size() != mesh_.nCells())
+        if (interfaceCell_.size() != mesh_.nCells())
         {
             interfaceCell_.resize(mesh_.nCells());
         }
     }
     interfaceCell_ = false;
 
-    // sets interfaceCell_ and interfaceNormal
+    // Sets interfaceCell_ and interfaceNormal
     setInitNormals(interpolateNormal_);
 
-    centre_ = dimensionedVector("centre", dimLength, vector::zero);
-    normal_ = dimensionedVector("normal", dimArea, vector::zero);
+    centre_ = dimensionedVector("centre", dimLength, Zero);
+    normal_ = dimensionedVector("normal", dimArea, Zero);
 
     // nextToInterface is update on setInitNormals
     const boolList& nextToInterface_ = RDF_.nextToInterface();
 
-    labelHashSet tooCoarse;
+    bitSet tooCoarse(mesh_.nCells(),false);
 
-    for(int iter=0;iter<iteration_;iter++)
+    for (int iter=0; iter<iteration_; ++iter)
     {
         forAll(interfaceLabels_, i)
         {
             const label celli = interfaceLabels_[i];
-            if (mag(interfaceNormal_[i]) == 0 || tooCoarse.found(celli))
+            if (mag(interfaceNormal_[i]) == 0 || tooCoarse.test(celli))
             {
                 continue;
             }
@@ -532,28 +529,30 @@ void Foam::reconstruction::plicRDF::reconstruct(bool forceUpdate)
                 interfaceNormal_[i]
             );
 
-            if(sIterPLIC_.cellStatus() == 0)
+            if (sIterPLIC_.cellStatus() == 0)
             {
 
                 normal_[celli] = sIterPLIC_.surfaceArea();
                 centre_[celli] = sIterPLIC_.surfaceCentre();
-                if(mag(normal_[celli]) == 0)
+                if (mag(normal_[celli]) == 0)
                 {
-                    normal_[celli] = vector::zero;
-                    centre_[celli] = vector::zero;
+                    normal_[celli] = Zero;
+                    centre_[celli] = Zero;
                 }
             }
             else
             {
-                normal_[celli] = vector::zero;
-                centre_[celli] = vector::zero;
+                normal_[celli] = Zero;
+                centre_[celli] = Zero;
             }
         }
 
         normal_.correctBoundaryConditions();
         centre_.correctBoundaryConditions();
-        Map<scalar> residual;
-        Map<scalar> avgAngle;
+        List<normalRes> normalResidual(interfaceLabels_.size());
+
+        surfaceVectorField::Boundary nHatb(mesh_.Sf().boundaryField());
+        nHatb *= 1/(mesh_.magSf().boundaryField());
 
         {
             centreAndNormalBC();
@@ -567,43 +566,41 @@ void Foam::reconstruction::plicRDF::reconstruct(bool forceUpdate)
             );
             // RDF_.updateContactAngle(alpha1_, U_, nHatb);
             gradSurf(RDF_);
-            calcResidual(residual, avgAngle);
+            calcResidual(normalResidual);
         }
-
 
         label resCounter = 0;
         scalar avgRes = 0;
         scalar avgNormRes = 0;
 
-        Map<scalar>::iterator resIter = residual.begin();
-        Map<scalar>::iterator avgAngleIter = avgAngle.begin();
-
-        while (resIter.found())
+        forAll(normalResidual,i)
         {
-            if (avgAngleIter() > 0.26 && iter > 0) // 15 deg
+
+            const label celli = normalResidual[i].celli;
+            const scalar normalRes= normalResidual[i].normalResidual;
+            const scalar avgA = normalResidual[i].avgAngle;
+
+            if (avgA > 0.26 && iter > 0) // 15 deg
             {
-                tooCoarse.set(resIter.key());
+                tooCoarse.set(celli);
             }
             else
             {
-                avgRes += resIter();
+                avgRes += normalRes;
                 scalar normRes = 0;
-                scalar discreteError = 0.01*sqr(avgAngleIter());
+                scalar discreteError = 0.01*sqr(avgA);
                 if (discreteError != 0)
                 {
-                    normRes= resIter()/max(discreteError, tol_);
+                    normRes= normalRes/max(discreteError, tol_);
                 }
                 else
                 {
-                    normRes= resIter()/tol_;
+                    normRes= normalRes/tol_;
                 }
                 avgNormRes += normRes;
                 resCounter++;
 
             }
-
-            ++resIter;
-            ++avgAngleIter;
         }
 
         reduce(avgRes,sumOp<scalar>());
@@ -620,11 +617,11 @@ void Foam::reconstruction::plicRDF::reconstruct(bool forceUpdate)
 
         if (iter == 0)
         {
-            DebugInfo<< "intial residual absolute = "
-                << avgRes/resCounter << endl;
-            DebugInfo<< "intial residual normalized = "
-                << avgNormRes/resCounter
-                << endl;
+            DebugInfo
+                << "initial residual absolute = "
+                << avgRes/resCounter << nl
+                << "initial residual normalized = "
+                << avgNormRes/resCounter << nl;
         }
 
         if
@@ -636,11 +633,13 @@ void Foam::reconstruction::plicRDF::reconstruct(bool forceUpdate)
          || iter + 1  == iteration_
         )
         {
-            DebugInfo << "iterations = " << iter << endl;
-            DebugInfo << "final residual absolute = "
-                << avgRes/resCounter << endl;
-            DebugInfo << "final residual normalized = " << avgNormRes/resCounter
+            DebugInfo
+                << "iterations = " << iter << nl
+                << "final residual absolute = "
+                << avgRes/resCounter << nl
+                << "final residual normalized = " << avgNormRes/resCounter
                 << endl;
+
             break;
         }
     }
@@ -673,5 +672,7 @@ void Foam::reconstruction::plicRDF::mapAlphaField() const
     alpha1_.correctBoundaryConditions();
     alpha1_.oldTime () = alpha1_;
     alpha1_.oldTime().correctBoundaryConditions();
-
 }
+
+
+// ************************************************************************* //

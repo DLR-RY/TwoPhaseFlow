@@ -2,12 +2,11 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2019-2019 OpenCFD Ltd.
+    \\  /    A nd           | www.openfoam.com
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
-                            | Copyright (C) 2019-2019 DLR
+    Copyright (C) 2020 DLR
 -------------------------------------------------------------------------------
-
 License
     This file is part of OpenFOAM.
 
@@ -40,7 +39,6 @@ SourceFiles
 #ifndef zoneCellStencils_H
 #define zoneCellStencils_H
 
-
 #include "boolList.H"
 #include "HashSet.H"
 #include "Map.H"
@@ -62,10 +60,18 @@ class zoneCellStencils
 :
     public labelListList
 {
-    protected:
+protected:
+
     // Protected Members
 
         const fvMesh& meshRef_;
+
+        labelHashSet needComm_;
+
+        globalIndex globalNumbering_;
+
+
+    // Protected Member Functions
 
         //- Return patch of all coupled faces.
         autoPtr<indirectPrimitivePatch> nonEmptyFacesPatch() const;
@@ -109,27 +115,26 @@ class zoneCellStencils
             labelHashSet& globals
         ) const;
 
-        virtual void calculateStencil 
+        virtual void calculateStencil
         (
             const boolList& zone,
             labelListList& globalCellCells
         ) = 0;
 
-        labelHashSet needComm_;
-
-        globalIndex globalNumbering_;
 
         //- No copy construct
         zoneCellStencils(const zoneCellStencils&) = delete;
-  
+
         //- No copy assignment
         void operator=(const zoneCellStencils&) = delete;
 
 public:
 
-    // Constructors
         // Declare name of the class and its debug switch
         TypeName("zoneCellStencils");
+
+
+    // Constructors
 
         //- Construct from all cells and boundary faces
         explicit zoneCellStencils(const fvMesh&);
@@ -139,6 +144,9 @@ public:
         //  First element is always cell itself!
         //- Destructor
         virtual ~zoneCellStencils() = default;
+
+
+    // Member Functions
 
         void updateStencil
         (
@@ -157,13 +165,12 @@ public:
         {
             return meshRef_;
         }
- 
+
          //- Global numbering for cells and boundary faces
         const globalIndex& globalNumbering() const
         {
              return globalNumbering_;
         }
-
 };
 
 

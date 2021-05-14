@@ -7,7 +7,7 @@
 -------------------------------------------------------------------------------
     Copyright (C) 2016-2017 DHI
     Modified code Copyright (C) 2016-2017 OpenCFD Ltd.
-    Modified code Copyright (C) 2019 DLR
+    Modified code Copyright (C) 2019-2020 DLR
 -------------------------------------------------------------------------------
 License
     This file is part of OpenFOAM.
@@ -30,7 +30,6 @@ License
 #include "isoAdvection.H"
 #include "fvcSurfaceIntegrate.H"
 #include "upwind.H"
-
 
 // ************************************************************************* //
 
@@ -111,7 +110,8 @@ void Foam::advection::isoAdvection::setFaceValue
     }
 }
 
-template < class SpType, class SuType >
+
+template<class SpType, class SuType>
 void Foam::advection::isoAdvection::limitFluxes
 (
     const SpType& Sp,
@@ -128,7 +128,8 @@ void Foam::advection::isoAdvection::limitFluxes
     const labelList& owner = mesh_.faceOwner();
     const labelList& neighbour = mesh_.faceNeighbour();
 
-    DebugInfo << "isoAdvection: Before conservative bounding: min(alpha) = "
+    DebugInfo
+        << "isoAdvection: Before conservative bounding: min(alpha) = "
         << minAlpha << ", max(alpha) = 1 + " << maxAlphaMinus1 << endl;
 
     surfaceScalarField dVfcorrectionValues("dVfcorrectionValues", dVf_*0.0);
@@ -158,14 +159,14 @@ void Foam::advection::isoAdvection::limitFluxes
             forAll(correctedFaces, fi)
             {
                 label facei = correctedFaces[fi];
-                if(alreadyUpdated.insert(facei))
+                if (alreadyUpdated.insert(facei))
                 {
                     checkIfOnProcPatch(facei);
                     const label own = owner[facei];
 
                     alpha1_[own] +=
                         -faceValue(dVfcorrectionValues, facei)/mesh_.V()[own];
-                    if(mesh_.isInternalFace(facei))
+                    if (mesh_.isInternalFace(facei))
                     {
                         const label nei = neighbour[facei];
                         alpha1_[nei] -=
@@ -200,8 +201,8 @@ void Foam::advection::isoAdvection::limitFluxes
             label nOvershoots = sum(pos0(alpha1_.primitiveField() - 1 - aTol));
 
             Info<< "After bounding number " << n + 1 << " of time "
-                << mesh_.time().value() << ":" << endl;
-            Info<< "nOvershoots = " << nOvershoots << " with max(alpha1_-1) = "
+                << mesh_.time().value() << ":" << nl
+                << "nOvershoots = " << nOvershoots << " with max(alpha1_-1) = "
                 << maxAlphaMinus1 << " and nUndershoots = " << nUndershoots
                 << " with min(alpha1_) = " << minAlpha << endl;
         }
@@ -212,7 +213,7 @@ void Foam::advection::isoAdvection::limitFluxes
 }
 
 
-template < class SpType, class SuType >
+template<class SpType, class SuType>
 void Foam::advection::isoAdvection::boundFlux
 (
     const bitSet& nextToInterface,
@@ -237,8 +238,6 @@ void Foam::advection::isoAdvection::boundFlux
     DynamicList<scalar> phi(downwindFaces.size());
     const volScalarField& alphaOld = alpha1_.oldTime();
 
-
-
     // Loop through alpha cell centred field
     for(label celli: nextToInterface)
     {
@@ -254,8 +253,13 @@ void Foam::advection::isoAdvection::boundFlux
 
             // First try to pass surplus fluid on to neighbour cells that are
             // not filled and to which dVf < phi*dt
-            while (mag(alphaOvershoot) > aTol && nFacesToPassFluidThrough > 0)
+            for (label iter=0; iter<10; iter++)
             {
+                if(mag(alphaOvershoot) < aTol || nFacesToPassFluidThrough == 0)
+                {
+                    break;
+                }
+
                 DebugInfo
                     << "\n\nBounding cell " << celli
                     << " with alpha overshooting " << alphaOvershoot
@@ -367,7 +371,7 @@ void Foam::advection::isoAdvection::boundFlux
 }
 
 
-template < class SpType, class SuType >
+template<class SpType, class SuType>
 void Foam::advection::isoAdvection::advect(const SpType& Sp, const SuType& Su)
 {
     DebugInFunction << endl;
@@ -439,4 +443,6 @@ void Foam::advection::isoAdvection::advect(const SpType& Sp, const SuType& Su)
 
     alphaPhi_ = dVf_/mesh_.time().deltaT();
 }
+
+
 // ************************************************************************* //

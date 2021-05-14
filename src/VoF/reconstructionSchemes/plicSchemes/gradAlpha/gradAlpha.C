@@ -5,7 +5,7 @@
     \\  /    A nd           | Copyright (C) 2019 OpenCFD Ltd.
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
-                            | Copyright (C) 2019 DLR
+    Copyright (C) 2019-2020 DLR
 -------------------------------------------------------------------------------
 License
     This file is part of OpenFOAM.
@@ -87,7 +87,6 @@ void Foam::reconstruction::gradAlpha::gradSurf(const volScalarField& phi)
 
         cellCentre -= mesh_.C()[celli];
         interfaceNormal_[i] = lsGrad.grad(cellCentre, phiValues);
-        // interfaceNormal_[i] = vector(2,1,0);
     }
 }
 
@@ -134,7 +133,7 @@ void Foam::reconstruction::gradAlpha::reconstruct(bool forceUpdate)
     if (mesh_.topoChanging())
     {
         // Introduced resizing to cope with changing meshes
-        if(interfaceCell_.size() != mesh_.nCells())
+        if (interfaceCell_.size() != mesh_.nCells())
         {
             interfaceCell_.resize(mesh_.nCells());
         }
@@ -143,17 +142,17 @@ void Foam::reconstruction::gradAlpha::reconstruct(bool forceUpdate)
 
     interfaceLabels_.clear();
 
-    forAll(alpha1_,celli)
+    forAll(alpha1_, celli)
     {
-        if(sIterPLIC_.isASurfaceCell(alpha1_[celli]))
+        if (sIterPLIC_.isASurfaceCell(alpha1_[celli]))
         {
             interfaceCell_[celli] = true; // is set to false earlier
             interfaceLabels_.append(celli);
         }
     }
-    interfaceNormal_.setSize(interfaceLabels_.size());
-    centre_ = dimensionedVector("centre", dimLength, vector::zero);
-    normal_ = dimensionedVector("normal", dimArea, vector::zero);
+    interfaceNormal_.resize(interfaceLabels_.size());
+    centre_ = dimensionedVector("centre", dimLength, Zero);
+    normal_ = dimensionedVector("normal", dimArea, Zero);
 
     gradSurf(alpha1_);
 
@@ -180,22 +179,22 @@ void Foam::reconstruction::gradAlpha::reconstruct(bool forceUpdate)
             centre_[celli] = sIterPLIC_.surfaceCentre();
             if (mag(normal_[celli]) == 0)
             {
-                normal_[celli] = vector::zero;
-                centre_[celli] = vector::zero;
+                normal_[celli] = Zero;
+                centre_[celli] = Zero;
             }
-
         }
         else
         {
-            normal_[celli] = vector::zero;
-            centre_[celli] = vector::zero;
+            normal_[celli] = Zero;
+            centre_[celli] = Zero;
         }
     }
 }
 
+
 void Foam::reconstruction::gradAlpha::mapAlphaField() const
 {
-    // without it, we seem to get a race condition
+    // Without this line, we seem to get a race condition
     mesh_.C();
 
     cutCellPLIC cutCell(mesh_);
@@ -213,13 +212,12 @@ void Foam::reconstruction::gradAlpha::mapAlphaField() const
                 n
             );
             alpha1_[celli] = cutCell.VolumeOfFluid();
-
         }
     }
+
     alpha1_.correctBoundaryConditions();
     alpha1_.oldTime () = alpha1_;
     alpha1_.oldTime().correctBoundaryConditions();
-
 }
 
 

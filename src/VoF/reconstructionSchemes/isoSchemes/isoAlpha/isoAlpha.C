@@ -5,7 +5,7 @@
     \\  /    A nd           | www.openfoam.com
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
-    Copyright (C) 2019 DLR
+    Copyright (C) 2019-2020 DLR
 -------------------------------------------------------------------------------
 License
     This file is part of OpenFOAM.
@@ -132,15 +132,15 @@ void Foam::reconstruction::isoAlpha::reconstruct(bool forceUpdate)
             }
             else
             {
-                normal_[cellI] = vector::zero;
-                centre_[cellI] = vector::zero;
+                normal_[cellI] = Zero;
+                centre_[cellI] = Zero;
                 interfaceCell_[cellI] = false;
             }
          }
          else
          {
-            normal_[cellI] = vector::zero;
-            centre_[cellI] = vector::zero;
+            normal_[cellI] = Zero;
+            centre_[cellI] = Zero;
             interfaceCell_[cellI] = false;
          }
     }

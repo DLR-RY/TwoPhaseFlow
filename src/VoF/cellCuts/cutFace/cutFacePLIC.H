@@ -2,14 +2,13 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2016-2017 OpenCFD Ltd.
+    \\  /    A nd           | www.openfoam.com
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
-                isoAdvector | Copyright (C) 2016-2017 DHI
-              Modified work | Copyright (C) 2018-2019 Johan Roenby
-              Modified work | Copyright (C) 2019 DLR
+    Copyright (C) 2016-2017 DHI
+    Copyright (C) 2018-2019 Johan Roenby
+    Copyright (C) 2019-2020 DLR
 -------------------------------------------------------------------------------
-
 License
     This file is part of OpenFOAM.
 
@@ -25,7 +24,6 @@ License
 
     You should have received a copy of the GNU General Public License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
-
 
 Class
     Foam::cutFacePLIC
@@ -59,7 +57,6 @@ SourceFiles
 #include "fvMesh.H"
 #include "volFields.H"
 #include "surfaceFields.H"
-#include "OFstream.H"
 #include "cutFace.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -75,9 +72,10 @@ class cutFacePLIC
 :
     public cutFace
 {
-    // Private data
+    // Private Data
 
-        //- Mesh whose cells and faces to cut at their intersection with an isoface
+        //- Mesh whose cells and faces to cut at their intersection
+        //- with an isoface
         const fvMesh& mesh_;
 
         //- Storage for centre of subface
@@ -101,7 +99,7 @@ class cutFacePLIC
         //- A face status label taking one of the values:
         //
         //   -1: face is fully below the PLICsurface
-        //    0: face is cut, i.e. has values larger and smaller than cutValue_
+        //    0: face is cut (has values larger and smaller than cutValue_)
         //   +1: face is fully above the PLICsurface
         label faceStatus_;
 
@@ -111,16 +109,15 @@ public:
     // Constructors
 
         //- Construct from fvMesh and a scalarField
-        //  Length of scalarField should equal number of mesh points
-        cutFacePLIC(const fvMesh& mesh);
+        explicit cutFacePLIC(const fvMesh& mesh);
 
 
-    // Member functions
+    // Member Functions
 
         //- Calculate cut points along edges of faceI
         label calcSubFace
         (
-            const label& faceI,
+            const label faceI,
             const vector& normal,
             const vector& base
         );

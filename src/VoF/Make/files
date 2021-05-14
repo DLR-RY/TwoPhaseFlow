@@ -38,10 +38,9 @@ reconstructedDistanceFunction/reconstructedDistanceFunction.C
 markInterfaceRegion/markInterfaceRegion.C
 
 /* Run-time selectable implicitFunctions */
-reconstructionSchemes/newReconstructionSchemes.C
+reconstructionSchemes/reconstructionSchemesNew.C
 reconstructionSchemes/reconstructionSchemes.C
 reconstructionSchemes/isoSchemes/isoAlpha/isoAlpha.C
-reconstructionSchemes/isoSchemes/isoRDF/isoRDF.C
 reconstructionSchemes/isoSchemes/isoSurface/isoSurface.C
 reconstructionSchemes/plicSchemes/gradAlpha/gradAlpha.C
 reconstructionSchemes/plicSchemes/plicRDF/plicRDF.C

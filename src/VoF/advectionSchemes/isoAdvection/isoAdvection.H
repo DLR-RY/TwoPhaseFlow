@@ -38,12 +38,12 @@ Description
     isosurfaces.
 
     Reference:
-        \verbatim
-            Roenby, J., Bredmose, H. and Jasak, H. (2016).
-            A computational method for sharp interface advection
-            Royal Society Open Science, 3
-            doi 10.1098/rsos.160405
-        \endverbatim
+    \verbatim
+        Roenby, J., Bredmose, H. and Jasak, H. (2016).
+        A computational method for sharp interface advection
+        Royal Society Open Science, 3
+        doi 10.1098/rsos.160405
+    \endverbatim
 
     Original code supplied by Johan Roenby, DHI (2016)
     Modified Henning Scheufler, DLR

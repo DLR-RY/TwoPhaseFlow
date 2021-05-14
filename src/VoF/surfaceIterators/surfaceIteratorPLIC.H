@@ -2,12 +2,11 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2019-2019 OpenCFD Ltd.
+    \\  /    A nd           | www.openfoam.com
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
-                            | Copyright (C) 2019-2019 DLR
+    Copyright (C) 2019-2020 DLR
 -------------------------------------------------------------------------------
-
 License
     This file is part of OpenFOAM.
 
@@ -31,13 +30,13 @@ Description
     Finds the cutValue that matches the volume fraction
 
     Reference:
-        \verbatim
-            Henning Scheufler, Johan Roenby,
-            Accurate and efficient surface reconstruction from volume
-            fraction data on general meshes,
-            Journal of Computational Physics, 2019,
-            doi 10.1016/j.jcp.2019.01.009
-        \endverbatim
+    \verbatim
+        Henning Scheufler, Johan Roenby,
+        Accurate and efficient surface reconstruction from volume
+        fraction data on general meshes,
+        Journal of Computational Physics, 2019,
+        doi 10.1016/j.jcp.2019.01.009
+    \endverbatim
 
 Author
     Johan Roenby, DHI, all rights reserved.
@@ -54,9 +53,7 @@ SourceFiles
 #include "fvMesh.H"
 #include "volFields.H"
 #include "surfaceFields.H"
-#include "OFstream.H"
 #include "cutCellPLIC.H"
-#include "scalarMatrices.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -69,14 +66,14 @@ namespace Foam
 
 class surfaceIteratorPLIC
 {
-    // Private data
+    // Private Data
 
         //- Mesh whose cells and faces to cut at their intersection with an
-        //  isosurface.
+        //- isosurface.
         const fvMesh& mesh_;
 
-        // cuts the cell and returns volume centre and normal
-        cutCellPLIC cutCell_;//(mesh_,normal);
+        //- Cuts the cell and returns volume centre and normal
+        cutCellPLIC cutCell_;
 
         //- Tolerance for marking of surface cells:
         //  Those with surfCellTol_ < alpha1 < 1 - surfCellTol_
@@ -89,10 +86,10 @@ public:
 
         //- Construct from fvMesh and a scalarField
         //  Length of scalarField should equal number of mesh points
-        surfaceIteratorPLIC(const fvMesh&, const scalar tol);
+        surfaceIteratorPLIC(const fvMesh& mesh, const scalar tol);
 
 
-    // Member functions
+    // Member Functions
 
         //- Determine if a cell is a surface cell
         bool isASurfaceCell(const scalar alpha1) const
@@ -105,7 +102,7 @@ public:
         }
 
         //- Finds matching cutValue for the given value fraction
-        //  returns the cellStatus
+        //  \return the cellStatus
         label vofCutCell
         (
             const label celli,
@@ -115,25 +112,25 @@ public:
             vector normal
         );
 
-        //- Returns the centre point of cutted volume
+        //- The centre point of cutted volume
         const point& subCellCentre() const
         {
             return cutCell_.subCellCentre();
         }
 
-        //- Returns the volume of cutted volume
+        //- The volume of cutted volume
         scalar subCellVolume() const
         {
             return cutCell_.subCellVolume();
         }
 
-        //- Returns the centre of cutting isosurface
+        //- The centre of cutting isosurface
         const point& surfaceCentre() const
         {
             return cutCell_.faceCentre();
         }
 
-        //- Returns the area vector of cutting isosurface
+        //- The area vector of cutting isosurface
         const vector& surfaceArea() const
         {
             return cutCell_.faceArea();
@@ -145,19 +142,19 @@ public:
             return cutCell_.VolumeOfFluid();
         }
 
-        //- Returns the cutValue
+        //- The cutValue
         scalar cutValue() const
         {
             return cutCell_.cutValue();
         }
 
-        //- Returns the cellStatus
+        //- The cellStatus
         label cellStatus()
         {
             return cutCell_.cellStatus();
         }
 
-        //- Returns the points of the cutting isosurface in sorted order
+        //- The points of the cutting isosurface in sorted order
         const DynamicList<point>& facePoints()
         {
             return cutCell_.facePoints();

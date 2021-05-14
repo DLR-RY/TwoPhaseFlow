@@ -2,12 +2,11 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2019-2019 OpenCFD Ltd.
+    \\  /    A nd           | www.openfoam.com
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
-                            | Copyright (C) 2019-2019 DLR
+    Copyright (C) 2019-2020 DLR
 -------------------------------------------------------------------------------
-
 License
     This file is part of OpenFOAM.
 
@@ -28,7 +27,6 @@ Class
     Foam::reconstructionSchemes
 
 Description
-
     Original code supplied by Henning Scheufler, DLR (2019)
 
 SourceFiles
@@ -41,13 +39,10 @@ SourceFiles
 
 #include "typeInfo.H"
 #include "runTimeSelectionTables.H"
-#include "volFields.H"
 #include "dimensionedScalar.H"
-#include "autoPtr.H"
+#include "volFields.H"
 #include "IOdictionary.H"
 #include "DynamicField.H"
-
-
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -55,17 +50,14 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                Class reconstructionSchemes Declaration
+                    Class reconstructionSchemes Declaration
 \*---------------------------------------------------------------------------*/
 
 class reconstructionSchemes
 :
     public IOdictionary
 {
-
-private:
-
-    // Private data
+    // Private Data
 
         //- Coefficients dictionary
         dictionary reconstructionSchemesCoeffs_;
@@ -73,7 +65,7 @@ private:
 
 protected:
 
-    // Protected data
+    // Protected Data
 
         //- Reference to the VoF Field
         volScalarField& alpha1_;
@@ -87,7 +79,7 @@ protected:
         //- Interface area normals
         volVectorField normal_;
 
-        //- interface centres
+        //- Interface centres
         volVectorField centre_;
 
         //- Is interface cell?
@@ -96,29 +88,22 @@ protected:
         //- List of cell labels that have an interface
         DynamicField<label> interfaceLabels_;
 
-        // stores the timeindex and iteration to avoid multiple reconstruction
-        Pair<label> timeIndexAndIter_;
-
-        //- is the interface already up-to-date?
-        bool alreadyReconstructed(bool forceUpdate = true);
+        //- Store timeindex/iteration to avoid multiple reconstruction
+        mutable Pair<label> timeIndexAndIter_;
 
 
-    // Private Member Functions
+    // Protected Member Functions
+
+        //- Is the interface already up-to-date?
+        bool alreadyReconstructed(bool forceUpdate = true) const;
 
         //- No copy construct
         reconstructionSchemes(const reconstructionSchemes&) = delete;
 
-        //- No bitwise assignment
+        //- No copy assignment
         void operator=(const reconstructionSchemes&) = delete;
 
 
-public:
-
-    //- Return access to the model dictionary
-    dictionary& modelDict();
-
-    //- Return const access to the model dictionary
-    const dictionary& modelDict() const;
 
 
 public:
@@ -175,16 +160,28 @@ public:
 
     // Member Functions
 
-        //- reconstruct the interface
+        //- Access to the model dictionary
+        dictionary& modelDict()
+        {
+            return reconstructionSchemesCoeffs_;
+        }
+
+        //- Const access to the model dictionary
+        const dictionary& modelDict() const
+        {
+            return reconstructionSchemesCoeffs_;
+        }
+
+        //- Reconstruct the interface
         virtual void reconstruct(bool forceUpdate = true) = 0;
 
-        //- Reference to interface normals
+        //- const-Reference to interface normals
         const volVectorField& normal() const
         {
             return normal_;
         }
 
-        //- Reference to interface centres
+        //- const-Reference to interface centres
         const volVectorField& centre() const
         {
             return centre_;
@@ -216,9 +213,9 @@ public:
 
         //- Map VoF Field in case of refinement
         virtual void mapAlphaField() const
-        {
-            // do nothing;
-        }
+        {}
+
+
 };
 
 

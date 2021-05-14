@@ -2,12 +2,11 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2019-2019 OpenCFD Ltd.
+    \\  /    A nd           | www.openfoam.com
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
-                            | Copyright (C) 2019-2019 DLR
+    Copyright (C) 2019-2020 DLR
 -------------------------------------------------------------------------------
-
 License
     This file is part of OpenFOAM.
 
@@ -27,6 +26,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "surfaceIteratorIso.H"
+#include "scalarMatrices.H"
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
@@ -65,7 +65,7 @@ Foam::label Foam::surfaceIteratorIso::vofCutCell
     scalar f1 = fvert[order.first()];
     scalar f2 = fvert[order.last()];
 
-    //Handling special case where method is handed an almost full or empty cell
+    // Special case where method is given an almost full or empty cell
     if (alpha1 < tol)
     {
         return -1; // is area and centre is zero;
@@ -198,4 +198,6 @@ Foam::label Foam::surfaceIteratorIso::vofCutCell
 
     return status;
 }
+
+
 // ************************************************************************* //

@@ -2,12 +2,12 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2019-2019 OpenCFD Ltd.
+    \\  /    A nd           | www.openfoam.com
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
-                            | Copyright (C) 2019-2019 DLR
+    Copyright (C) 2020 DLR
+    Copyright (C) 2020 OpenCFD Ltd.
 -------------------------------------------------------------------------------
-
 License
     This file is part of OpenFOAM.
 
@@ -35,12 +35,15 @@ License
 
 #include "globalPoints.H"
 
-// * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
+// * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
 {
     defineTypeNameAndDebug(zoneDistribute, 0);
 }
+
+
+// * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 
 Foam::autoPtr<Foam::indirectPrimitivePatch>
 Foam::zoneDistribute::coupledFacesPatch() const
@@ -83,6 +86,7 @@ Foam::zoneDistribute::coupledFacesPatch() const
     );
 }
 
+
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 Foam::zoneDistribute::zoneDistribute(const fvMesh& mesh)
@@ -94,13 +98,16 @@ Foam::zoneDistribute::zoneDistribute(const fvMesh& mesh)
     gblIdx_(stencil_.globalNumbering())
 {
 }
+
+
 // * * * * * * * * * * * * * * * * Selectors  * * * * * * * * * * * * * * //
+
 Foam::zoneDistribute& Foam::zoneDistribute::New(const fvMesh& mesh)
 {
     bool found = mesh.thisDb().foundObject<zoneDistribute>
     (
         zoneDistribute::typeName
-    ); 
+    );
     zoneDistribute* ptr = nullptr;
 
     if(found)
@@ -119,7 +126,7 @@ Foam::zoneDistribute& Foam::zoneDistribute::New(const fvMesh& mesh)
 
     return *objectPtr;
 }
- 
+
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
@@ -134,25 +141,22 @@ void Foam::zoneDistribute::setUpCommforZone(const boolList& zone,bool updateSten
     zoneCPCStencil& stencil = zoneCPCStencil::New(mesh_);
 
     if(updateStencil)
-    { 
+    {
         stencil.updateStencil(zone);
     }
 
     const labelHashSet comms = stencil.needsComm();
 
-    List< labelHashSet > needed(Pstream::nProcs());
+    List<labelHashSet> needed(Pstream::nProcs());
 
     if (Pstream::parRun())
     {
-
-        forAllConstIters(comms, iter)
+        for (const label celli : comms)
         {
-            if(zone[iter.key()]) // iter.key is the cell number, celli
+            if (zone[celli])
             {
-                forAll(stencil[iter.key()],i)
+                for (const label gblIdx : stencil_[celli])
                 {
-                    const label& gblIdx = stencil[iter.key()][i];
-
                     if(!gblIdx_.isLocal(gblIdx))
                     {
                         const label procID = gblIdx_.whichProcID (gblIdx);
@@ -167,7 +171,6 @@ void Foam::zoneDistribute::setUpCommforZone(const boolList& zone,bool updateSten
         // Stream data into buffer
         for (label domain = 0; domain < Pstream::nProcs(); domain++)
         {
-
             if (domain != Pstream::myProcNo())
             {
                 // Put data into send buffer
@@ -180,10 +183,8 @@ void Foam::zoneDistribute::setUpCommforZone(const boolList& zone,bool updateSten
         // wait until everything is written.
         pBufs.finishedSends();
 
-
         for (label domain = 0; domain < Pstream::nProcs(); domain++)
         {
-
             send_[domain].clear();
 
             if (domain != Pstream::myProcNo())
@@ -192,22 +193,12 @@ void Foam::zoneDistribute::setUpCommforZone(const boolList& zone,bool updateSten
                 UIPstream fromDomain(domain, pBufs);
 
                 fromDomain >> send_[domain];
-
             }
         }
-
     }
-
-
 }
 
-// void Foam::zoneDistribute::updateMesh(const mapPolyMesh& mpm)
-// {
-//     if(mesh_.topoChanging())
-//     { 
-//         coupledBoundaryPoints_ = coupledFacesPatch()().meshPoints();
-//     }
-  
-// }
+
+
 
 // ************************************************************************* //

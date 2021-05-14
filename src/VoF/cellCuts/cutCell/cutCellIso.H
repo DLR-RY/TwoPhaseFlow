@@ -2,14 +2,14 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2016-2017 OpenCFD Ltd.
+    \\  /    A nd           | www.openfoam.com
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
-                isoAdvector | Copyright (C) 2016-2017 DHI
-              Modified work | Copyright (C) 2018-2019 Johan Roenby
-              Modified work | Copyright (C) 2019 DLR
+    Copyright (C) 2016-2017 DHI
+    Copyright (C) 2016-2017 OpenCFD Ltd.
+    Copyright (C) 2018 Johan Roenby
+    Copyright (c) 2017-2019, German Aerospace Center (DLR)
 -------------------------------------------------------------------------------
-
 License
     This file is part of OpenFOAM.
 
@@ -49,7 +49,6 @@ Description
 
     \endverbatim
 
-
     Original code supplied by Johan Roenby, DHI (2016)
 
 SourceFiles
@@ -60,11 +59,9 @@ SourceFiles
 #ifndef cutCellIso_H
 #define cutCellIso_H
 
-#include "OFstream.H"
 #include "cutCell.H"
 #include "cutFaceIso.H"
 #include "fvMesh.H"
-#include "scalarMatrices.H"
 #include "surfaceFields.H"
 #include "volFields.H"
 
@@ -81,7 +78,7 @@ class cutCellIso
 :
     public cutCell
 {
-    // Private data
+    // Private Data
 
         //- Mesh whose cells and faces to cut at their intersection with an
         //  isosurface.
@@ -142,13 +139,13 @@ class cutCellIso
 
         //- Construct from fvMesh and a scalarField
         //  Length of scalarField should equal number of mesh points
-        cutCellIso(const fvMesh&, scalarField& f);
+        cutCellIso(const fvMesh& mesh, scalarField& f);
 
 
-    // Member functions
+    // Member Functions
 
         //- Sets internal values and returns face status
-        label calcSubCell(const label& cellI, const scalar cutValue);
+        label calcSubCell(const label cellI, const scalar cutValue);
 
         //- Returns subCellCentre
         const point& subCellCentre() const;

@@ -2,12 +2,11 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2019-2019 OpenCFD Ltd.
+    \\  /    A nd           | www.openfoam.com
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
-                            | Copyright (C) 2019-2019 DLR
+    Copyright (C) 2020 DLR
 -------------------------------------------------------------------------------
-
 License
     This file is part of OpenFOAM.
 
@@ -31,13 +30,15 @@ License
 #include "dummyTransform.H"
 #include "emptyPolyPatch.H"
 
-// * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
+// * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
 {
     defineTypeNameAndDebug(zoneCellStencils, 0);
 }
 
+
+// * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 
 Foam::autoPtr<Foam::indirectPrimitivePatch>
 Foam::zoneCellStencils::nonEmptyFacesPatch() const
@@ -80,6 +81,7 @@ Foam::zoneCellStencils::nonEmptyFacesPatch() const
     );
 }
 
+
 Foam::autoPtr<Foam::indirectPrimitivePatch>
 Foam::zoneCellStencils::allCoupledFacesPatch() const
 {
@@ -121,11 +123,12 @@ Foam::zoneCellStencils::allCoupledFacesPatch() const
     );
 }
 
+
 void Foam::zoneCellStencils::validBoundaryFaces(boolList& isValidBFace) const
 {
     const polyBoundaryMesh& patches = meshRef_.boundaryMesh();
 
-    isValidBFace.setSize(meshRef_.nFaces()-meshRef_.nInternalFaces());
+    isValidBFace.setSize(meshRef_.nBoundaryFaces());
 
     isValidBFace = true;
 
@@ -196,6 +199,7 @@ void Foam::zoneCellStencils::merge
         cCells[n++] = seti;
     }
 }
+
 
 void Foam::zoneCellStencils::insertFaceCells
 (

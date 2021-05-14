@@ -5,7 +5,7 @@
     \\  /    A nd           | www.openfoam.com
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
-    Copyright (C) 2019 DLR
+    Copyright (C) 2019-2020 DLR
 -------------------------------------------------------------------------------
 License
     This file is part of OpenFOAM.
@@ -95,7 +95,7 @@ class gradAlpha
         //- No copy construct
         gradAlpha(const gradAlpha&) = delete;
 
-        //- No bitwise assignment
+        //- No copy assignment
         void operator=(const gradAlpha&) = delete;
 
 

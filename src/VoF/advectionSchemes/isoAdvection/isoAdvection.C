@@ -8,7 +8,7 @@
     Copyright (C) 2016-2017 DHI
     Modified code Copyright (C) 2016-2017 OpenCFD Ltd.
     Modified code Copyright (C) 2019 Johan Roenby
-    Modified code Copyright (C) 2019 DLR
+    Modified code Copyright (C) 2019-2020 DLR
 -------------------------------------------------------------------------------
 License
     This file is part of OpenFOAM.
@@ -123,23 +123,7 @@ Foam::advection::isoAdvection::isoAdvection
         mesh_.cellCells();
         mesh_.cells();
 
-        // // Get boundary mesh and resize the list for parallel comms
-        // const polyBoundaryMesh& patches = mesh_.boundaryMesh();
-
-        // surfaceCellFacesOnProcPatches_.resize(patches.size());
-
-        // // Append all processor patch labels to the list
-        // forAll(patches, patchi)
-        // {
-        //     if
-        //     (
-        //         isA<processorPolyPatch>(patches[patchi])
-        //      && patches[patchi].size() > 0
-        //     )
-        //     {
-        //         procPatchLabels_.append(patchi);
-        //     }
-        // }
+        // Get boundary mesh and resize the list for parallel comms
         setProcessorPatches();
     }
 }
@@ -492,10 +476,10 @@ Foam::DynamicList<Foam::label>  Foam::advection::isoAdvection::syncProcPatches
             List<scalar> nbrdVfs;
 
             fromNeighb >> faceIDs >> nbrdVfs;
-            if(returnSyncedFaces)
+            if (returnSyncedFaces)
             {
-                List <label> syncedFaceI(faceIDs);
-                for(label& faceI: syncedFaceI)
+                List<label> syncedFaceI(faceIDs);
+                for (label& faceI : syncedFaceI)
                 {
                     faceI += procPatch.start();
                 }

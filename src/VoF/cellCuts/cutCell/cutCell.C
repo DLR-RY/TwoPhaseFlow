@@ -2,14 +2,14 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2016-2017 OpenCFD Ltd.
+    \\  /    A nd           | www.openfoam.com
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
-                isoAdvector | Copyright (C) 2016-2017 DHI
-              Modified work | Copyright (C) 2018-2019 Johan Roenby
-              Modified work | Copyright (C) 2019 DLR
+    Copyright (C) 2016-2017 OpenCFD Ltd.
+    Copyright (C) 2016-2017 DHI
+    Copyright (C) 2018-2019 Johan Roenby
+    Copyright (C) 2019-2020 DLR
 -------------------------------------------------------------------------------
-
 License
     This file is part of OpenFOAM.
 
@@ -34,12 +34,17 @@ License
 
 int Foam::cutCell::debug = 0;
 
+
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 Foam::cutCell::cutCell(const fvMesh& mesh)
-:
-    mesh_(mesh)
-{}
+{
+    // required as otherwise setAlphaFields might not work in parallel
+    mesh.C();
+    mesh.V();
+    mesh.Cf();
+    mesh.magSf();
+}
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
@@ -52,8 +57,8 @@ void Foam::cutCell::calcCellData
 )
 {
     // Clear the fields for accumulation
-    subCellCentre = vector::zero;
-    subCellVolume = 0.0;
+    subCellCentre = Zero;
+    subCellVolume = Zero;
 
     // first estimate the approximate cell centre as the average of
     // face centres
@@ -91,14 +96,13 @@ void Foam::cutCell::calcGeomDataCutFace
 )
 {
     // Initial guess of face centre from edge points
-    point fCentre = vector::zero;
-    label nEdgePoints = 0;
-    forAll(faceEdges, ei)
+    point fCentre{Zero};
+    label nEdgePoints{0};
+    for (const DynamicList<point>& edgePoints : faceEdges)
     {
-        const DynamicList<point>& edgePoints = faceEdges[ei];
-        forAll(edgePoints, pi)
+        for (const point& p : edgePoints)
         {
-            fCentre += edgePoints[pi];
+            fCentre += p;
             nEdgePoints++;
         }
     }
@@ -107,9 +111,9 @@ void Foam::cutCell::calcGeomDataCutFace
         fCentre /= nEdgePoints;
     }
 
-    vector sumN = vector::zero;
-    scalar sumA = 0.0;
-    vector sumAc = vector::zero;
+    vector sumN{Zero};
+    scalar sumA{0};
+    vector sumAc{Zero};
 
     // calculate area and centre
     forAll(faceEdges, ei)
@@ -137,7 +141,7 @@ void Foam::cutCell::calcGeomDataCutFace
     if (sumA < ROOTVSMALL)
     {
         faceCentre = fCentre;
-        faceArea = vector::zero;
+        faceArea = Zero;
     }
     else
     {
@@ -166,24 +170,22 @@ void Foam::cutCell::calcIsoFacePointsFromEdges
         facePoints.clear();
         return;
     }
-    const vector zhat = faceArea/mag(faceArea);
+    const vector zhat = normalised(faceArea);
     vector xhat = faceEdges[0][0] - faceCentre;
     xhat = (xhat - (xhat & zhat)*zhat);
+    xhat.normalise();
     if (mag(xhat) == 0)
     {
         facePoints.clear();
         return;
     }
-    xhat /= mag(xhat);
-    vector yhat = zhat ^ xhat;
+    vector yhat = normalised(zhat ^ xhat);
     if (mag(yhat) == 0)
     {
         facePoints.clear();
         return;
     }
-    yhat /= mag(yhat);
-
-
+    yhat.normalise();
 
     // Calculating all intersection points
     DynamicList<point> unsortedFacePoints(3 * faceEdges.size());

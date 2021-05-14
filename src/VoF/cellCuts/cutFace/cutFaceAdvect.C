@@ -2,14 +2,13 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2016-2017 OpenCFD Ltd.
+    \\  /    A nd           | www.openfoam.com
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
-                isoAdvector | Copyright (C) 2016-2017 DHI
-              Modified work | Copyright (C) 2018-2019 Johan Roenby
-              Modified work | Copyright (C) 2019 DLR
+    Copyright (C) 2016-2017 DHI
+    Copyright (C) 2018-2019 Johan Roenby
+    Copyright (C) 2019-2020 DLR
 -------------------------------------------------------------------------------
-
 License
     This file is part of OpenFOAM.
 
@@ -26,10 +25,10 @@ License
     You should have received a copy of the GNU General Public License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
-
 \*---------------------------------------------------------------------------*/
 
 #include "cutFaceAdvect.H"
+#include "OFstream.H"
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
@@ -42,8 +41,8 @@ Foam::cutFaceAdvect::cutFaceAdvect
     cutFace(mesh),
     mesh_(mesh),
     alpha1_(alpha1),
-    subFaceCentre_(vector::zero),
-    subFaceArea_(vector::zero),
+    subFaceCentre_(Zero),
+    subFaceArea_(Zero),
     subFacePoints_(10),
     surfacePoints_(4),
     pointStatus_(10),
@@ -59,7 +58,7 @@ Foam::cutFaceAdvect::cutFaceAdvect
 
 Foam::label Foam::cutFaceAdvect::calcSubFace
 (
-    const label& faceI,
+    const label faceI,
     const vector& normal,
     const vector& base
 )
@@ -71,7 +70,7 @@ Foam::label Foam::cutFaceAdvect::calcSubFace
     label inLiquid = 0;
     label firstFullySubmergedPoint = -1;
 
-    // loop face and calculate pointStatus
+    // Loop face and calculate pointStatus
     forAll(f, i)
     {
         scalar value = (mesh_.points()[f[i]] - base) & normal;
@@ -100,8 +99,8 @@ Foam::label Foam::cutFaceAdvect::calcSubFace
     else if (inLiquid == 0) // gas face
     {
         faceStatus_ = 1;
-        subFaceCentre_ = vector::zero;
-        subFaceArea_ = vector::zero;
+        subFaceCentre_ = Zero;
+        subFaceArea_ = Zero;
         return faceStatus_;
     }
 
@@ -126,7 +125,7 @@ Foam::label Foam::cutFaceAdvect::calcSubFace
     const face& f,
     const pointField& points,
     const scalarField& val,
-    const scalar& cutValue
+    const scalar cutValue
 )
 {
     clearStorage();
@@ -135,7 +134,7 @@ Foam::label Foam::cutFaceAdvect::calcSubFace
     label firstFullySubmergedPoint = -1;
     scalarList pointStatus(f.size());
 
-    // loop face and calculate pointStatus
+    // Loop face and calculate pointStatus
     forAll(f, i)
     {
         pointStatus[i] = val[f[i]] - cutValue;
@@ -163,8 +162,8 @@ Foam::label Foam::cutFaceAdvect::calcSubFace
     else if (inLiquid == 0) // gas face
     {
         faceStatus_ = 1;
-        subFaceCentre_ = vector::zero;
-        subFaceArea_ = vector::zero;
+        subFaceCentre_ = Zero;
+        subFaceArea_ = Zero;
         return faceStatus_;
     }
 
@@ -351,10 +350,7 @@ Foam::scalar Foam::cutFaceAdvect::timeIntegratedFaceFlux
         // Here we estimate time of arrival to the face points from their normal
         // distance to the initial surface and the surface normal velocity
 
-        for (const scalar ti : times)
-        {
-            pTimes_.append(ti);
-        }
+        pTimes_.append(times);
 
         scalar dVf = 0;
 
@@ -526,67 +522,72 @@ Foam::scalar Foam::cutFaceAdvect::timeIntegratedArea
 void Foam::cutFaceAdvect::isoFacesToFile
 (
     const DynamicList<List<point>>& faces,
-    const word filNam,
-    const word filDir
+    const word& filNam,
+    const word& filDir
 ) const
 {
     // Writing isofaces to vtk file for inspection in paraview
 
+    fileName outputFile(filDir/(filNam + ".vtk"));
+
     mkDir(filDir);
-    autoPtr<OFstream> vtkFilePtr;
-    Info << "Writing file: " << (filDir + "/" + filNam + ".vtk") << endl;
-    vtkFilePtr.reset(new OFstream(filDir + "/" + filNam + ".vtk"));
-    vtkFilePtr() << "# vtk DataFile Version 2.0" << endl;
-    vtkFilePtr() << filNam << endl;
-    vtkFilePtr() << "ASCII" << endl;
-    vtkFilePtr() << "DATASET POLYDATA" << endl;
-    label nPoints(0);
-    forAll(faces, fi)
+    Info<< "Writing file: " << outputFile << endl;
+
+    OFstream os(outputFile);
+    os  << "# vtk DataFile Version 2.0" << nl
+        << filNam << nl
+        << "ASCII" << nl
+        << "DATASET POLYDATA" << nl;
+
+    label nPoints{0};
+    for (const List<point>& f : faces)
     {
-        nPoints += faces[fi].size();
+        nPoints += f.size();
     }
 
-    vtkFilePtr() << "POINTS " << nPoints << " float" << endl;
-    forAll(faces, fi)
+    os << "POINTS " << nPoints << " float" << nl;
+    for (const List<point>& f : faces)
     {
-        List<point> pf = faces[fi];
-        forAll(pf, pi)
+        for (const point& p : f)
         {
-            point p = pf[pi];
-            vtkFilePtr() << p[0] << " " << p[1] << " " << p[2] << endl;
+            os << p.x() << ' ' << p.y() << ' ' << p.z() << nl;
         }
     }
-    vtkFilePtr() << "POLYGONS " << faces.size() << " " << nPoints + faces.size()
-                 << endl;
 
-    label np = 0;
-    forAll(faces, fi)
+    os  << "POLYGONS "
+        << faces.size() << ' ' << (nPoints + faces.size()) << nl;
+
+    label pointi = 0;
+    for (const List<point>& f : faces)
     {
-        nPoints = faces[fi].size();
-        vtkFilePtr() << nPoints;
-        for (label pi = np; pi < np + nPoints; pi++)
+        label endp = f.size();
+        os << endp;
+
+        endp += pointi;
+
+        while (pointi < endp)
         {
-            vtkFilePtr() << " " << pi;
+            os << ' ' << pointi;
+            ++pointi;
         }
-        vtkFilePtr() << "" << endl;
-        np += nPoints;
+        os << nl;
     }
 }
 
 
 Foam::label Foam::cutFaceAdvect::calcSubFace
 (
-    const label& faceI,
+    const label faceI,
     const label sign,
-    const scalar& cutValue
+    const scalar cutValue
 )
 {
-//    clearStorage();
+    // clearStorage();
     const face& f = mesh_.faces()[faceI];
     label inLiquid = 0;
     label firstFullySubmergedPoint = -1;
 
-    // loop face and calculate pointStatus
+    // Loop face and calculate pointStatus
     forAll(f, i)
     {
         scalar value = (sign * pTimes_[i] - cutValue);
@@ -616,8 +617,8 @@ Foam::label Foam::cutFaceAdvect::calcSubFace
     else if (inLiquid == 0) // gas face
     {
         faceStatus_ = 1;
-        subFaceCentre_ = vector::zero;
-        subFaceArea_ = vector::zero;
+        subFaceCentre_ = Zero;
+        subFaceArea_ = Zero;
         return faceStatus_;
     }
 
@@ -639,7 +640,7 @@ Foam::label Foam::cutFaceAdvect::calcSubFace
 
 Foam::scalar Foam::cutFaceAdvect::timeIntegratedArea
 (
-    const label& faceI,
+    const label faceI,
     const scalar dt,
     const scalar magSf,
     const scalar Un0
@@ -837,7 +838,7 @@ void Foam::cutFaceAdvect::quadAreaCoeffs
 
         const scalar Bx = mag(B - A);
 
-        vector xhat(vector::zero);
+        vector xhat(Zero);
         if (Bx > 10 * SMALL)
         {
             // If |AB| > 0 ABCD we use AB to define xhat
@@ -882,7 +883,7 @@ void Foam::cutFaceAdvect::quadAreaCoeffs
 
 void Foam::cutFaceAdvect::cutPoints
 (
-    const label& faceI,
+    const label faceI,
     const scalar f0,
     DynamicList<point>& cutPoints
 )
@@ -1011,8 +1012,8 @@ const Foam::DynamicList<Foam::point>& Foam::cutFaceAdvect::surfacePoints() const
 
 void Foam::cutFaceAdvect::clearStorage()
 {
-    subFaceCentre_ = vector::zero;
-    subFaceArea_ = vector::zero;
+    subFaceCentre_ = Zero;
+    subFaceArea_ = Zero;
     subFacePoints_.clear();
     surfacePoints_.clear();
     pointStatus_.clear();

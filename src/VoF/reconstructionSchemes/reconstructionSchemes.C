@@ -5,7 +5,7 @@
     \\  /    A nd           | www.openfoam.com
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
-    Copyright (C) 2019 DLR
+    Copyright (C) 2019-2020 DLR
 -------------------------------------------------------------------------------
 License
     This file is part of OpenFOAM.
@@ -26,8 +26,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "reconstructionSchemes.H"
-#include "OFstream.H"
-
+#include "cutCellPLIC.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
@@ -38,31 +37,31 @@ namespace Foam
 }
 
 
+// * * * * * * * * * * * * Protected Member Functions  * * * * * * * * * * * //
 
-// * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
-
-bool Foam::reconstructionSchemes::alreadyReconstructed(bool forceUpdate)
+bool Foam::reconstructionSchemes::alreadyReconstructed(bool forceUpdate) const
 {
-    const fvMesh& mesh = alpha1_.mesh();
+    const Time& runTime = alpha1_.mesh().time();
+
     label& curTimeIndex = timeIndexAndIter_.first();
     label& curIter = timeIndexAndIter_.second();
 
-    // rest timeIndex and curIter
-    if (mesh.time().timeIndex() > curTimeIndex)
+    // Reset timeIndex and curIter
+    if (curTimeIndex < runTime.timeIndex())
     {
-        curTimeIndex = mesh.time().timeIndex();
+        curTimeIndex = runTime.timeIndex();
         curIter = 0;
         return false;
     }
 
-    if(forceUpdate)
+    if (forceUpdate)
     {
         curIter = 0;
         return false;
     }
 
-    // reconstruct always when subcycling
-    if (mesh.time().subCycling() != 0)
+    // Always reconstruct when subcycling
+    if (runTime.subCycling() != 0)
     {
         return false;
     }
@@ -107,7 +106,7 @@ Foam::reconstructionSchemes::reconstructionSchemes
     (
         IOobject
         (
-            IOobject::groupName("normal", alpha1.group()),
+            IOobject::groupName("interfaceNormal", alpha1.group()),
             alpha1_.mesh().time().timeName(),
             alpha1_.mesh(),
             IOobject::NO_READ,
@@ -120,7 +119,7 @@ Foam::reconstructionSchemes::reconstructionSchemes
     (
         IOobject
         (
-            IOobject::groupName("centre", alpha1.group()),
+            IOobject::groupName("interfaceCentre", alpha1.group()),
             alpha1_.mesh().time().timeName(),
             alpha1_.mesh(),
             IOobject::NO_READ,
@@ -132,24 +131,11 @@ Foam::reconstructionSchemes::reconstructionSchemes
     interfaceCell_(alpha1_.mesh().nCells(), false),
     interfaceLabels_(0.2*alpha1_.mesh().nCells()),
     timeIndexAndIter_(0, 0)
-{
-    centre_.oldTime();
-    normal_.oldTime();
-}
+{}
 
 
-// * * * * * * * * * * * * Public Member Functions * * * * * * * * * * * * * //
+// * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-const Foam::dictionary& Foam::reconstructionSchemes::modelDict() const
-{
-    return reconstructionSchemesCoeffs_;
-}
-
-
-Foam::dictionary& Foam::reconstructionSchemes::modelDict()
-{
-    return reconstructionSchemesCoeffs_;
-}
 
 
 // ************************************************************************* //
