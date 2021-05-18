@@ -71,7 +71,7 @@ functions
         writeControl    writeTime;
 
         surfaceFormat   raw;
-        fields          (p U T);
+        fields          (p U);
 
         interpolationScheme cell;
 

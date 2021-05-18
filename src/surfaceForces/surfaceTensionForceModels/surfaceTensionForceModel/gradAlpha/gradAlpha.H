@@ -16,29 +16,29 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::fitParaboloid
+    Foam::gradAlpha
 
 Description
-    estimates the curvature by fitting a paraboloid in the interface centres
+    estimates the curvature from the volume fraction field similiar to the
+    mode of Brackbill et al.
 
 SourceFiles
-    fitParaboloid.C
+    gradAlpha.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef fitParaboloid_H
-#define fitParaboloid_H
+#ifndef gradAlpha_H
+#define gradAlpha_H
 
 #include "typeInfo.H"
 #include "volFields.H"
 #include "dimensionedScalar.H"
 #include "autoPtr.H"
 
-#include "DynamicField.H"
 
-#include "curvatureModel.H"
-#include "zoneDistribute.H"
-#include "cartesianCS.H"
+
+
+#include "surfaceTensionForceModel.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -46,67 +46,44 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                Class fitParaboloid Declaration
+                Class gradAlpha Declaration
 \*---------------------------------------------------------------------------*/
 
-class fitParaboloid
-    : public curvatureModel
+class gradAlpha
+    : public surfaceTensionForceModel
 {
 
-    private:
+private:
 
-        //-
+    //-
         //- Stabilisation for normalisation of the interface normal
         const dimensionedScalar deltaN_;
 
-        //- update contact angle
+    // Private Member Functions
+
         virtual void correctContactAngle
         (
             surfaceVectorField::Boundary& nHat,
             surfaceVectorField::Boundary& gradAlphaf
         );
 
-        //- update contact angle
-        void correctContactAngle
-        (
-            volVectorField& normal,
-            volVectorField& centre
-        );
-
-        //- compute curvature from the fit data
-        scalar calcCurvature
-        (
-            const scalarField& fit
-        );
-
-        //- get the faceCentre
-        vectorField getFaceCentres
-        (
-            const globalIndex& globalNumbering,
-            const DynamicList < label >& stencil,
-            const volVectorField& faceCentres,
-            const Map < vector >& map
-        );
 
         //- Disallow copy construct
-        fitParaboloid(const fitParaboloid&);
+        gradAlpha(const gradAlpha&);
 
         //- Disallow default bitwise assignment
-        void operator=(const fitParaboloid&);
+        void operator=(const gradAlpha&);
 
-    protected:
+public:
 
-        //- Re-calculate the interface curvature
-        virtual void calculateK();
+    //- Runtime type information
+    TypeName("gradAlpha");
 
-    public:
-
-        //- Runtime type information
-        TypeName("fitParaboloid");
 
     // Constructors
+
         //- Construct from components
-        fitParaboloid
+        gradAlpha
         (
             const dictionary& dict,
             const volScalarField& alpha1,
@@ -114,9 +91,12 @@ class fitParaboloid
             const volVectorField& U
         );
 
-        //- Destructor
-        virtual ~fitParaboloid()
-        {}
+
+    //- Destructor
+    virtual ~gradAlpha()
+    {}
+
+    virtual void correct();
 
 };
 

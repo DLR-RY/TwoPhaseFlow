@@ -17,51 +17,79 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "deltaFunctionModel.H"
-
+#include "surfaceTensionForceModel.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
 {
-    defineTypeNameAndDebug(deltaFunctionModel, 0);
-    defineRunTimeSelectionTable(deltaFunctionModel, components);
+    defineTypeNameAndDebug(surfaceTensionForceModel, 0);
+    defineRunTimeSelectionTable(surfaceTensionForceModel, components);
 }
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::deltaFunctionModel::deltaFunctionModel
+Foam::surfaceTensionForceModel::surfaceTensionForceModel
 (
-    const word type,
+    const word& type,
     const dictionary& dict,
-    const volScalarField& alpha1
+    const volScalarField& alpha1,
+    const surfaceScalarField& phi,
+    const volVectorField& U
 )
 :
     alpha1_(alpha1),
-    deltaFunction_
+    phi_(phi),
+    U_(U),
+    surfTenModel_(nullptr),
+    deltaFunctionModel_(nullptr),
+    nHatf_
     (
         IOobject
         (
-            "deltaFunction_",
+            "nHatf_",
             alpha1_.time().timeName(),
             alpha1_.mesh()
         ),
         alpha1_.mesh(),
-        dimensionedScalar("deltaFunction_", dimless/dimLength, 0.0)
+        dimensionedScalar("nHatf", dimArea, 0.0)
+    ),
+    K_
+    (
+        IOobject
+        (
+            "K_",
+            alpha1_.time().timeName(),
+            alpha1_.mesh(),
+            IOobject::NO_READ,
+            IOobject::AUTO_WRITE
+        ),
+        alpha1_.mesh(),
+        dimensionedScalar("K", dimless/dimLength, 0.0),
+        "zeroGradient"
+    ),
+    Kf_
+    (
+        IOobject
+        (
+            "Kf_",
+            alpha1_.time().timeName(),
+            alpha1_.mesh()
+        ),
+        alpha1_.mesh(),
+        dimensionedScalar("Kf", dimless/dimLength, 0.0)
     )
 
 {
 
+    surfTenModel_ = surfaceTensionModel::New(dict,alpha1.mesh());
+    word deltaFunctionType =
+        dict.lookupOrDefault<word>("deltaFunctionModel","alphaCSF");
+    deltaFunctionModel_ = deltaFunctionModel::New(deltaFunctionType,dict,alpha1);
 }
 
 
 
-// * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * * //
-
-void Foam::deltaFunctionModel::calculateDeltaFunction()
-{
-    notImplemented("void Foam::RDF::calculateDeltaFunction()");;
-}
 
 
 // ************************************************************************* //

@@ -19,7 +19,7 @@
     (
         (
             surfForces.surfaceTensionForce()
-            + surfForces.accelerationForce(rho)
+            + surfForces.accelerationForce()
         )*rAUf*mesh.magSf()
     );
 

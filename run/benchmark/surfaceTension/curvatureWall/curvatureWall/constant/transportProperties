@@ -36,7 +36,7 @@ sigma           sigma [ 1 0 -2 0 0 0 0 ] 1;
 surfaceForces
 {
   sigma 1;
-  curvatureModel RDF; // fitParaboloid RDF gradAlpha
+  surfaceTensionForceModel RDF; // fitParaboloid RDF gradAlpha
   accelerationModel gravity;
   deltaFunctionModel alphaCSF;
 }

@@ -16,92 +16,85 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::gradAlpha
+    Foam::gravity
 
 Description
-    estimates the curvature from the volume fraction field similiar to the
-    mode of Brackbill et al.
+    constant gravitional forces
 
 SourceFiles
-    gradAlpha.C
+    gravity.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef gradAlpha_H
-#define gradAlpha_H
+#ifndef gravity_H
+#define gravity_H
 
 #include "typeInfo.H"
 #include "volFields.H"
 #include "dimensionedScalar.H"
 #include "autoPtr.H"
+#include "uniformDimensionedFields.H"
 
-
-
-
-#include "curvatureModel.H"
-
+#include "accelerationModel.H"
+#include "alphaCSF.H"
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                Class gradAlpha Declaration
+                Class gravity Declaration
 \*---------------------------------------------------------------------------*/
 
-class gradAlpha
-    : public curvatureModel
+class gravity
+    : public accelerationModel
 {
 
-private:
+        //- const access dict
+        const dictionary& gravityDict_;
 
-    //-
-        //- Stabilisation for normalisation of the interface normal
-        const dimensionedScalar deltaN_;
+        //- gravity vector
+        dimensionedVector g_;
+
+        //- Href Field
+        uniformDimensionedScalarField hRef_;
 
     // Private Member Functions
 
-        virtual void correctContactAngle
-        (
-            surfaceVectorField::Boundary& nHat,
-            surfaceVectorField::Boundary& gradAlphaf
-        );
-
-
         //- Disallow copy construct
-        gradAlpha(const gradAlpha&);
+        gravity(const gravity&);
 
         //- Disallow default bitwise assignment
-        void operator=(const gradAlpha&);
+        void operator=(const gravity&);
 
 
         protected:
 
         //- Re-calculate the interface curvature
-        virtual void calculateK();
+        virtual void calculateAcc();
 
 
 public:
 
     //- Runtime type information
-    TypeName("gradAlpha");
+    TypeName("gravity");
 
 
     // Constructors
 
         //- Construct from components
-        gradAlpha
+        gravity
         (
             const dictionary& dict,
-            const volScalarField& alpha1,
-            const surfaceScalarField& phi,
-            const volVectorField& U
+            const fvMesh& mesh
         );
 
 
     //- Destructor
-    virtual ~gradAlpha()
+    virtual ~gravity()
     {}
+
+    virtual tmp<surfaceScalarField> accelerationForce();
 
 
 };

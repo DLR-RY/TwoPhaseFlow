@@ -31,7 +31,7 @@
           //  mixture.surfaceTensionForce()
           surfForces.surfaceTensionForce()
           //- ghf*fvc::snGrad(rho)
-          + surfForces.accelerationForce(rho)
+          + surfForces.accelerationForce()
         )*rAUf*mesh.magSf()
     );
 

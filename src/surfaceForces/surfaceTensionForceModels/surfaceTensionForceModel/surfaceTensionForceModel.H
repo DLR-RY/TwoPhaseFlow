@@ -16,32 +16,33 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::deltaFunctionModel
+    Foam::surfaceTensionForceModel
 
 Description
 
 SourceFiles
-    deltaFunctionModel.C
-    newDeltaFunctionModel.C
+    surfaceTensionForceModel.C
+    newsurfaceTensionForceModel.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef deltaFunctionModel_H
-#define deltaFunctionModel_H
+#ifndef surfaceTensionForceModel_H
+#define surfaceTensionForceModel_H
 
 #include "typeInfo.H"
 #include "runTimeSelectionTables.H"
-
+#include "volFields.H"
 #include "dimensionedScalar.H"
 #include "autoPtr.H"
-
+#include "Pair.H"
 
 #include "IOdictionary.H"
 #include "volFields.H"
 #include "surfaceFields.H"
 
-#include "fvcSnGrad.H"
-
+#include "surfaceTensionModel.H"
+#include "deltaFunctionModel.H"
+#include "fvc.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -49,99 +50,123 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                Class deltaFunctionModel Declaration
+                Class surfaceTensionForceModel Declaration
 \*---------------------------------------------------------------------------*/
 
-class deltaFunctionModel
+class surfaceTensionForceModel
 {
+
 protected:
 
-        // reference to volume fraction field
+        //- reference to volume fraction field
         const volScalarField& alpha1_;
 
-        //- delta function on the faces
-        surfaceScalarField deltaFunction_;
+        //- reference to face velocity
+        const surfaceScalarField& phi_;
+
+        //- reference to velcoity
+        const volVectorField& U_;
+
+        autoPtr<surfaceTensionModel> surfTenModel_;
+
+        autoPtr<deltaFunctionModel> deltaFunctionModel_;
+
+        //- surface face normal on the face
+        surfaceScalarField nHatf_;
+
+        //- curvature field
+        volScalarField K_;
+
+        //- curvature field on faces
+        surfaceScalarField Kf_;
 
 private:
 
     // Private Member Functions
 
         //- Disallow copy construct
-        deltaFunctionModel(const deltaFunctionModel&);
+        surfaceTensionForceModel(const surfaceTensionForceModel&);
 
         //- Disallow default bitwise assignment
-        void operator=(const deltaFunctionModel&);
-
-protected:
-
-        //- Re-calculate the interface curvature
-        virtual void calculateDeltaFunction();
+        void operator=(const surfaceTensionForceModel&);
 
 public:
 
     //- Runtime type information
-    TypeName("deltaFunctionModel");
-
+    TypeName("surfaceTensionForceModel");
 
     // Declare run-time constructor selection table
 
         declareRunTimeSelectionTable
         (
             autoPtr,
-            deltaFunctionModel,
+            surfaceTensionForceModel,
             components,
             (
                 const dictionary& dict,
-                const volScalarField& alpha1
+                const volScalarField& alpha1,
+                const surfaceScalarField& phi,
+                const volVectorField& U
             ),
-            (dict,alpha1)
+            (dict,alpha1,phi,U)
         );
-
 
     // Selectors
 
         //- Return a reference to the selected phaseChange model
-        static autoPtr<deltaFunctionModel> New
+        static autoPtr<surfaceTensionForceModel> New
         (
-            const word deltaFunctionModelTypeName,
             const dictionary& dict,
-            const volScalarField& alpha1
+            const volScalarField& alpha1,
+            const surfaceScalarField& phi,
+            const volVectorField& U
         );
-
 
     // Constructors
 
         //- Construct from components
-        deltaFunctionModel
+        surfaceTensionForceModel
         (
-            const word type,
+            const word& type,
             const dictionary& dict,
-            const volScalarField& alpha1
+            const volScalarField& alpha1,
+            const surfaceScalarField& phi,
+            const volVectorField& U
         );
 
-
     //- Destructor
-    virtual ~deltaFunctionModel()
+    virtual ~surfaceTensionForceModel()
     {}
-
 
     // Member Functions
 
-        const surfaceScalarField& deltaFunction() const
+        const volScalarField& K() const
         {
-            return deltaFunction_;
+            return K_;
         }
 
-        tmp<surfaceScalarField> deltaFunction(const volScalarField& phi) const
+        const surfaceScalarField& Kf() const
         {
-            return fvc::snGrad(phi);
+            return Kf_;
         }
 
-        void correct()
+        const surfaceScalarField& nHatf() const
         {
-            calculateDeltaFunction();
+            return nHatf_;
         }
 
+        tmp<volScalarField> sigma() const
+        {
+            return surfTenModel_->sigma();
+        }
+
+        virtual void correct() = 0;
+
+        virtual tmp<surfaceScalarField> surfaceTensionForce()
+        {
+            return fvc::interpolate(sigma())*Kf()
+                   * deltaFunctionModel_->deltaFunction();
+        }
 };
 
 

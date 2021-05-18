@@ -24,14 +24,11 @@ License
 Foam::autoPtr<Foam::deltaFunctionModel>
 Foam::deltaFunctionModel::New
 (
+    word deltaFunctionModelTypeName,
     const dictionary& dict,
     const volScalarField& alpha1
 )
 {
-    word deltaFunctionModelTypeName
-    (
-        dict.lookup("deltaFunctionModel")
-    );
 
     Info<< "Selecting surfaceTension model "
         << deltaFunctionModelTypeName << endl;

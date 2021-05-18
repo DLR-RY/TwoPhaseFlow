@@ -17,72 +17,51 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "constantCurvature.H"
-#include "addToRunTimeSelectionTable.H"
-
-#include "alphaContactAngleFvPatchScalarField.H"
-#include "mathematicalConstants.H"
-#include "surfaceInterpolate.H"
-#include "fvcDiv.H"
-#include "fvcGrad.H"
-
-// * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
-
-namespace Foam
-{
-    defineTypeNameAndDebug(constantCurvature, 0);
-    addToRunTimeSelectionTable(curvatureModel,constantCurvature, components);
-}
+#include "surfaceTensionForceModel.H"
 
 
-// * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-Foam::constantCurvature::constantCurvature
+Foam::autoPtr<Foam::surfaceTensionForceModel>
+Foam::surfaceTensionForceModel::New
 (
     const dictionary& dict,
     const volScalarField& alpha1,
     const surfaceScalarField& phi,
     const volVectorField& U
 )
-:
-    curvatureModel
+{
+
+    word surfaceTensionForceModelTypeName
     (
-        typeName,
-        dict,
-        alpha1,
-        phi,
-        U
-    ),
-    curv_
-    (
-        dict.get<scalar>("curv")
-    )
-{
+        dict.getCompat<word>
+        (
+            "surfaceTensionForceModel",
+            {{"surfaceTensionForceModel", 1.1}}
+        )
+    );
 
+    Info<< "Selecting surfaceTension model "
+        << surfaceTensionForceModelTypeName << endl;
+
+    componentsConstructorTable::iterator cstrIter =
+        componentsConstructorTablePtr_
+            ->find(surfaceTensionForceModelTypeName);
+
+    if (cstrIter == componentsConstructorTablePtr_->end())
+    {
+        FatalErrorIn
+        (
+            "surfaceTensionForceModel::New"
+        )   << "Unknown surfaceTensionForceModel type "
+            << surfaceTensionForceModelTypeName << endl << endl
+            << "Valid  surfaceTensionForceModels are : " << endl
+            << componentsConstructorTablePtr_->sortedToc()
+            << exit(FatalError);
+    }
+
+    return autoPtr<surfaceTensionForceModel>(cstrIter()( dict,alpha1, phi, U));
 }
-
-
-// * * * * * * * * * * * * * * Public Access Member Functions  * * * * * * * * * * * * * * //
-
-void Foam::constantCurvature::correctContactAngle
-(
-    surfaceVectorField::Boundary& nHatb,
-    surfaceVectorField::Boundary& constantCurvaturef
-)
-{
-
-}
-
-
-void Foam::constantCurvature::calculateK()
-{
-
-    // Simple expression for curvature
-    K_ = dimensionedScalar("0",dimless/dimLength,curv_);
-
-    Kf_ = dimensionedScalar("0",dimless/dimLength,curv_);
-}
-
 
 
 // ************************************************************************* //

@@ -44,7 +44,7 @@ License
 namespace Foam
 {
     defineTypeNameAndDebug(fitParaboloid, 0);
-    addToRunTimeSelectionTable(curvatureModel,fitParaboloid, components);
+    addToRunTimeSelectionTable(surfaceTensionForceModel,fitParaboloid, components);
 }
 
 
@@ -126,7 +126,7 @@ Foam::fitParaboloid::fitParaboloid
     const volVectorField& U
 )
 :
-    curvatureModel
+    surfaceTensionForceModel
     (
         typeName,
         dict,
@@ -271,8 +271,10 @@ void Foam::fitParaboloid::correctContactAngle
 }
 
 
-void Foam::fitParaboloid::calculateK()
+void Foam::fitParaboloid::correct()
 {
+    deltaFunctionModel_->correct();
+
     const fvMesh& mesh = alpha1_.mesh();
 
     reconstructionSchemes& surf = mesh.lookupObjectRef<reconstructionSchemes>("reconstructionScheme");

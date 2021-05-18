@@ -16,26 +16,29 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::gravity
+    Foam::constantCurvature
 
 Description
-    constant gravitional forces
+    defines a constant curvature to test if pressure velocity couplding is
+    well-balanced
 
 SourceFiles
-    gravity.C
+    constantCurvature.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef gravity_H
-#define gravity_H
+#ifndef constantCurvature_H
+#define constantCurvature_H
 
 #include "typeInfo.H"
 #include "volFields.H"
 #include "dimensionedScalar.H"
 #include "autoPtr.H"
-#include "uniformDimensionedFields.H"
 
-#include "accelerationModel.H"
+
+
+
+#include "surfaceTensionForceModel.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -43,57 +46,59 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                Class gravity Declaration
+                Class constantCurvature Declaration
 \*---------------------------------------------------------------------------*/
 
-class gravity
-    : public accelerationModel
+class constantCurvature
+    : public surfaceTensionForceModel
 {
 
 private:
 
     //-
         //- Stabilisation for normalisation of the interface normal
-        const dictionary& gravityDict_;
-        dimensionedVector g_;
+        const dimensionedScalar deltaN_;
 
-        uniformDimensionedScalarField hRef_;
+        const scalar curv_;
 
     // Private Member Functions
 
+        virtual void correctContactAngle
+        (
+            surfaceVectorField::Boundary& nHat,
+            surfaceVectorField::Boundary& constantCurvaturef
+        );
+
+
         //- Disallow copy construct
-        gravity(const gravity&);
+        constantCurvature(const constantCurvature&);
 
         //- Disallow default bitwise assignment
-        void operator=(const gravity&);
-
-
-        protected:
-
-        //- Re-calculate the interface curvature
-        virtual void calculateAcc();
-
+        void operator=(const constantCurvature&);
 
 public:
 
     //- Runtime type information
-    TypeName("gravity");
+    TypeName("constantCurvature");
 
 
     // Constructors
 
         //- Construct from components
-        gravity
+        constantCurvature
         (
             const dictionary& dict,
-            const fvMesh& mesh
+            const volScalarField& alpha1,
+            const surfaceScalarField& phi,
+            const volVectorField& U
         );
 
 
     //- Destructor
-    virtual ~gravity()
+    virtual ~constantCurvature()
     {}
 
+    virtual void correct();
 
 };
 

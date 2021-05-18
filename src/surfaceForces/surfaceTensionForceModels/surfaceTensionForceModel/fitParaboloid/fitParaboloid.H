@@ -16,30 +16,29 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::accelerationModel
+    Foam::fitParaboloid
 
 Description
-    abstract base class of the acceleration model
+    estimates the curvature by fitting a paraboloid in the interface centres
 
 SourceFiles
-    accelerationModel.C
-    newAccelerationModel.C
+    fitParaboloid.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef accelerationModel_H
-#define accelerationModel_H
+#ifndef fitParaboloid_H
+#define fitParaboloid_H
 
 #include "typeInfo.H"
-#include "runTimeSelectionTables.H"
 #include "volFields.H"
 #include "dimensionedScalar.H"
 #include "autoPtr.H"
-#include "Pair.H"
 
-#include "IOdictionary.H"
-#include "volFields.H"
-#include "surfaceFields.H"
+#include "DynamicField.H"
+
+#include "surfaceTensionForceModel.H"
+#include "zoneDistribute.H"
+#include "cartesianCS.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -47,90 +46,75 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                Class accelerationModel Declaration
+                Class fitParaboloid Declaration
 \*---------------------------------------------------------------------------*/
 
-class accelerationModel
+class fitParaboloid
+    : public surfaceTensionForceModel
 {
-protected:
 
-        surfaceScalarField accf_; // ghf
-        volScalarField acc_; // gh
+    private:
 
-private:
+        //-
+        //- Stabilisation for normalisation of the interface normal
+        const dimensionedScalar deltaN_;
 
-    // Private Member Functions
+        //- update contact angle
+        virtual void correctContactAngle
+        (
+            surfaceVectorField::Boundary& nHat,
+            surfaceVectorField::Boundary& gradAlphaf
+        );
+
+        //- update contact angle
+        void correctContactAngle
+        (
+            volVectorField& normal,
+            volVectorField& centre
+        );
+
+        //- compute curvature from the fit data
+        scalar calcCurvature
+        (
+            const scalarField& fit
+        );
+
+        //- get the faceCentre
+        vectorField getFaceCentres
+        (
+            const globalIndex& globalNumbering,
+            const DynamicList < label >& stencil,
+            const volVectorField& faceCentres,
+            const Map < vector >& map
+        );
 
         //- Disallow copy construct
-        accelerationModel(const accelerationModel&);
+        fitParaboloid(const fitParaboloid&);
 
         //- Disallow default bitwise assignment
-        void operator=(const accelerationModel&);
+        void operator=(const fitParaboloid&);
 
-protected:
+    public:
 
-        //- Re-calculate the interface curvature
-        virtual void calculateAcc();
-
-public:
-
-    //- Runtime type information
-    TypeName("accelerationModel");
-
-
-    // Declare run-time constructor selection table
-
-        declareRunTimeSelectionTable
-        (
-            autoPtr,
-            accelerationModel,
-            components,
-            (
-                const dictionary& dict,
-                const fvMesh& mesh
-            ),
-            (dict,mesh)
-        );
-
-    // Selectors
-
-        //- Return a reference to the selected phaseChange model
-        static autoPtr<accelerationModel> New
-        (
-            const dictionary& dict,
-            const fvMesh& mesh
-        );
+        //- Runtime type information
+        TypeName("fitParaboloid");
 
     // Constructors
-
         //- Construct from components
-        accelerationModel
+        fitParaboloid
         (
-            const word& type,
             const dictionary& dict,
-            const fvMesh& mesh
+            const volScalarField& alpha1,
+            const surfaceScalarField& phi,
+            const volVectorField& U
         );
 
-    //- Destructor
-    virtual ~accelerationModel()
-    {}
+        //- Destructor
+        virtual ~fitParaboloid()
+        {}
 
-    // Member Functions
 
-        const surfaceScalarField& accf() const
-        {
-            return accf_;
-        }
-
-        const volScalarField& acc() const
-        {
-            return acc_;
-        }
-
-        void correct()
-        {
-            calculateAcc();
-        }
+        virtual void correct();
 };
 
 

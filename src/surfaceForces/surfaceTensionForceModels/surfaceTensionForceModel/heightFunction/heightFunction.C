@@ -35,7 +35,7 @@ License
 namespace Foam
 {
     defineTypeNameAndDebug(heightFunction, 0);
-    addToRunTimeSelectionTable(curvatureModel,heightFunction, components);
+    addToRunTimeSelectionTable(surfaceTensionForceModel,heightFunction, components);
 }
 
 
@@ -212,7 +212,7 @@ Foam::heightFunction::heightFunction
     const volVectorField& U
 )
 :
-    curvatureModel
+    surfaceTensionForceModel
     (
         typeName,
         dict,
@@ -314,8 +314,9 @@ void Foam::heightFunction::correctContactAngle
 }
 
 
-void Foam::heightFunction::calculateK()
+void Foam::heightFunction::correct()
 {
+    deltaFunctionModel_->correct();
 
     const fvMesh& mesh = alpha1_.mesh();
     const surfaceVectorField& Sf = mesh.Sf();

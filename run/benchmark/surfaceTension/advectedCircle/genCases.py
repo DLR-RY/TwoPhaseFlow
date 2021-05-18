@@ -17,19 +17,19 @@ update_plicRDF = {
 
 update_gradAlpha = {
     'constant/transportProperties': {
-        'surfaceForces': {'curvatureModel': 'gradAlpha'}}}
+        'surfaceForces': {'surfaceTensionForceModel': 'gradAlpha'}}}
 
 update_RDF = {
     'constant/transportProperties': {
-        'surfaceForces': {'curvatureModel': 'RDF'}}}
+        'surfaceForces': {'surfaceTensionForceModel': 'RDF'}}}
 
 update_fitParaboloid = {
     'constant/transportProperties': {
-        'surfaceForces': {'curvatureModel': 'fitParaboloid'}}}
+        'surfaceForces': {'surfaceTensionForceModel': 'fitParaboloid'}}}
 
 update_heightFunction = {
     'constant/transportProperties': {
-        'surfaceForces': {'curvatureModel': 'heightFunction'}}}
+        'surfaceForces': {'surfaceTensionForceModel': 'heightFunction'}}}
 
 def changeBlockMesh(Nx):
     return {

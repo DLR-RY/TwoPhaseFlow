@@ -17,79 +17,71 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "curvatureModel.H"
+#include "constantCurvature.H"
+#include "addToRunTimeSelectionTable.H"
+
+#include "alphaContactAngleFvPatchScalarField.H"
+#include "mathematicalConstants.H"
+#include "surfaceInterpolate.H"
+#include "fvcDiv.H"
+#include "fvcGrad.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
 {
-    defineTypeNameAndDebug(curvatureModel, 0);
-    defineRunTimeSelectionTable(curvatureModel, components);
+    defineTypeNameAndDebug(constantCurvature, 0);
+    addToRunTimeSelectionTable(surfaceTensionForceModel,constantCurvature, components);
 }
+
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::curvatureModel::curvatureModel
+Foam::constantCurvature::constantCurvature
 (
-    const word& type,
     const dictionary& dict,
     const volScalarField& alpha1,
     const surfaceScalarField& phi,
     const volVectorField& U
 )
 :
-    alpha1_(alpha1),
-    phi_(phi),
-    U_(U),
-
-    nHatf_
+    surfaceTensionForceModel
     (
-        IOobject
-        (
-            "nHatf_",
-            alpha1_.time().timeName(),
-            alpha1_.mesh()
-        ),
-        alpha1_.mesh(),
-        dimensionedScalar("nHatf", dimArea, 0.0)
+        typeName,
+        dict,
+        alpha1,
+        phi,
+        U
     ),
-
-    K_
+    curv_
     (
-        IOobject
-        (
-            "K_",
-            alpha1_.time().timeName(),
-            alpha1_.mesh(),
-            IOobject::NO_READ,
-            IOobject::AUTO_WRITE
-        ),
-        alpha1_.mesh(),
-        dimensionedScalar("K", dimless/dimLength, 0.0),
-        "zeroGradient"
-    ),
-    Kf_
-    (
-        IOobject
-        (
-            "Kf_",
-            alpha1_.time().timeName(),
-            alpha1_.mesh()
-        ),
-        alpha1_.mesh(),
-        dimensionedScalar("Kf", dimless/dimLength, 0.0)
+        dict.get<scalar>("curv")
     )
-
 {
 
 }
 
+
 // * * * * * * * * * * * * * * Public Access Member Functions  * * * * * * * * * * * * * * //
 
-
-void Foam::curvatureModel::calculateK()
+void Foam::constantCurvature::correctContactAngle
+(
+    surfaceVectorField::Boundary& nHatb,
+    surfaceVectorField::Boundary& constantCurvaturef
+)
 {
-    notImplemented("bool Foam::curvatureModel::correctContactAngle(scalar t)");;
+
+}
+
+
+void Foam::constantCurvature::correct()
+{
+    deltaFunctionModel_->correct();
+
+    // Simple expression for curvature
+    K_ = dimensionedScalar("0",dimless/dimLength,curv_);
+
+    Kf_ = dimensionedScalar("0",dimless/dimLength,curv_);
 }
 
 

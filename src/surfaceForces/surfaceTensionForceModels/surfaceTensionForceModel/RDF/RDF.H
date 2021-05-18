@@ -16,29 +16,28 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::constantCurvature
+    Foam::RDF
 
 Description
-    defines a constant curvature to test if pressure velocity couplding is
-    well-balanced
+    reconstructs a signed distance function for the interface information and
+    use this function to compute the curvature
 
 SourceFiles
-    constantCurvature.C
+    RDF.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef constantCurvature_H
-#define constantCurvature_H
+#ifndef RDF_H
+#define RDF_H
 
 #include "typeInfo.H"
 #include "volFields.H"
 #include "dimensionedScalar.H"
 #include "autoPtr.H"
+#include "DynamicField.H"
 
-
-
-
-#include "curvatureModel.H"
+#include "surfaceTensionForceModel.H"
+#include "reconstructedDistanceFunction.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -46,53 +45,77 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                Class constantCurvature Declaration
+                Class RDF Declaration
 \*---------------------------------------------------------------------------*/
 
-class constantCurvature
-    : public curvatureModel
+class RDF
+    : public surfaceTensionForceModel
 {
 
 private:
 
+    //- Combine operator for Lists
+    template <class type> class appendOp
+    {
+      public:
+        void operator()(List<type>& x, const List<type>& y) const
+        {
+            if (y.size())
+            {
+                if (x.empty())
+                {
+                    x = y;
+                }
+                else
+                {
+                    x.append(y);
+                }
+            }
+        }
+    };
+
     //-
+        Switch curvFromTr_;
         //- Stabilisation for normalisation of the interface normal
         const dimensionedScalar deltaN_;
 
-        const scalar curv_;
+        DynamicField<vector> FaceCentreField_;
+        DynamicField<vector> FaceNormalField_;
+
+        // calculates the RDF function
+        reconstructedDistanceFunction& RDF_;
 
     // Private Member Functions
+        template <typename T>
+        void distributeField(const labelList& neiProcs,Field<T>& field);
+
+        scalar distanceToSurfacePlane(const point& p);
+
+        label closestDistToSurface(const point& p);
+
+        labelList getNeibourProcs(const boolList& nextToInterface);
 
         virtual void correctContactAngle
         (
-            surfaceVectorField::Boundary& nHat,
-            surfaceVectorField::Boundary& constantCurvaturef
+            surfaceVectorField::Boundary& nHatb,
+            surfaceVectorField::Boundary& gradAlphaf
         );
 
-
         //- Disallow copy construct
-        constantCurvature(const constantCurvature&);
+        RDF(const RDF&);
 
         //- Disallow default bitwise assignment
-        void operator=(const constantCurvature&);
-
-
-        protected:
-
-        //- Re-calculate the interface curvature
-        virtual void calculateK();
-
+        void operator=(const RDF&);
 
 public:
 
     //- Runtime type information
-    TypeName("constantCurvature");
-
+    TypeName("RDF");
 
     // Constructors
 
         //- Construct from components
-        constantCurvature
+        RDF
         (
             const dictionary& dict,
             const volScalarField& alpha1,
@@ -100,11 +123,11 @@ public:
             const volVectorField& U
         );
 
-
     //- Destructor
-    virtual ~constantCurvature()
+    virtual ~RDF()
     {}
 
+    virtual void correct();
 
 };
 

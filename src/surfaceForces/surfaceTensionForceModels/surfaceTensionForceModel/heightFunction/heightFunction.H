@@ -35,7 +35,7 @@ SourceFiles
 #include "dimensionedScalar.H"
 #include "autoPtr.H"
 
-#include "curvatureModel.H"
+#include "surfaceTensionForceModel.H"
 #include "HFStencil.H"
 #include "markInterfaceRegion.H"
 #include "twoDimFDStencil.H"
@@ -51,7 +51,7 @@ namespace Foam
 \*---------------------------------------------------------------------------*/
 
 class heightFunction
-    : public curvatureModel
+    : public surfaceTensionForceModel
 {
 
 private:
@@ -120,13 +120,6 @@ private:
         //- Disallow default bitwise assignment
         void operator=(const heightFunction&);
 
-
-        protected:
-
-        //- Re-calculate the interface curvature
-        virtual void calculateK();
-
-
 public:
 
     //- Runtime type information
@@ -147,6 +140,8 @@ public:
     //- Destructor
     virtual ~heightFunction()
     {}
+
+    virtual void correct();
 
 
 };

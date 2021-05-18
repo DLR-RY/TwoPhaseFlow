@@ -12,20 +12,20 @@ caseStructure = [['gradAlpha', 'RDF','heightFunction','fitParaboloid'],
 # dictionarys with data for the caseData dictionary
 update_gradAlpha = {
     'constant/transportProperties': {
-        'surfaceForces': {'curvatureModel': 'gradAlpha'}}}
+        'surfaceForces': {'surfaceTensionForceModel': 'gradAlpha'}}}
 
 update_RDF = {
     'constant/transportProperties': {
-        'surfaceForces': {'curvatureModel': 'RDF'}}}
+        'surfaceForces': {'surfaceTensionForceModel': 'RDF'}}}
 
 
 update_heightFunction = {
     'constant/transportProperties': {
-        'surfaceForces': {'curvatureModel': 'heightFunction'}}}
+        'surfaceForces': {'surfaceTensionForceModel': 'heightFunction'}}}
 
 update_fitParaboloid = {
     'constant/transportProperties': {
-        'surfaceForces': {'curvatureModel': 'fitParaboloid'}}}
+        'surfaceForces': {'surfaceTensionForceModel': 'fitParaboloid'}}}
 
 update_hex = dict() #{'system/blockMeshDict': {}} # do nothing
 
@@ -35,7 +35,7 @@ def changeBlockMesh(Nx):
     'system/blockMeshDict': {
             'blocks': ['hex',
                        [0, 1, 2, 3, 4, 5, 6, 7],
-                       '(%s 1 %s)' % (Nx, Nx), 
+                       '(%s 1 %s)' % (Nx, Nx),
                        'simpleGrading',
                        '(1 1 1)']}}
 

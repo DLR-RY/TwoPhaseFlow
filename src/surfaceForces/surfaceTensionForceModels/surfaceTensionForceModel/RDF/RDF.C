@@ -41,7 +41,7 @@ License
 namespace Foam
 {
     defineTypeNameAndDebug(RDF, 0);
-    addToRunTimeSelectionTable(curvatureModel,RDF, components);
+    addToRunTimeSelectionTable(surfaceTensionForceModel,RDF, components);
 }
 
 
@@ -55,7 +55,7 @@ Foam::RDF::RDF
     const volVectorField& U
 )
 :
-    curvatureModel
+    surfaceTensionForceModel
     (
         typeName,
         dict,
@@ -255,8 +255,9 @@ void Foam::RDF::correctContactAngle
 }
 
 
-void Foam::RDF::calculateK()
+void Foam::RDF::correct()
 {
+    deltaFunctionModel_->correct();
 
     const fvMesh& mesh = alpha1_.mesh();
     mesh.time().cpuTimeIncrement();

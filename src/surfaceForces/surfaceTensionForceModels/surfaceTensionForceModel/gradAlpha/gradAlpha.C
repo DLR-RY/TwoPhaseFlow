@@ -31,7 +31,7 @@ License
 namespace Foam
 {
     defineTypeNameAndDebug(gradAlpha, 0);
-    addToRunTimeSelectionTable(curvatureModel,gradAlpha, components);
+    addToRunTimeSelectionTable(surfaceTensionForceModel,gradAlpha, components);
 }
 
 
@@ -45,7 +45,7 @@ Foam::gradAlpha::gradAlpha
     const volVectorField& U
 )
 :
-    curvatureModel
+    surfaceTensionForceModel
     (
         typeName,
         dict,
@@ -127,8 +127,10 @@ void Foam::gradAlpha::correctContactAngle
 }
 
 
-void Foam::gradAlpha::calculateK()
+void Foam::gradAlpha::correct()
 {
+    deltaFunctionModel_->correct();
+
     const fvMesh& mesh = alpha1_.mesh();
     const surfaceVectorField& Sf = mesh.Sf();
 

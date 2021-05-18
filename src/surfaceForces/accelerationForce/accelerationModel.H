@@ -16,18 +16,19 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::curvatureModel
+    Foam::accelerationModel
 
 Description
+    abstract base class of the acceleration model
 
 SourceFiles
-    curvatureModel.C
-    newCurvatureModel.C
+    accelerationModel.C
+    newAccelerationModel.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef curvatureModel_H
-#define curvatureModel_H
+#ifndef accelerationModel_H
+#define accelerationModel_H
 
 #include "typeInfo.H"
 #include "runTimeSelectionTables.H"
@@ -40,124 +41,96 @@ SourceFiles
 #include "volFields.H"
 #include "surfaceFields.H"
 
-
-
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                Class curvatureModel Declaration
+                Class accelerationModel Declaration
 \*---------------------------------------------------------------------------*/
 
-class curvatureModel
+class accelerationModel
 {
-
 protected:
 
-        //- reference to volume fraction field
-        const volScalarField& alpha1_;
+        surfaceScalarField accf_; // ghf
+        volScalarField acc_; // gh
 
-        //- reference to face velocity
-        const surfaceScalarField& phi_;
-
-        //- reference to velcoity
-        const volVectorField& U_;
-
-        //- surface face normal on the face
-        surfaceScalarField nHatf_;
-
-        //- curvature field
-        volScalarField K_;
-
-        //- curvature field on faces
-        surfaceScalarField Kf_;
+        //- Re-calculate the interface curvature
+        virtual void calculateAcc();
 
 private:
 
     // Private Member Functions
 
         //- Disallow copy construct
-        curvatureModel(const curvatureModel&);
+        accelerationModel(const accelerationModel&);
 
         //- Disallow default bitwise assignment
-        void operator=(const curvatureModel&);
-
-protected:
-
-        //- Re-calculate the interface curvature
-        virtual void calculateK();
+        void operator=(const accelerationModel&);
 
 public:
 
     //- Runtime type information
-    TypeName("curvatureModel");
+    TypeName("accelerationModel");
+
 
     // Declare run-time constructor selection table
 
         declareRunTimeSelectionTable
         (
             autoPtr,
-            curvatureModel,
+            accelerationModel,
             components,
             (
                 const dictionary& dict,
-                const volScalarField& alpha1,
-                const surfaceScalarField& phi,
-                const volVectorField& U
+                const fvMesh& mesh
             ),
-            (dict,alpha1,phi,U)
+            (dict,mesh)
         );
 
     // Selectors
 
         //- Return a reference to the selected phaseChange model
-        static autoPtr<curvatureModel> New
+        static autoPtr<accelerationModel> New
         (
             const dictionary& dict,
-            const volScalarField& alpha1,
-            const surfaceScalarField& phi,
-            const volVectorField& U
+            const fvMesh& mesh
         );
 
     // Constructors
 
         //- Construct from components
-        curvatureModel
+        accelerationModel
         (
             const word& type,
             const dictionary& dict,
-            const volScalarField& alpha1,
-            const surfaceScalarField& phi,
-            const volVectorField& U
+            const fvMesh& mesh
         );
 
     //- Destructor
-    virtual ~curvatureModel()
+    virtual ~accelerationModel()
     {}
 
     // Member Functions
 
-        const volScalarField& K() const
+        const surfaceScalarField& accf() const
         {
-            return K_;
+            return accf_;
         }
 
-        const surfaceScalarField& Kf() const
+        const volScalarField& acc() const
         {
-            return Kf_;
-        }
-
-        const surfaceScalarField& nHatf() const
-        {
-            return nHatf_;
+            return acc_;
         }
 
         void correct()
         {
-            calculateK();
+            calculateAcc();
         }
+
+        virtual tmp<surfaceScalarField> accelerationForce() = 0;
 };
 
 

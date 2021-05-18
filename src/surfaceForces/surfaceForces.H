@@ -42,7 +42,7 @@ SourceFiles
 #include "surfaceFields.H"
 
 #include "surfaceTensionModel.H"
-#include "curvatureModel.H"
+#include "surfaceTensionForceModel.H"
 #include "deltaFunctionModel.H"
 #include "accelerationModel.H"
 
@@ -68,13 +68,11 @@ private:
 
         const fvMesh& mesh_;
 
-        autoPtr<surfaceTensionModel> surfTenModel_;
 
-        autoPtr<curvatureModel> curvModel_;
+        autoPtr<surfaceTensionForceModel> surfTenForceModel_;
 
         autoPtr<accelerationModel> accModel_;
 
-        autoPtr<deltaFunctionModel> deltaFunctionModel_;
 
     // Private Member Functions
 
@@ -117,22 +115,14 @@ public:
             const dimensionedScalar rho2
         );
 
-        //-
         dictionary& modelDict();
 
-        //-
         const dictionary& modelDict() const;
 
         void correct()
         {
-            curvModel_->correct();
+            surfTenForceModel_->correct();
             accModel_->correct();
-            deltaFunctionModel_->correct();
-        }
-
-        const surfaceScalarField& Kf() const
-        {
-            return curvModel_->Kf();
         }
 
         const volScalarField& acc() const
@@ -147,22 +137,17 @@ public:
 
         tmp<volScalarField> sigma() const
         {
-            return surfTenModel_->sigma();
+            return surfTenForceModel_->sigma();
         }
 
         const surfaceScalarField& nHatf() const
         {
-            return curvModel_->nHatf();
-        }
-
-        tmp<volScalarField> sigmaK() const
-        {
-            return surfTenModel_->sigma()*curvModel_->K();
+            return surfTenForceModel_->nHatf();
         }
 
         tmp<surfaceScalarField> surfaceTensionForce();
 
-        tmp<surfaceScalarField> accelerationForce(const volScalarField& rho);
+        tmp<surfaceScalarField> accelerationForce();
 
 
 };

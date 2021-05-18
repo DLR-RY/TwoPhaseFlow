@@ -37,7 +37,7 @@ sigma           sigma [ 1 0 -2 0 0 0 0 ] 1;
 surfaceForces
 {
   sigma 1;
-  curvatureModel constantCurvature; //RDF RDFleastSquare fitParaboloid gradAlpha heightFunction
+  surfaceTensionForceModel constantCurvature; //RDF RDFleastSquare fitParaboloid gradAlpha heightFunction
   curv 10;
   accelerationModel gravity;
   deltaFunctionModel alphaCSF;

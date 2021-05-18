@@ -36,16 +36,11 @@ Foam::surfaceForces::surfaceForces
     surfaceForcesCoeffs_(dict.subDict("surfaceForces")),
     alpha1_(alpha1),
     mesh_(alpha1.mesh()),
-    surfTenModel_(nullptr),
-    curvModel_(nullptr),
-    deltaFunctionModel_(nullptr)
-
+    surfTenForceModel_(nullptr),
+    accModel_(nullptr)
 {
-    surfTenModel_ = surfaceTensionModel::New(surfaceForcesCoeffs_,alpha1.mesh());
-    curvModel_ = curvatureModel::New(surfaceForcesCoeffs_,alpha1,phi,U);
+    surfTenForceModel_ = surfaceTensionForceModel::New(surfaceForcesCoeffs_,alpha1,phi,U);
     accModel_ = accelerationModel::New(surfaceForcesCoeffs_,alpha1.mesh());
-    deltaFunctionModel_ = deltaFunctionModel::New(surfaceForcesCoeffs_,alpha1);
-
 }
 
 
@@ -54,15 +49,12 @@ Foam::surfaceForces::surfaceForces
 
 Foam::tmp<Foam::surfaceScalarField> Foam::surfaceForces::surfaceTensionForce()
 {
-    return fvc::interpolate(sigma())*Kf()*deltaFunctionModel_->deltaFunction();
+    return surfTenForceModel_->surfaceTensionForce();
 }
 
-Foam::tmp<Foam::surfaceScalarField> Foam::surfaceForces::accelerationForce
-(
-     const volScalarField& rho
-)
+Foam::tmp<Foam::surfaceScalarField> Foam::surfaceForces::accelerationForce()
 {
-    return -accModel_->accf()*deltaFunctionModel_->deltaFunction(rho);
+    return accModel_->accelerationForce();
 }
 
 Foam::scalar Foam::surfaceForces::capillaryDt
@@ -76,12 +68,11 @@ Foam::scalar Foam::surfaceForces::capillaryDt
         interface*fvc::average(mag(mesh_.delta()))
         + neg0(interface-0.5)*dimensionedScalar("0",dimLength,GREAT);
 
-
     dimensionedScalar smallSigma("smallSigma",dimensionSet(1,0,-2, 0, 0),SMALL);
 
     dimensionedScalar dt =
         gMin(sqrt((rho1 +rho2)*pow(deltaX.internalField(),3) /
-        (2*constant::mathematical::pi*(surfTenModel_->sigma()().internalField()+smallSigma))));
+        (2*constant::mathematical::pi*(sigma()().internalField()+smallSigma))));
 
     return dt.value();
 }
@@ -100,7 +91,7 @@ Foam::scalar Foam::surfaceForces::capillaryDt
 
     dimensionedScalar dt =
         min(sqrt((rho1 +rho2)*pow(deltaX,3) /
-        (2*constant::mathematical::pi*(surfTenModel_->sigma()+smallSigma))));
+        (2*constant::mathematical::pi*(sigma()+smallSigma))));
 
     reduce(dt.value(),minOp<scalar>());
     return dt.value();

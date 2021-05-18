@@ -38,7 +38,7 @@ air
 surfaceForces
 {
   sigma 0.0;
-  curvatureModel gradAlpha;
+  surfaceTensionForceModel gradAlpha;
   accelerationModel gravity;
   deltaFunctionModel alphaCSF;
 }

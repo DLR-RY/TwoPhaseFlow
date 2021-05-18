@@ -1,19 +1,19 @@
 surfaceForces.C
 
-curvature/curvatureModel.C
-curvature/newCurvatureModel.C
-curvature/RDF/RDF.C
-curvature/gradAlpha/gradAlpha.C
-curvature/fitParaboloid/fitParaboloid.C
-curvature/heightFunction/heightFuncStencil/HFStencil.C
-curvature/heightFunction/twoDimFDStencil/twoDimFDStencil.C
-curvature/heightFunction/heightFunction.C
-curvature/constantCurvature/constantCurvature.C
+surfaceTensionForceModels/surfaceTensionForceModel/surfaceTensionForceModel.C
+surfaceTensionForceModels/surfaceTensionForceModel/surfaceTensionForceModels.C
+surfaceTensionForceModels/surfaceTensionForceModel/RDF/RDF.C
+surfaceTensionForceModels/surfaceTensionForceModel/gradAlpha/gradAlpha.C
+surfaceTensionForceModels/surfaceTensionForceModel/fitParaboloid/fitParaboloid.C
+surfaceTensionForceModels/surfaceTensionForceModel/heightFunction/heightFuncStencil/HFStencil.C
+surfaceTensionForceModels/surfaceTensionForceModel/heightFunction/twoDimFDStencil/twoDimFDStencil.C
+surfaceTensionForceModels/surfaceTensionForceModel/heightFunction/heightFunction.C
+surfaceTensionForceModels/surfaceTensionForceModel/constantCurvature/constantCurvature.C
 
 
-acceleration/accelerationModel.C
-acceleration/newAccelerationModel.C
-acceleration/gravity/gravity.C
+accelerationForce/accelerationModel.C
+accelerationForce/accelerationModels.C
+accelerationForce/gravity/gravity.C
 
 deltaFunctions/deltaFunctionModel.C
 deltaFunctions/newDeltaFunctionModel.C
