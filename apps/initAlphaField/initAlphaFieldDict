@@ -15,15 +15,15 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-field "alpha.water";
+field "alpha.phase1";
 
-function composedFunction;
+type composedFunction;
 mode add;
-composedFunctions
+composedFunction
 {
     plane
     {
-        function plane;
+        type plane;
         origin (0 1. 0);
         normal (0 1 0);
 
@@ -31,7 +31,7 @@ composedFunctions
 
     sphere
     {
-        function sphere;
+        type sphere;
         radius 0.4;
         origin (0.5 0.8 0.5);
         scale 1;
@@ -39,7 +39,7 @@ composedFunctions
 
     sphere2
     {
-        function sphere;
+        type sphere;
         radius 0.4;
         origin (0.5 0.5 0.5);
     }

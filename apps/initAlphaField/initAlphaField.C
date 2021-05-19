@@ -222,7 +222,7 @@ int main(int argc, char *argv[])
 
     Foam::autoPtr<Foam::implicitFunction> func = implicitFunction::New
     (
-           initAlphaFieldDict.get<word>("function"),
+           initAlphaFieldDict.get<word>("type"),
            initAlphaFieldDict
     );
 
