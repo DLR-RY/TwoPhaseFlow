@@ -387,8 +387,6 @@ void Foam::reconstruction::plicRDF::centreAndNormalBC()
                         projN /= mag(projN) + SMALL;
 
                         vector nTheta = sin(theta[i])*nf[i] - cos(theta[i])*projN;
-
-                        scalar proJDist = mag((boundary[patchi].Cf()[i] - centre_[celli]) & nf[i]);
                         vector nHat =  cos(theta[i])*nf[i] + sin(theta[i])*projN;
 
                         cbf[patchi][i] = centre_[celli] + 2*nTheta/boundary[patchi].deltaCoeffs()[i]; // should point outside of the domain

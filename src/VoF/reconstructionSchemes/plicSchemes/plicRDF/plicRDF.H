@@ -81,9 +81,9 @@ class plicRDF
         //-  residuals storage
         struct normalRes
         {
-            label celli;
-            scalar normalResidual;
-            scalar avgAngle;
+            label celli = {};
+            scalar normalResidual = {};
+            scalar avgAngle = {};
         };
 
         //- Reference to mesh
