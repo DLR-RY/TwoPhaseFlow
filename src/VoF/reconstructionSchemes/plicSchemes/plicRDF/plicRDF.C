@@ -256,6 +256,9 @@ void Foam::reconstruction::plicRDF::calcResidual
         const label celli = interfaceLabels_[i];
         if (mag(normal_[celli]) == 0 || mag(interfaceNormal_[i]) == 0)
         {
+            normalResidual[i].celli = celli;
+            normalResidual[i].normalResidual = 0;
+            normalResidual[i].avgAngle = 0;
             continue;
         }
 
