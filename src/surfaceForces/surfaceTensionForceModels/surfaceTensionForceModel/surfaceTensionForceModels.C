@@ -37,7 +37,7 @@ Foam::surfaceTensionForceModel::New
         dict.getCompat<word>
         (
             "surfaceTensionForceModel",
-            {{"surfaceTensionForceModel", 1.1}}
+            {{"curvatureModel", 1.1}}
         )
     );
 
