@@ -37,47 +37,49 @@ Author
 
 #include "fvCFD.H"
 //#include "isoAdvection.H"
+#include "dynamicFvMesh.H"
 #include "advectionSchemes.H"
 #include "immiscibleIncompressibleTwoPhaseMixture.H"
+#include "markInterfaceRegion.H"
+#include "setFlow.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 int main(int argc, char *argv[])
 {
-    #include "setRootCase.H"
+    Foam::argList::addBoolOption
+    (
+        "overwrite",
+        "Update and overwrite the existing mesh useful for adaptive mesh refinement"
+    );
+
+    #include "addCheckCaseOptions.H"
+    #include "setRootCaseLists.H"
     #include "createTime.H"
-    #include "createMesh.H"
+    #include "createDynamicFvMesh.H"
+    #include "initContinuityErrs.H"
     #include "createControl.H"
     #include "createTimeControls.H"
+    // #include "createDyMControls.H"
 
     #include "createFields.H"
     #include "readTimeControls.H"
+    #include "createUfIfPresent.H"
     #include "CourantNo.H"
     #include "alphaCourantNo.H"
     #include "setDeltaT.H"
+
+    const bool overwrite = args.found("overwrite");
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
     Info<< "\nStarting time loop\n" << endl;
     scalar executionTime = runTime.elapsedCpuTime();
 
-    fileName outputFile(runTime.path()/"error.dat");
-    OFstream os(outputFile);
-
-    IOdictionary isoSurfDict
-    (
-        IOobject
-        (
-            "setAlphaFieldDict",
-            mesh.time().system(),
-            mesh,
-            IOobject::MUST_READ,
-            IOobject::NO_WRITE
-        )
-    );
-
-    Info << "reverseTime " << reverseTime << endl;
-    Info << "period " << period << endl;
+    if (flow)
+    {
+        flow->execute();
+    }
 
     while (runTime.run())
     {
@@ -86,37 +88,64 @@ int main(int argc, char *argv[])
         #include "alphaCourantNo.H"
         #include "setDeltaT.H"
 
-        //Setting velocity field and face fluxes for next time step
-        scalar t = runTime.time().value();
-        scalar dt = runTime.deltaT().value();
-        if ( reverseTime > 0.0 && t >= reverseTime )
+        if (!flow)
         {
-            Info<< "Reversing flow" << endl;
-            phi = -phi;
-            phi0 = -phi0;
-            U = -U;
-            U0 = -U0;
-            reverseTime = -1.0;
-        }
-        if ( period > 0.0 )
-        {
-            phi = phi0*Foam::cos(2.0*M_PI*(t + 0.5*dt)/period);
-            U = U0*Foam::cos(2.0*M_PI*(t + 0.5*dt)/period);
-        }
-        if(spirallingFlow > 0)
-        {
-            U = U0*Foam::cos(constant::mathematical::pi*(t+ 0.5*dt)/spirallingFlow);
-            phi = phi0*Foam::cos(constant::mathematical::pi*(t+ 0.5*dt)/spirallingFlow);
+            scalar t = runTime.time().value();
+            scalar dt = runTime.deltaT().value();
+            if ( reverseTime > 0.0 && t >= reverseTime )
+            {
+                Info<< "Reversing flow" << endl;
+                phi = -phi;
+                phi0 = -phi0;
+                U = -U;
+                U0 = -U0;
+                reverseTime = -1.0;
+            }
+            if ( period > 0.0 )
+            {
+                phi = phi0*Foam::cos(2.0*M_PI*(t + 0.5*dt)/period);
+                U = U0*Foam::cos(2.0*M_PI*(t + 0.5*dt)/period);
+            }
+            if(spirallingFlow > 0)
+            {
+                U = U0*Foam::cos(constant::mathematical::pi*(t+ 0.5*dt)/spirallingFlow);
+                phi = phi0*Foam::cos(constant::mathematical::pi*(t+ 0.5*dt)/spirallingFlow);
+            }
         }
 
         runTime++;
 
+        if (overwrite)
+        {
+            runTime.setTime(runTime.value() - runTime.deltaTValue(), 1);
+            runTime.writeAndEnd();
+        }
+
         Info<< "Time = " << runTime.timeName() << nl << endl;
 
+        if (mesh.dynamic())
+        {
+            // advector->surf().reconstruct();
+            mesh.update();
+            alpha1.correctBoundaryConditions();
+        }
+
+        if (overwrite)
+        {
+            runTime.write();
+            continue;
+        }
+
+        if (flow)
+        {
+            runTime.setTime(runTime.value() - 0.5*runTime.deltaTValue(), runTime.timeIndex());
+            flow->execute();
+            runTime.setTime(runTime.value() + 0.5*runTime.deltaTValue(), runTime.timeIndex());
+        }
+
         //Advance alpha1 from time t to t+dt
-        // #include "alphaSuSp.H"
-        // advector->advect(Sp,(Su + divU*min(alpha1(), scalar(1)))());
-        advector->advect();
+        #include "alphaSuSp.H"
+        advector->advect(Sp,(Su + divU*min(alpha1(), scalar(1)))());
 
         //Write total VOF and discrepancy from original VOF to log
         label lMin = -1, lMax = -1;
@@ -145,16 +174,6 @@ int main(int argc, char *argv[])
              << ",\t min(alpha1) = " << aMin << " at cell " << lMin << endl;
 
         runTime.write();
-
-        //Clip and snap alpha1 to ensure strict boundedness to machine precision
-      /*  if ( clipAlphaTol > 0.0 )
-        {
-            alpha1 = alpha1*pos(alpha1-clipAlphaTol)*neg(alpha1-(1.0-clipAlphaTol)) + pos(alpha1-(1.0-clipAlphaTol));
-        }
-        if ( snapAlpha )
-        {
-            alpha1 = min(1.0,max(0.0,alpha1));
-        }*/
 
         scalar newExecutionTime = runTime.elapsedCpuTime();
         Info<< "ExecutionTime = " << newExecutionTime << " s"

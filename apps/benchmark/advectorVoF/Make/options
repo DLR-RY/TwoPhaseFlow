@@ -1,8 +1,10 @@
 EXE_INC = \
     -I../../../src/VoF/lnInclude \
+    -I$(LIB_SRC)/dynamicFvMesh/lnInclude \
     -I$(LIB_SRC)/finiteVolume/lnInclude \
     -I$(LIB_SRC)/meshTools/lnInclude \
     -I$(LIB_SRC)/sampling/lnInclude \
+    -I$(LIB_SRC)/functionObjects/field/lnInclude \
     -I$(LIB_SRC)/transportModels/twoPhaseMixture/lnInclude \
     -I$(LIB_SRC)/transportModels \
     -I$(LIB_SRC)/transportModels/incompressible/lnInclude \
@@ -14,9 +16,11 @@ EXE_INC = \
 EXE_LIBS = \
     -L$(FOAM_USER_LIBBIN) \
     -lfiniteVolume \
+    -ldynamicFvMesh \
     -lmeshTools \
     -lsampling \
     -lVoF \
     -limmiscibleIncompressibleTwoPhaseMixture \
     -lturbulenceModels \
-    -lincompressibleTurbulenceModels
+    -lincompressibleTurbulenceModels \
+    -lfieldFunctionObjects
