@@ -52,7 +52,7 @@
         + fvm::div(rhoCpVPhi,TV)
 	    - fvm::Sp(fvc::ddt(rhoCpV) + fvc::div(rhoCpVPhi), TV)
         - fvm::laplacian(kappaVEff,TV)
-        - dpdt
+        - dpdt*alpha2
         + phaseChange.TSource2()
             ==
         fvOptions(rhoCpV, TV)
