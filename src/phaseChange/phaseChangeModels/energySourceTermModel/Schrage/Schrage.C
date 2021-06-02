@@ -62,7 +62,7 @@ Foam::Schrage::Schrage
         surf,
         dict
     ),
-    evapCoeff_(dict.lookupOrDefault<scalar>("sigma",1)),
+    evapCoeff_(modelDict().lookupOrDefault<scalar>("sigma",1)),
     R_("R",dimGasConstant,0)
 {
     if (phase2_.thermo().incompressible())
@@ -189,7 +189,15 @@ Foam::tmp<Foam::volScalarField> Foam::Schrage::energyFlux1()
         *rho2/pow(TSat,1.5)
     );
 
-    tmp<volScalarField> energyFlux1(TSource*(T1-TSat));
+    volScalarField interface = phase2_*0;
+    interface.boundaryFieldRef() = Zero;
+
+    for (const label celli: surf_.interfaceLabels())
+    {
+        interface[celli] = 1;
+    }
+
+    tmp<volScalarField> energyFlux1(TSource*(T1-TSat)*interface);
 
     return energyFlux1;
 
@@ -205,7 +213,6 @@ Foam::tmp<Foam::volScalarField> Foam::Schrage::energyFlux2()
         psi2 = 1/(R_*phase2_.thermo().T());
     }
     const volScalarField& rho2 = phase2_.thermo().rho();
-    const volScalarField& T1 = phase1_.thermo().T();
     const volScalarField& T2 = phase2_.thermo().T();
 
     volScalarField TSource
@@ -215,7 +222,15 @@ Foam::tmp<Foam::volScalarField> Foam::Schrage::energyFlux2()
         *rho2/pow(TSat,1.5)
     );
 
-    tmp<volScalarField> energyFlux2(TSource*(T2-TSat));
+    volScalarField interface = phase2_*0;
+    interface.boundaryFieldRef() = Zero;
+
+    for (const label celli: surf_.interfaceLabels())
+    {
+        interface[celli] = 1;
+    }
+
+    tmp<volScalarField> energyFlux2(TSource*(T2-TSat)*interface);
 
     return energyFlux2;
 
