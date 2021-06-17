@@ -17,60 +17,53 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "energySourceTermModel.H"
-#include "zeroGradientFvPatchFields.H"
+#include "macroModel.H"
 
-// * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-namespace Foam
-{
-    defineTypeNameAndDebug(energySourceTermModel, 0);
-    defineRunTimeSelectionTable(energySourceTermModel, components);
-}
-
-// * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
-
-Foam::energySourceTermModel::energySourceTermModel
+Foam::autoPtr<Foam::macroModel>
+Foam::macroModel::New
 (
-    const word& type,
+    word macroModelTypeName,
     const phaseModel& phase1,
     const phaseModel& phase2,
-    const compressibleInterPhaseTransportModel& turbModel,
     const volScalarField& p,
     singleComponentSatProp& satModel,
-    reconstructionSchemes& surf,
+    const compressibleInterPhaseTransportModel& turbModel,
     const dictionary& dict
 )
-:
-    dictionary(dict),
-    energySourceTermModelCoeffs_(optionalSubDict(type + "Coeffs")),
-    phase1_(phase1),
-    phase2_(phase2),
-    turbModel_(turbModel),
-    p_(p),
-    satModel_(satModel),
-    surf_(surf)
 {
 
+    Info<< "Selecting macroModel model "
+        << macroModelTypeName << endl;
+
+    componentsConstructorTable::iterator cstrIter =
+        componentsConstructorTablePtr_
+            ->find(macroModelTypeName);
+
+    if (cstrIter == componentsConstructorTablePtr_->end())
+    {
+        FatalErrorIn
+        (
+            "macroModel::New"
+        )   << "Unknown macroModel type "
+            << macroModelTypeName << endl << endl
+            << "Valid  macroModels are : " << endl
+            << componentsConstructorTablePtr_->sortedToc()
+            << exit(FatalError);
+    }
+
+    return
+    autoPtr<macroModel>(cstrIter()
+    (
+        phase1,
+        phase2,
+        p,
+        satModel,
+        turbModel,
+        dict
+    ));
 }
-
-// * * * * * * * * * * * * * * Public Access Member Functions  * * * * * * * //
-
-
-const Foam::dictionary&
-Foam::energySourceTermModel::modelDict() const
-{
-    return energySourceTermModelCoeffs_;
-}
-
-Foam::dictionary&
-Foam::energySourceTermModel::modelDict()
-{
-    return energySourceTermModelCoeffs_;
-}
-
-// * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * * //
-
 
 
 // ************************************************************************* //

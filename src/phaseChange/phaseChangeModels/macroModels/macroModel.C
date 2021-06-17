@@ -17,39 +17,37 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "energySourceTermModel.H"
+#include "macroModel.H"
 #include "zeroGradientFvPatchFields.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
 {
-    defineTypeNameAndDebug(energySourceTermModel, 0);
-    defineRunTimeSelectionTable(energySourceTermModel, components);
+    defineTypeNameAndDebug(macroModel, 0);
+    defineRunTimeSelectionTable(macroModel, components);
 }
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::energySourceTermModel::energySourceTermModel
+Foam::macroModel::macroModel
 (
     const word& type,
     const phaseModel& phase1,
     const phaseModel& phase2,
-    const compressibleInterPhaseTransportModel& turbModel,
     const volScalarField& p,
     singleComponentSatProp& satModel,
-    reconstructionSchemes& surf,
+    const compressibleInterPhaseTransportModel& turbModel,
     const dictionary& dict
 )
 :
     dictionary(dict),
-    energySourceTermModelCoeffs_(optionalSubDict(type + "Coeffs")),
+    macroModelCoeffs_(optionalSubDict(type + "Coeffs")),
     phase1_(phase1),
     phase2_(phase2),
-    turbModel_(turbModel),
     p_(p),
     satModel_(satModel),
-    surf_(surf)
+    turbModel_(turbModel)
 {
 
 }
@@ -58,15 +56,15 @@ Foam::energySourceTermModel::energySourceTermModel
 
 
 const Foam::dictionary&
-Foam::energySourceTermModel::modelDict() const
+Foam::macroModel::modelDict() const
 {
-    return energySourceTermModelCoeffs_;
+    return macroModelCoeffs_;
 }
 
 Foam::dictionary&
-Foam::energySourceTermModel::modelDict()
+Foam::macroModel::modelDict()
 {
-    return energySourceTermModelCoeffs_;
+    return macroModelCoeffs_;
 }
 
 // * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * * //

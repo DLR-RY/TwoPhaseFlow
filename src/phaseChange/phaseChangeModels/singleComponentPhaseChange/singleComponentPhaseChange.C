@@ -28,115 +28,8 @@ License
 #include "singleComponentPhaseChange.H"
 
 
-
-#include "centredCPCCellToCellStencilObject.H"
-
-
-
-// * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
-
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-//- Construct from phaseModels
-Foam::singleComponentPhaseChange::singleComponentPhaseChange
-(
-    const phaseModel& phase1,
-    const phaseModel& phase2,
-    const volScalarField& p,
-    const compressibleInterPhaseTransportModel& turbModel,
-    reconstructionSchemes &surf
-)
-:
-    IOdictionary
-    (
-        IOobject
-        (
-            "singleComponentPhaseChange",
-            p.time().constant(),
-            p.db(),
-            IOobject::NO_READ,
-            IOobject::NO_WRITE
-        )
-    ),
-    mesh_(phase1.mesh()),
-    energyModel_(nullptr),
-    massModel_(nullptr),
-    satProp_(nullptr),
-    phase1_(phase1),
-    phase2_(phase2),
-    p_(p),
-    turbModel_(turbModel),
-    surf_(surf),
-    psi0_
-    (
-        IOobject
-        (
-            "psi0",
-            mesh_.time().timeName(),
-            mesh_,
-            IOobject::NO_READ,
-            IOobject::AUTO_WRITE
-        ),
-        mesh_,
-        dimensionedScalar("0", dimDensity/dimTime, 0),
-        "zeroGradient"
-    ),
-    massSource_
-    (
-        IOobject
-        (
-        "massSource_",
-        mesh_.time().timeName(),
-        mesh_,
-        IOobject::NO_READ,
-        IOobject::AUTO_WRITE
-    ),
-        mesh_,
-        dimensionedScalar("0", dimDensity/dimTime, 0),
-        "zeroGradient"
-    ),
-    alphaSource_
-    (
-        IOobject
-        (
-        "alphaSource_",
-        mesh_.time().timeName(),
-        mesh_,
-        IOobject::NO_READ,
-        IOobject::AUTO_WRITE
-    ),
-        mesh_,
-        dimensionedScalar("0", dimless/dimTime, 0),
-        "zeroGradient"
-    )
-{
-    IOdictionary phaseChangeProperties
-    (
-        IOobject
-        (
-            "phaseChangeProperties",
-            mesh_.time().constant(),
-            mesh_,
-            IOobject::MUST_READ_IF_MODIFIED,
-            IOobject::NO_WRITE
-        )
-    );
-
-    dictionary satPropertiesDict = phaseChangeProperties.subDict("satProperties");
-    Info << "creating models" << endl;
-
-    Info << "creating singleComponentSatProp Model" << endl;
-    satProp_ =  singleComponentSatProp::New(mesh_,satPropertiesDict);
-
-    Info << "creating Energy Source Term Model" << endl;
-    energyModel_ =  energySourceTermModel::New(phase1_,phase2_,turbModel_,p_,satProp_.ref(),surf_,phaseChangeProperties);
-
-    Info << "creating Mass Source Term Model" << endl;
-    massModel_ =  massSourceTermModel::New(phase1_,phase2_,p_,satProp_.ref(),surf_,phaseChangeProperties);
-
-}
-
-// - construct from twoPhaseModelThermo
 Foam::singleComponentPhaseChange::singleComponentPhaseChange
 (
     const twoPhaseModelThermo& mixture,
@@ -159,6 +52,7 @@ Foam::singleComponentPhaseChange::singleComponentPhaseChange
     // General data
     mesh_(mixture.phase1().mesh()),
     energyModel_(nullptr),
+    macroModels_(),
     massModel_(nullptr),
     satProp_(nullptr),
     phase1_(mixture.phase1()),
@@ -222,19 +116,77 @@ Foam::singleComponentPhaseChange::singleComponentPhaseChange
         )
     );
 
-    limitHeatFlux_ = phaseChangeProperties.lookupOrDefault<bool>("limitHeatFlux",true);
-
-    dictionary satPropertiesDict = phaseChangeProperties.subDict("satProperties");
+    dictionary satPropertiesDict =
+        phaseChangeProperties.subDict("satProperties");
     Info << "creating models" << endl;
 
     Info << "creating singleComponentSatProp Model" << endl;
     satProp_ =  singleComponentSatProp::New(mesh_,satPropertiesDict);
 
     Info << "creating Energy Source Term Model" << endl;
-    energyModel_ =  energySourceTermModel::New(phase1_,phase2_,turbModel_,p_,satProp_.ref(),surf_,phaseChangeProperties);
+    energyModel_ =  energySourceTermModel::New
+    (
+        phase1_,
+        phase2_,
+        turbModel_,
+        p_,
+        satProp_.ref(),
+        surf_,
+        phaseChangeProperties
+    );
+
+    const dictionary marcoModelDict =
+        phaseChangeProperties.subOrEmptyDict("marcoModels");
+
+    label modeli = 0;
+    macroModels_.setSize
+    (
+        marcoModelDict.size()
+    );
+
+    forAllConstIters(marcoModelDict, iter)
+    {
+        const word& key = iter().keyword();
+
+        if (!marcoModelDict.isDict(key))
+        {
+            FatalErrorInFunction
+                << "Found non-dictionary entry " << iter()
+                << " in top-level dictionary " << marcoModelDict
+                << exit(FatalError);
+        }
+
+        const dictionary& compmarcoModel = marcoModelDict.subDict(key);
+
+        macroModels_.set
+        (
+            modeli,
+            macroModel::New
+            (
+                word(compmarcoModel.lookup("type")),
+                phase1_,
+                phase2_,
+                p_,
+                satProp_.ref(),
+                turbModel_,
+                compmarcoModel
+            )
+        );
+
+        ++modeli;
+    }
 
     Info << "creating Mass Source Term Model" << endl;
-    massModel_ =  massSourceTermModel::New(phase1_,phase2_,p_,satProp_.ref(),surf_,phaseChangeProperties);
+    massModel_ =  massSourceTermModel::New
+    (
+        phase1_,
+        phase2_,
+        p_,
+        satProp_.ref(),
+        surf_,
+        phaseChangeProperties
+    );
+
 }
 
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
@@ -249,8 +201,18 @@ void Foam::singleComponentPhaseChange::correct()
 {
     surf_.reconstruct(false);
 
-    psi0_.ref() = energyModel_->energySource()().internalField() /
+    tmp<volScalarField> tphaseChangeEnergy = energyModel_->energySource();
+    volScalarField& phaseChangeEnergy = tphaseChangeEnergy.ref();
+
+    for (auto& mModel: macroModels_)
+    {
+        mModel.energySource(phaseChangeEnergy);
+    }
+
+    psi0_.ref() = phaseChangeEnergy.internalField() /
                   satProp_->L().internalField();
+
+
 
     const volScalarField& rho1 = phase1_.thermo().rho();
     if(limitHeatFlux_)
@@ -267,7 +229,17 @@ void Foam::singleComponentPhaseChange::correct()
 
     massSource_ = massModel_->massSource(psi0_);
 
+    for (auto& mModel: macroModels_)
+    {
+        mModel.massSource(massSource_);
+    }
+
     alphaSource_ = massModel_->alphaSource(psi0_);
+
+    for (auto& mModel: macroModels_)
+    {
+        mModel.alphaSource(alphaSource_);
+    }
 
 
 }

@@ -33,16 +33,14 @@ SourceFiles
 #define directEvaporation_H
 
 #include "typeInfo.H"
-#include "energySourceTermModel.H"
+#include "macroModel.H"
 #include "volFields.H"
 #include "dimensionedScalar.H"
 #include "autoPtr.H"
 
 #include "fvScalarMatrix.H"
 #include "fvm.H"
-#include "reconstructionSchemes.H"
 
-#include "implicitInterfaceDiffFlux.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -54,13 +52,13 @@ namespace Foam
 \*---------------------------------------------------------------------------*/
 
 class directEvaporation
-    : public energySourceTermModel
+    : public macroModel
 {
 private:
 
-    implicitInterfaceDiffFlux impDiffFlux_;
-
     scalar superheated_;
+
+    volScalarField boilingHeatFlow_;
 
     // Private Member Functions
 
@@ -82,10 +80,9 @@ public:
         (
             const phaseModel& phase1,
             const phaseModel& phase2,
-            const compressibleInterPhaseTransportModel& turbModel,
             const volScalarField& p,
             singleComponentSatProp& satModel,
-            reconstructionSchemes& surf,
+            const compressibleInterPhaseTransportModel& turbModel,
             const dictionary& dict
         );
 
@@ -94,15 +91,19 @@ public:
     virtual ~directEvaporation()
     {}
 
-    virtual tmp<fvScalarMatrix> TSource1();
+    virtual void TSource1(fvScalarMatrix& T1Eqn);
 
-    virtual tmp<fvScalarMatrix> TSource2();
+    virtual void TSource2(fvScalarMatrix& T2Eqn);
 
-    virtual tmp<volScalarField> energySource();
+    virtual void energySource(volScalarField& Q);
 
-    virtual tmp<volScalarField> energyFlux1();
+    virtual void energySource1(volScalarField& q1);
 
-    virtual tmp<volScalarField> energyFlux2();
+    virtual void energySource2(volScalarField& q2);
+
+    virtual void massSource(volScalarField& rhoSource);
+
+    virtual void alphaSource(volScalarField& rhoSource);
 
 };
 
