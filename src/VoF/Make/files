@@ -50,6 +50,6 @@ advectionSchemes/newAdvectionSchemes.C
 advectionSchemes/advectionSchemes.C
 advectionSchemes/isoAdvection/isoAdvection.C
 advectionSchemes/geoAdvection/geoAdvection.C
-advectionSchemes/MULES/MULESScheme.C
+/*advectionSchemes/MULES/MULESScheme.C*/
 
 LIB = $(FOAM_USER_LIBBIN)/libVoF

@@ -26,7 +26,7 @@ Class
 
 Description
     A dynamic alphaContactAngle scalar boundary condition
-    (alphaContactAngleFvPatchScalarField)
+    (alphaContactAngleTwoPhaseFvPatchScalarField)
 
 SourceFiles
     dynamicAlphaContactAngleJiangFvPatchScalarField.C
@@ -34,14 +34,14 @@ SourceFiles
 
 Dynamics of Spreading of Liquid on Solid Surface* nach dem paper Eq15
 
-thetaD^3 −θ0^3 = cT Ca ct numerical 
+thetaD^3 −θ0^3 = cT Ca ct numerical
 
 \*---------------------------------------------------------------------------*/
 
 #ifndef dynamicAlphaContactAngleJiangFvPatchScalarField_H
 #define dynamicAlphaContactAngleJiangFvPatchScalarField_H
 
-#include "alphaContactAngleFvPatchScalarField.H"
+#include "alphaContactAngleTwoPhaseFvPatchScalarField.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -54,7 +54,7 @@ namespace Foam
 
 class dynamicAlphaContactAngleJiangFvPatchScalarField
 :
-    public alphaContactAngleFvPatchScalarField
+    public alphaContactAngleTwoPhaseFvPatchScalarField
 {
     // Private data
 

@@ -278,7 +278,7 @@ void Foam::advection::MULESScheme::advect()
         if (alphaApplyPrevCorr_)
         {
             Info<< "Applying the previous iteration compression flux" << endl;
-            MULES::correct(alpha1_, alphaPhi_, talphaPhiCorr0_, 1, 0);
+            MULES::correct(alpha1_, alphaPhi_, talphaPhiCorr0_, oneField(), zeroField());
 
             alphaPhi_ += talphaPhiCorr0_;
         }
@@ -342,7 +342,7 @@ void Foam::advection::MULESScheme::advect()
         {
             alphaPhi_ = talphaPhiUn;
 
-            MULES::explicitSolve(alpha1_, phiCN, alphaPhi_, 1, 0);
+            MULES::explicitSolve(alpha1_, phiCN, alphaPhi_, oneField(), zeroField());
         }
 
         alpha2_ = 1.0 - alpha1_;
@@ -390,10 +390,10 @@ void Foam::advection::MULESScheme::advect(const volScalarField::Internal& Sp,con
     word alphaScheme("div(phi,alpha)");
     word alpharScheme("div(phirb,alpha)");
 
+    // Set the off-centering coefficient according to ddt scheme
     scalar ocCoeff = 0;
     {
-
-        tmp<fv::ddtScheme<scalar>> ddtAlpha
+        tmp<fv::ddtScheme<scalar>> tddtAlpha
         (
             fv::ddtScheme<scalar>::New
             (
@@ -401,18 +401,17 @@ void Foam::advection::MULESScheme::advect(const volScalarField::Internal& Sp,con
                 mesh_.ddtScheme("ddt(alpha)")
             )
         );
-
-        // Set the off-centering coefficient according to ddt scheme
+        const fv::ddtScheme<scalar>& ddtAlpha = tddtAlpha();
 
         if
         (
-            isType<fv::EulerDdtScheme<scalar>>(ddtAlpha())
-         || isType<fv::localEulerDdtScheme<scalar>>(ddtAlpha())
+            isType<fv::EulerDdtScheme<scalar>>(ddtAlpha)
+         || isType<fv::localEulerDdtScheme<scalar>>(ddtAlpha)
         )
         {
             ocCoeff = 0;
         }
-        else if (isType<fv::CrankNicolsonDdtScheme<scalar>>(ddtAlpha()))
+        else if (isType<fv::CrankNicolsonDdtScheme<scalar>>(ddtAlpha))
         {
             if (nAlphaSubCycles_ > 1)
             {
@@ -422,9 +421,16 @@ void Foam::advection::MULESScheme::advect(const volScalarField::Internal& Sp,con
                     << exit(FatalError);
             }
 
-            ocCoeff =
-                refCast<const fv::CrankNicolsonDdtScheme<scalar>>(ddtAlpha())
-               .ocCoeff();
+            if
+            (
+                alphaRestart
+             || mesh.time().timeIndex() > mesh.time().startTimeIndex() + 1
+            )
+            {
+                ocCoeff =
+                    refCast<const fv::CrankNicolsonDdtScheme<scalar>>(ddtAlpha)
+                   .ocCoeff();
+            }
         }
         else
         {
@@ -434,6 +440,7 @@ void Foam::advection::MULESScheme::advect(const volScalarField::Internal& Sp,con
         }
     }
 
+    // Set the time blending factor, 1 for Euler
     scalar cnCoeff = 1.0/(1.0 + ocCoeff);
 
     // Standard face-flux compression coefficient
@@ -445,6 +452,14 @@ void Foam::advection::MULESScheme::advect(const volScalarField::Internal& Sp,con
         phic *= (1.0 - icAlpha_);
         phic += (cAlpha_*icAlpha_)*fvc::interpolate(mag(U_));
     }
+
+    // Add the optional shear compression contribution
+    if (scAlpha > 0)
+    {
+        phic +=
+            scAlpha*mag(mesh.delta() & fvc::interpolate(symm(fvc::grad(U))));
+    }
+
 
     surfaceScalarField::Boundary& phicBf =
         phic.boundaryFieldRef();
@@ -475,8 +490,8 @@ void Foam::advection::MULESScheme::advect(const volScalarField::Internal& Sp,con
         (
             (
                 LTS_
-              ? fv::localEulerDdtScheme<scalar>(mesh_).fvmDdt(alpha1_)
-              : fv::EulerDdtScheme<scalar>(mesh_).fvmDdt(alpha1_)
+              ? fv::localEulerDdtScheme<scalar>(mesh_).fvmDdt(alpha1)
+              : fv::EulerDdtScheme<scalar>(mesh_).fvmDdt(alpha1)
             )
           + fv::gaussConvectionScheme<scalar>
             (
@@ -484,8 +499,10 @@ void Foam::advection::MULESScheme::advect(const volScalarField::Internal& Sp,con
                 phiCN,
                 upwind<scalar>(mesh_, phiCN)
             ).fvmDiv(phiCN, alpha1_)
-             ==
-                 Su + fvm::Sp(Sp , alpha1_)
+       // - fvm::Sp(fvc::ddt(dimensionedScalar("1", dimless, 1), mesh)
+       //           + fvc::div(phiCN), alpha1)
+         ==
+            Su + fvm::Sp(Sp , alpha1_)
         );
 
         alpha1Eqn.solve();
@@ -502,7 +519,15 @@ void Foam::advection::MULESScheme::advect(const volScalarField::Internal& Sp,con
         if (alphaApplyPrevCorr_)
         {
             Info<< "Applying the previous iteration compression flux" << endl;
-            MULES::correct(alpha1_, alphaPhi_, talphaPhiCorr0_, 1, 0);
+            MULES::correct
+            (
+                geometricOneField(),
+                alpha1,
+                alphaPhi10,
+                talphaPhi1Corr0.ref(),
+                oneField(),
+                zeroField()
+            );
 
             alphaPhi_ += talphaPhiCorr0_;
         }
@@ -512,7 +537,6 @@ void Foam::advection::MULESScheme::advect(const volScalarField::Internal& Sp,con
 
         alpha2_ = 1.0 - alpha1_;
 
-       // mixture.correct();
         updateNHatf();
     }
 
@@ -521,33 +545,26 @@ void Foam::advection::MULESScheme::advect(const volScalarField::Internal& Sp,con
     {
         surfaceScalarField phir(phic*nHatf_);
 
-        tmp<surfaceScalarField> talphaPhiUn
+        tmp<surfaceScalarField> talphaPhi1Un
+        (
+            fvc::flux
             (
-                fvc::flux
-                (
-                    phi_,
-                    alpha1_,
-                    alphaScheme
-                )
-            + fvc::flux
-                (
-                    -fvc::flux(-phir, alpha2_, alpharScheme),
-                    alpha1_,
-                    alpharScheme
-                )
-            );
+                phi_,
+                cnCoeff*alpha1 + (1.0 - cnCoeff)*alpha1.oldTime(),
+                alphaScheme
+            )
+          + fvc::flux
+            (
+               -fvc::flux(-phir, alpha2, alpharScheme),
+                alpha1,
+                alpharScheme
+            )
+        );
 
-        // Calculate the Crank-Nicolson off-centred alpha flux
-//            if (ocCoeff > 0)
-//            {
-//                talphaPhiUn =
-//                    cnCoeff*talphaPhiUn + (1.0 - cnCoeff)*alphaPhi_.oldTime();
-//            }
-
-        if (MULESCorr_)
+        if (MULESCorr)
         {
-            tmp<surfaceScalarField> talphaPhiCorr(talphaPhiUn - alphaPhi_);
-            volScalarField alpha10("alpha10", alpha1_);
+            tmp<surfaceScalarField> talphaPhi1Corr(talphaPhi1Un - alphaPhi_);
+            volScalarField alpha10("alpha10", alpha1);
 
             MULES::correct
             (
@@ -557,14 +574,14 @@ void Foam::advection::MULESScheme::advect(const volScalarField::Internal& Sp,con
                 alphaPhi_,
                 Sp,
                 Su,
-                1,
-                0
+                oneField(),
+                zeroField()
             );
 
             // Under-relax the correction for all but the 1st corrector
             if (aCorr == 0)
             {
-                alphaPhi_ += talphaPhiCorr();
+                alphaPhi_ += talphaPhi1Corr();
             }
             else
             {
@@ -574,30 +591,27 @@ void Foam::advection::MULESScheme::advect(const volScalarField::Internal& Sp,con
         }
         else
         {
-
-            alphaPhi_ = talphaPhiUn;
-
+            alphaPhi_ = talphaPhi1Un;
 
             MULES::explicitSolve
             (
-               geometricOneField(),
-               alpha1_,
-               phiCN,
-               alphaPhi_,
-               Sp,
-               Su,
-               1,
-               0
+                geometricOneField(),
+                alpha1,
+                phiCN,
+                alphaPhi_,
+                Sp,
+                Su,
+                oneField(),
+                zeroField()
             );
         }
 
-        alpha2_ = 1.0 - alpha1_;
+        alpha2 = 1.0 - alpha1;
 
-        // mixture.correct();
-         updateNHatf();
+        mixture.correct();
     }
 
-    if (alphaApplyPrevCorr_ && MULESCorr_)
+    if (alphaApplyPrevCorr && MULESCorr)
     {
         talphaPhiCorr0_ = alphaPhi_ - talphaPhiCorr0_;
     }
@@ -606,20 +620,23 @@ void Foam::advection::MULESScheme::advect(const volScalarField::Internal& Sp,con
     (
         word(mesh_.ddtScheme("ddt(rho,U)"))
      == fv::EulerDdtScheme<vector>::typeName
+     || word(mesh_.ddtScheme("ddt(rho,U)"))
+     == fv::localEulerDdtScheme<vector>::typeName
     )
     {
-//            rhoPhi = alphaPhi_*(rho1 - rho2) + phiCN*rho2;
+        // rhoPhi = alphaPhi_*(rho1 - rho2) + phiCN*rho2;
     }
     else
     {
         if (ocCoeff > 0)
         {
             // Calculate the end-of-time-step alpha flux
-            alphaPhi_ = (alphaPhi_ - (1.0 - cnCoeff)*alphaPhi_.oldTime())/cnCoeff;
+            alphaPhi_ =
+                (alphaPhi_ - (1.0 - cnCoeff)*alphaPhi_.oldTime())/cnCoeff;
         }
 
         // Calculate the end-of-time-step mass flux
-        //rhoPhi = alphaPhi_*(rho1 - rho2) + phi_*rho2;
+        // rhoPhi = alphaPhi10*(rho1f - rho2f) + phi*rho2f;
     }
 
     Info<< "Phase-1 volume fraction = "
@@ -629,4 +646,3 @@ void Foam::advection::MULESScheme::advect(const volScalarField::Internal& Sp,con
         << endl;
 
 }
-

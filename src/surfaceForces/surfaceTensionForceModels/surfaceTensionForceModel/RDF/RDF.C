@@ -20,7 +20,7 @@ License
 #include "RDF.H"
 #include "addToRunTimeSelectionTable.H"
 
-#include "alphaContactAngleFvPatchScalarField.H"
+#include "alphaContactAngleTwoPhaseFvPatchScalarField.H"
 #include "mathematicalConstants.H"
 #include "surfaceInterpolate.H"
 #include "fvcDiv.H"
@@ -207,12 +207,12 @@ void Foam::RDF::correctContactAngle
 
     forAll(boundary, patchi)
     {
-        if (isA<alphaContactAngleFvPatchScalarField>(abf[patchi]))
+        if (isA<alphaContactAngleTwoPhaseFvPatchScalarField>(abf[patchi]))
         {
-            alphaContactAngleFvPatchScalarField& acap =
-                const_cast<alphaContactAngleFvPatchScalarField&>
+            alphaContactAngleTwoPhaseFvPatchScalarField& acap =
+                const_cast<alphaContactAngleTwoPhaseFvPatchScalarField&>
                 (
-                    refCast<const alphaContactAngleFvPatchScalarField>
+                    refCast<const alphaContactAngleTwoPhaseFvPatchScalarField>
                     (
                         abf[patchi]
                     )

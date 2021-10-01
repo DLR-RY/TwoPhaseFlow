@@ -30,7 +30,7 @@ License
 #include "fvc.H"
 #include "leastSquareGrad.H"
 #include "addToRunTimeSelectionTable.H"
-#include "alphaContactAngleFvPatchScalarField.H"
+#include "alphaContactAngleTwoPhaseFvPatchScalarField.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
@@ -321,7 +321,7 @@ void Foam::reconstruction::plicRDF::centreAndNormalBC()
 
     forAll(boundary, patchi)
     {
-        if (isA<alphaContactAngleFvPatchScalarField>(abf[patchi]))
+        if (isA<alphaContactAngleTwoPhaseFvPatchScalarField>(abf[patchi]))
         {
             forAll(normalf.boundaryFieldRef()[patchi],i)
             {
@@ -338,12 +338,12 @@ void Foam::reconstruction::plicRDF::centreAndNormalBC()
 
     forAll(boundary, patchi)
     {
-        if (isA<alphaContactAngleFvPatchScalarField>(abf[patchi]))
+        if (isA<alphaContactAngleTwoPhaseFvPatchScalarField>(abf[patchi]))
         {
-            alphaContactAngleFvPatchScalarField& acap =
-                const_cast<alphaContactAngleFvPatchScalarField&>
+            alphaContactAngleTwoPhaseFvPatchScalarField& acap =
+                const_cast<alphaContactAngleTwoPhaseFvPatchScalarField&>
                 (
-                    refCast<const alphaContactAngleFvPatchScalarField>
+                    refCast<const alphaContactAngleTwoPhaseFvPatchScalarField>
                     (
                         abf[patchi]
                     )

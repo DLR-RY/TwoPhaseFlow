@@ -133,7 +133,7 @@ bool Foam::functionObjects::thermalResiduals::write()
 
     if (Pstream::master())
     {
-        writeTime(file());
+        writeCurrentTime(file());
 
         file()
             << token::TAB << intVolValue
