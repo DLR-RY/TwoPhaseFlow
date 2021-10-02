@@ -2,9 +2,9 @@ name: openfoam
 
 on:
   push:
-    branches: [ master ]
+    branches: [ of2106 ]
   pull_request:
-    branches: [ master ]
+    branches: [ of2106 ]
 
 jobs:
   build:
