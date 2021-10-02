@@ -18,11 +18,6 @@ jobs:
         curl -s https://dl.openfoam.com/add-debian-repo.sh | sudo bash
         wget -q -O - https://dl.openfoam.com/add-debian-repo.sh | sudo bash
         sudo apt-get install openfoam2106-dev
-        echo "Finished Installing"
-        echo "Sourcing Install"
-        ls /usr/lib
-        ls /usr/lib/openfoam/
-        . /usr/lib/openfoam/openfoam2106/etc/bashrc
     - name: compile library
       run: |
-        ./Allwmake
+        openfoam2106 -c ./Allwmake
