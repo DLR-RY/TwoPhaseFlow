@@ -1,0 +1,17 @@
+#!/bin/sh
+cd ${0%/*} || exit 1    # Run from this directory
+
+# Source tutorial run functions
+. $WM_PROJECT_DIR/bin/tools/RunFunctions
+
+runApplication blockMesh -region fluid
+restore0Dir
+cp -r 0 1.36
+runApplication setFields -region fluid
+runApplication initAlphaField -region fluid
+
+touch stefan_problem.foam
+
+runApplication $(getApplication)
+
+#------------------------------------------------------------------------------
