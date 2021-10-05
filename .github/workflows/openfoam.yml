@@ -7,7 +7,7 @@ on:
     branches: [ of2106 ]
 
 jobs:
-  build:
+  build-and-test:
 
     runs-on: ubuntu-latest
 
@@ -20,4 +20,10 @@ jobs:
         sudo apt-get install openfoam2106-dev
     - name: compile library
       run: |
+        export WM_NCOMPPROCS=2
         openfoam2106 -c ./Allwmake
+    - name: test
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r oftest scipy
+        openfoam2106 -c py.test -m "not slow"
