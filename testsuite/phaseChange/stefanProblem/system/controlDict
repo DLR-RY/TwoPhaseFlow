@@ -1,0 +1,94 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  plus                                  |
+|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+
+isoAdvection 1;
+application     multiRegionPhaseChangeFlow;
+
+startFrom       latestTime;
+
+startTime       0;
+
+stopAt          endTime;
+
+endTime         21.36;
+
+deltaT          1e-7;
+
+writeControl    adjustableRunTime;
+
+writeInterval   1;
+
+purgeWrite      0;
+
+writeFormat     ascii;
+
+writePrecision  8;
+
+writeCompression off;
+
+timeFormat      general;
+
+timePrecision   10;
+
+runTimeModifiable yes;
+
+adjustTimeStep  yes;
+
+maxCo           0.01;
+maxAlphaCo      0.01;
+maxCapillaryNum 1e8;
+// needed for the explicit time step criteria of explicitGrad
+maxDeltaT       1e-3;
+// requires for accurate results of the explicit scheme
+//maxDeltaT       1e-4;
+
+functions
+{
+    surfaces
+    {
+        type            surfaces;
+        libs
+        (
+            "libsampling.so"
+        );
+
+        // Write at same frequency as fields
+        writeControl    outputTime;
+        writeInterval   1;
+        surfaceFormat  raw;
+        fields
+        (
+            alpha.water
+        );
+        region fluid;
+        interpolationScheme cellPoint;
+        surfaces
+        (
+            constantIso
+            {
+                type        isoSurfaceCell;
+                isoField    alpha.water;
+                isoValue    0.5;
+                interpolate true;
+            }
+        );
+    }
+
+}
+
+// ************************************************************************* //

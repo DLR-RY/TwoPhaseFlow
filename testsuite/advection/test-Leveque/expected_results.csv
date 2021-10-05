@@ -1,0 +1,7 @@
+err_shape,err_mass,err_bound,reconScheme,Res,runtime
+8.636E-03,1.613E-16,2.220E-16,isoAlpha,32,2.5
+3.418E-03,8.535E-16,7.666E-11,isoAlpha,64,24.78
+5.430E-04,4.515E-15,2.522E-07,isoAlpha,128,359.17
+7.743E-03,1.301E-16,2.220E-16,plicRDF,32,5.59
+3.079E-03,9.819E-16,2.048E-07,plicRDF,64,53.27
+6.967E-04,5.504E-15,2.488E-06,plicRDF,128,599.97

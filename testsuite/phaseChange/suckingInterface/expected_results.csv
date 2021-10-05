@@ -1,0 +1,4 @@
+err,PCM,runtime
+2.1196383275637688e-09,selectedGradExplicit,16.22
+3.4622712309848373e-09,implicitGrad,16.11
+4.6975368807548405e-06,Schrage,146.59

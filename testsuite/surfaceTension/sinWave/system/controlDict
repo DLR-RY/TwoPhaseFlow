@@ -1,0 +1,101 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2.3.0                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+application     interFlow;
+
+//startFrom       startTime;
+startFrom       latestTime;
+
+startTime       0;
+
+stopAt          endTime;
+
+endTime         3.689e-4;
+
+deltaT          1e-7;
+
+writeControl    adjustableRunTime;
+
+writeInterval   5e-5;
+
+//writeControl    timeStep;
+
+//writeInterval   10;
+
+purgeWrite      0;
+
+writeFormat     ascii;
+
+writePrecision  6;
+
+writeCompression yes;
+
+timeFormat      general;
+
+timePrecision   6;
+
+runTimeModifiable yes;
+
+adjustTimeStep  yes;
+
+maxCo           0.1;
+maxAlphaCo      0.1;
+maxCapillaryNum 5.0; //0.5;
+
+maxDeltaT       1e-5;
+
+libs
+(
+    "libtwoPhaseProperties.so"
+);
+
+functions
+{
+
+    surfaces
+    {
+        type            surfaces;
+        functionObjectLibs
+        (
+            "libsampling.so"
+        );
+
+        // Write at same frequency as fields
+        writeControl    adjustableRunTime;
+        writeInterval   1e-6;
+        //writeControl    outputTime;
+        //writeInterval   1;
+        surfaceFormat   raw;
+        fields
+        (
+            alpha.water
+        );
+        interpolationScheme cellPoint;
+        surfaces
+        (
+            constantIso
+            {
+                type        isoSurfaceCell;
+                isoField    alpha.water;
+                isoValue    0.5;
+                interpolate true;
+            }
+        );
+    }
+}
+
+// ************************************************************************* //

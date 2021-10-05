@@ -1,4 +1,0 @@
-# volumeFractionError 
-# Time     	Eshape     	Emass      	Ebound     	tRec       	Tadv       	celltoCellDist	Ncells     	avg(CellVol)
-1.5        	1.941e-02	1.388e-16	1.976e-14	0.000e+00	0.000e+00	3.125e-02	8.192e+03	3.052e-05
-3          	7.917e-03	1.266e-16	2.220e-16	0.000e+00	0.000e+00	3.125e-02	8.192e+03	3.052e-05

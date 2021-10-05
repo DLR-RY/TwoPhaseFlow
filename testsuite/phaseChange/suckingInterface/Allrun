@@ -1,0 +1,22 @@
+#!/bin/sh
+cd ${0%/*} || exit 1    # Run from this directory
+
+# Source tutorial run functions
+. $WM_PROJECT_DIR/bin/tools/RunFunctions
+
+# generate mesh
+runApplication blockMesh -region fluid
+restore0Dir
+
+# map temperature profile
+runApplication setFieldfromTable -region fluid
+
+mv 0 0.1
+runApplication setFields -region fluid
+runApplication initAlphaField -region fluid
+
+touch suckingInterface.foam
+
+runApplication $(getApplication)
+
+#------------------------------------------------------------------------------
