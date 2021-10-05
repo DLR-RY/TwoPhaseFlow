@@ -35,8 +35,10 @@ lnInclude
 #OpenFOAM
 Cases
 CasesTri
-polyMesh/*
-0.[0-9]* [1-9]* *e-*
+*/polyMesh/*
+0.[0-9]*
+[1-9]*
+*e-*
 processor*
 
 # Build directories - anywhere

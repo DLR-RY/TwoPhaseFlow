@@ -39,30 +39,8 @@ int_err = integrate.trapz(sol['error'], x=sol['time'])
 err = 1/wavelength*math.sqrt(1/25*int_err)
 print("err",err)
 print("omega0",omega0,1/omega0)
-# ax = analytical.plot(style='.', x='time', y='analytical',
-#                      c='black', marker='+', ms=7)
-# sns.set_style("ticks")
 
-# ax = sol.plot(x='time',y='max')
-# sol.plot(x='time',y='ana',ax=ax)
-
-sol.plot(x='time',y='error')
-# plicRDF = sol[sol['interfaceType'] == 'plicRDF']
-# ax = sns.lineplot(x='time', y='max', hue='Method', style="nCells", data=plicRDF,
-#                   hue_order=['gradAlpha', 'fitParaboloid', 'RDF'], ax=ax)
-# plt.ylabel('Relative amplitude')
-# plt.xlabel('Non-dimensional time')
-# plt.savefig("sinWaveHex_plicRDF.pdf")
-# plicRDF.to_csv("sinWaveHex_plicRDF.csv", index=False)
-
-
-# ax = analytical.plot(x='time', y='analytical', c='black', marker='o')
-# isoSurface = sol[sol['interfaceType'] == 'isoSurface']
-# sns.lineplot(x='time', y='max', hue='Method', style="nCells", data=isoSurface,
-#              hue_order=['gradAlpha', 'fitParaboloid', 'RDF'], ax=ax)
-# plt.ylabel('Relative amplitude')
-# plt.xlabel('Non-dimensional time')
-# plt.savefig("sinWaveHex_isoSurface.pdf")
-# isoSurface.to_csv("sinWaveHex_isoSurface.csv", index=False)
+ax = sol.plot(x='time',y='max')
+sol.plot(x='time',y='analytical',ax=ax)
 
 plt.show()

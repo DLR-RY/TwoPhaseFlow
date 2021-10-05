@@ -4,19 +4,12 @@
             "name": "Linux",
             "includePath": [
                 "${workspaceFolder}/**",
-                "${FOAM_SRC}/OpenFOAM/lnInclude",
-                "${FOAM_SRC}/finiteVolume/lnInclude"
-            ],
-            "browse.path":[
-                "${workspaceFolder}/**",
-                "${FOAM_SRC}/OpenFOAM/lnInclude",
-                "${FOAM_SRC}/finiteVolume/lnInclude"
+                "${FOAM_SRC}/**"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/gcc",
             "cStandard": "c11",
-            "cppStandard": "c++17",
-            "intelliSenseMode": "clang-x64"
+            "cppStandard": "c++11"
         }
     ],
     "version": 4

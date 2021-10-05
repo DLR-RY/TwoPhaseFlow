@@ -133,13 +133,13 @@ c_fitParaboloid128 = simMod(128, "fitParaboloid")
 parameters = [
     c_gradAlpha32,
     c_gradAlpha64,
-    c_gradAlpha128,
+    pytest.param(c_gradAlpha128, marks=pytest.mark.slow),
     c_RDF32,
     c_RDF64,
-    c_RDF128,
+    pytest.param(c_RDF128, marks=pytest.mark.slow),
     c_fitParaboloid32,
     c_fitParaboloid64,
-    c_fitParaboloid128
+    pytest.param(c_fitParaboloid128, marks=pytest.mark.slow),
 ]
 
 results = {

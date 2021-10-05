@@ -22,7 +22,6 @@ License
 
 #include "isoSurface.H"
 #include "addToRunTimeSelectionTable.H"
-#include "implicitFunction.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
