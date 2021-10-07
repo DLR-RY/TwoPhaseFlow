@@ -106,7 +106,7 @@ bool Foam::functionObjects::volumeFractionError::read(const dictionary& dict)
     (
         implicitFunction::New
         (
-            dict.get<word>("function"),
+            dict.get<word>("type"),
             dict
         )
     );
@@ -208,7 +208,7 @@ bool Foam::functionObjects::volumeFractionError::write()
 
     Foam::autoPtr<Foam::implicitFunction> func =  implicitFunction::New
     (
-           word(dict_.lookup("function")),
+           word(dict_.lookup("type")),
            dict_
     );
 
