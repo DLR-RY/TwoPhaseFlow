@@ -76,6 +76,8 @@ def test_levque(run_reset_case, load_errorfiles):
     print("runcase", run_reset_case)
     log = oftest.path_log()
     assert oftest.case_status(log) == "completed"  # checks if run completes
+    with open(log, 'r') as fin:
+        print(fin.read().decode())
     err = load_errorfiles
     max_err_shape = abs(err.iloc[1, 1].max())
     max_err_mass = abs(err.iloc[:, 2].max())
