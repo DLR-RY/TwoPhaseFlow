@@ -14,6 +14,6 @@ runApplication setAlphaField
 runApplication generateU
 
 runApplication decomposePar
-runParallel $(getApplication)
-cp postProcessing/volumeFractionError/0/volumeFractionError.dat volumeFractionError.dat
+mpirun -oversubscribe -np 4 $(getApplication) -parallel  > log.$(getApplication)
 
+cp postProcessing/volumeFractionError/0/volumeFractionError.dat volumeFractionError.dat

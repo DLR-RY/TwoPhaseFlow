@@ -127,6 +127,7 @@ results = {
 def test_vortexShearedDisc(run_reset_case, expected, load_errorfile):
 
     log = oftest.path_log()
+    assert oftest.case_status(log) == "completed"  # checks if run completes
     err = load_errorfile
     max_err_shape = abs(err.iloc[1, 1].max())
     max_err_mass = abs(err.iloc[:, 2].max())
@@ -148,7 +149,6 @@ def test_vortexShearedDisc(run_reset_case, expected, load_errorfile):
     assert max_err_shape < expected_err_shape*1.05
     assert max_err_mass <= 1e-13
     assert max_err_bound <= 5e-5
-    assert oftest.case_status(log) == "completed"  # checks if run completes
 
 
 def test_results():
