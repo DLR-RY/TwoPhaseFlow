@@ -38,7 +38,7 @@ Foam::massSourceTermModel::New
         dict.lookup("massSourceTermModel")
     );
 
-    Info<< "Selecting evaporationCurve model "
+    Info<< "Selecting massSourceTermModel model "
         << massSourceTermModelTypeName << endl;
 
     componentsConstructorTable::iterator cstrIter =

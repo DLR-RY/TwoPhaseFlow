@@ -5,7 +5,6 @@ phaseChangeModels/energySourceTermModel/energySourceTermModel.C
 phaseChangeModels/energySourceTermModel/newEnergySourceTermModel.C
 phaseChangeModels/energySourceTermModel/selectedGradExplicit/selectedGradExplicit.C
 phaseChangeModels/energySourceTermModel/implicitGrad/implicitGrad.C
-phaseChangeModels/energySourceTermModel/directEvaporation/directEvaporation.C
 phaseChangeModels/energySourceTermModel/Schrage/Schrage.C
 
 phaseChangeModels/massSourceTermModel/massSourceTermModel.C
@@ -14,15 +13,15 @@ phaseChangeModels/massSourceTermModel/hardtWondra/hardtWondra.C
 phaseChangeModels/massSourceTermModel/hardtWondraGasPhase/hardtWondraGasPhase.C
 phaseChangeModels/massSourceTermModel/noPhaseChange/noPhaseChange.C
 
+phaseChangeModels/macroModels/macroModel.C
+phaseChangeModels/macroModels/macroModels.C
+phaseChangeModels/macroModels/directEvaporation/directEvaporation.C
+
 phaseChangeModels/singleComponentPhaseChange/singleComponentPhaseChange.C
 
 saturationProperties/singleComponentSatProp/newSingleComponentSatProp.C
 saturationProperties/singleComponentSatProp/singleComponentSatProp.C
 saturationProperties/singleComponentSatProp/ClausiusClapeyron/ClausiusClapeyron.C
 saturationProperties/singleComponentSatProp/singleComponentFunction/singleComponentFunction.C
-
-
-
-
 
 LIB = $(FOAM_USER_LIBBIN)/libphaseChange

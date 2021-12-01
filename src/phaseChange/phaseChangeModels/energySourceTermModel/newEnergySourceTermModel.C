@@ -38,7 +38,7 @@ Foam::energySourceTermModel::New
         dict.lookup("energySourceTermModel")
     );
 
-    Info<< "Selecting evaporationCurve model "
+    Info<< "Selecting energySourceTermModel model "
         << energySourceTermModelTypeName << endl;
 
     componentsConstructorTable::iterator cstrIter =

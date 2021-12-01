@@ -41,6 +41,7 @@ SourceFiles
 #include "singleComponentSatProp.H"
 
 #include "phaseModel.H"
+#include "macroModel.H"
 #include "twoPhaseModelThermo.H"
 #include "compressibleInterPhaseTransportModel.H"
 
@@ -63,6 +64,9 @@ class singleComponentPhaseChange
     const fvMesh& mesh_;
 
     autoPtr<energySourceTermModel> energyModel_;
+
+    //- Stores the functions
+    PtrList<macroModel> macroModels_;
 
     autoPtr<massSourceTermModel> massModel_;
 
@@ -98,16 +102,6 @@ public:
 
     // Constructors
 
-        //- Construct from phaseModels
-        singleComponentPhaseChange
-        (
-            const phaseModel& phase1,
-            const phaseModel& phase2,
-            const volScalarField& p,
-            const compressibleInterPhaseTransportModel& turbModel,
-            reconstructionSchemes &surf
-        );
-
         // - construct from twoPhaseModelThermo
         singleComponentPhaseChange
         (
@@ -117,14 +111,11 @@ public:
             reconstructionSchemes &surf
         );
 
-
-
     //- Destructor
     virtual ~singleComponentPhaseChange();
 
 
     // Member Functions
-
 
 
     singleComponentSatProp& satProp()
@@ -147,11 +138,6 @@ public:
         return turbModel_;
     }
 
-    //- Update properties
-    //void TempSourceTerms( const volScalarField& kappa1,const volScalarField& kappa2);
-
-    //- Update properties
-    //void correct( const volScalarField& kappa1,const volScalarField& kappa2);
     void correct();
 
     // void correct( const surfaceScalarField& kappa1,const surfaceScalarField& kappa2);
@@ -161,8 +147,6 @@ public:
         const volScalarField& p,
         const volScalarField& T
     );
-
-
 
     volScalarField& massSource()
     {
@@ -179,15 +163,26 @@ public:
         return psi0_;
     }
 
-
     tmp<fvScalarMatrix> TSource1()
     {
-        return energyModel_->TSource1();
+        tmp<fvScalarMatrix> tT1Eqn = energyModel_->TSource1();
+        fvScalarMatrix& T1Eqn = tT1Eqn.ref();
+        for (auto& mModel: macroModels_)
+        {
+            mModel.TSource1(T1Eqn);
+        }
+        return tT1Eqn;
     }
 
     tmp<fvScalarMatrix> TSource2()
     {
-        return energyModel_->TSource2();
+        tmp<fvScalarMatrix> tT2Eqn = energyModel_->TSource2();
+        fvScalarMatrix& T2Eqn = tT2Eqn.ref();
+        for (auto& mModel: macroModels_)
+        {
+            mModel.TSource2(T2Eqn);
+        }
+        return tT2Eqn;
     }
 
     tmp<volScalarField> energyFlux1()

@@ -42,7 +42,7 @@ Foam::massSourceTermModel::massSourceTermModel
 )
 :
     dictionary(dict),
-    massSourceTermModelCoeffs_(subDict(type + "Coeffs")),
+    massSourceTermModelCoeffs_(dict.optionalSubDict(type + "Coeffs")),
     phase1_(phase1),
     phase2_(phase2),
     p_(p),

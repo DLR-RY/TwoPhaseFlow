@@ -15,27 +15,17 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-energySourceTermModel directEvaporation;
+energySourceTermModel implicitGrad;
 
-implicitGradCoeffs
-{
-}
-
-SchrageCoeffs
-{
-}
-
-selectedGradExplicitCoeffs
-{
-}
-
-directEvaporationCoeffs
-{
-    superheated 1;
-}
 massSourceTermModel hardtWondra;
-hardtWondraCoeffs
+
+marcoModels
 {
+    directEvaporation
+    {
+        type directEvaporation;
+        superheated 1;
+    }
 }
 
 

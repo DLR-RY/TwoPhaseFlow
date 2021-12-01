@@ -42,7 +42,7 @@ class TestDiscUniFlow:
         error = abs(err_parrallel.iloc[:, 0:4]) - abs(err_serial.iloc[:, 0:4])
         max_error = max(error.abs().max().values)
 
-        assert max_error < 1e-9
+        assert max_error < 1e-8
 
     def test_accuracy(self, run_reset_case, load_errorfiles):
         err_serial, err_parrallel = load_errorfiles

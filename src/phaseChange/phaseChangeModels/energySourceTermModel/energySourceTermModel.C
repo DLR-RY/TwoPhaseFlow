@@ -43,7 +43,7 @@ Foam::energySourceTermModel::energySourceTermModel
 )
 :
     dictionary(dict),
-    energySourceTermModelCoeffs_(subDict(type + "Coeffs")),
+    energySourceTermModelCoeffs_(optionalSubDict(type + "Coeffs")),
     phase1_(phase1),
     phase2_(phase2),
     turbModel_(turbModel),
