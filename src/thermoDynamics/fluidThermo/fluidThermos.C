@@ -42,10 +42,10 @@ License
 
 #include "constTransport.H"
 #include "hPolynomialThermo.H"
-#include "hTabulatedThermo.H"
-
 #include "polynomialTransport.H"
-#include "tabulatedTransport.H"
+
+// #include "hTabulatedThermo.H"
+// #include "tabulatedTransport.H"
 
 #include "heRhoThermo.H"
 #include "pureMixture.H"
@@ -87,57 +87,57 @@ makeThermos
 );
 
 // added tabThermo
-makeThermo
-(
-    rhoThermo,
-    heRhoThermo,
-    pureMixture,
-    tabulatedTransport,
-    sensibleInternalEnergy,
-    hTabulatedThermo,
-    perfectGas,
-    specie
-);
+// makeThermo
+// (
+//     rhoThermo,
+//     heRhoThermo,
+//     pureMixture,
+//     tabulatedTransport,
+//     sensibleInternalEnergy,
+//     hTabulatedThermo,
+//     perfectGas,
+//     specie
+// );
 
-makeThermo
-(
-    rhoThermo,
-    heRhoThermo,
-    pureMixture,
-    tabulatedTransport,
-    sensibleInternalEnergy,
-    hTabulatedThermo,
-    PengRobinsonGas,
-    specie
-);
+// makeThermo
+// (
+//     rhoThermo,
+//     heRhoThermo,
+//     pureMixture,
+//     tabulatedTransport,
+//     sensibleInternalEnergy,
+//     hTabulatedThermo,
+//     PengRobinsonGas,
+//     specie
+// );
 
 
 // thermo physics types based on sensibleInternalEnergy
-typedef
-tabulatedTransport
-<
-    species::thermo
-    <
-        hTabulatedThermo
-        <
-            perfectGas<specie>
-        >,
-        sensibleInternalEnergy
-    >
-> tabTabEThermoPhysics;
+// typedef
+// tabulatedTransport
+// <
+//     species::thermo
+//     <
+//         hTabulatedThermo
+//         <
+//             perfectGas<specie>
+//         >,
+//         sensibleInternalEnergy
+//     >
+// > tabTabEThermoPhysics;
 
-typedef
-tabulatedTransport
-<
-    species::thermo
-    <
-        hTabulatedThermo
-        <
-            PengRobinsonGas<specie>
-        >,
-        sensibleInternalEnergy
-    >
-> tabTabPengRobPhysics;
+// typedef
+// tabulatedTransport
+// <
+//     species::thermo
+//     <
+//         hTabulatedThermo
+//         <
+//             PengRobinsonGas<specie>
+//         >,
+//         sensibleInternalEnergy
+//     >
+// > tabTabPengRobPhysics;
 
 typedef
 polynomialTransport
@@ -163,24 +163,24 @@ makeThermoPhysicsReactionThermos
     polyPolyEThermoPhysics
 );
 
-makeThermoPhysicsReactionThermos
-(
-    rhoThermo,
-    rhoReactionThermo,
-    heRhoThermo,
-    multiComponentMixture,
-    tabTabEThermoPhysics
-);
+// makeThermoPhysicsReactionThermos
+// (
+//     rhoThermo,
+//     rhoReactionThermo,
+//     heRhoThermo,
+//     multiComponentMixture,
+//     tabTabEThermoPhysics
+// );
 
 
-makeThermoPhysicsReactionThermos
-(
-    rhoThermo,
-    rhoReactionThermo,
-    heRhoThermo,
-    multiComponentMixture,
-    tabTabPengRobPhysics
-);
+// makeThermoPhysicsReactionThermos
+// (
+//     rhoThermo,
+//     rhoReactionThermo,
+//     heRhoThermo,
+//     multiComponentMixture,
+//     tabTabPengRobPhysics
+// );
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
