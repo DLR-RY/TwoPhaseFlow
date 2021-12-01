@@ -188,7 +188,7 @@ Foam::tmp<Foam::volScalarField> Foam::Schrage::energyFlux1()
         *rho2/pow(TSat,1.5)
     );
 
-    volScalarField interface = phase2_*0;
+    volScalarField interface(phase2_*0);
     interface.boundaryFieldRef() = Zero;
 
     for (const label celli: surf_.interfaceLabels())
@@ -221,7 +221,7 @@ Foam::tmp<Foam::volScalarField> Foam::Schrage::energyFlux2()
         *rho2/pow(TSat,1.5)
     );
 
-    volScalarField interface = phase2_*0;
+    volScalarField interface(phase2_*0);
     interface.boundaryFieldRef() = Zero;
 
     for (const label celli: surf_.interfaceLabels())
