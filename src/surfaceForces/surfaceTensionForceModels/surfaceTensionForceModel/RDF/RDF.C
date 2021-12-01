@@ -311,7 +311,7 @@ void Foam::RDF::correct()
         1e-14/pow(average(mesh.V()), 1.0/3.0)
     );
 
-    volVectorField gradRDF = fvc::grad(RDF_);
+    volVectorField gradRDF(fvc::grad(RDF_));
 
     gradRDF /= (mag(gradRDF)+deltaN*dimensionedScalar("0", dimLength, 1));
 

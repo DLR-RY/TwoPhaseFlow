@@ -176,7 +176,7 @@ void Foam::fitParaboloid::correctContactAngle
     const fvBoundaryMesh& boundary = mesh.boundary();
 
     // we need a surfaceVectorField to compute theta
-    surfaceVectorField normalf = fvc::interpolate(normal);
+    surfaceVectorField normalf(fvc::interpolate(normal));
 
     forAll(boundary, patchi)
     {
@@ -262,7 +262,7 @@ void Foam::fitParaboloid::correctContactAngle
                 }
                 else
                 {
-                    cbf[patchi][i] == vector::zero;
+                    cbf[patchi][i] = vector::zero;
                 }
             }
             acap.evaluate();

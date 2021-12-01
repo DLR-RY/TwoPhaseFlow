@@ -709,8 +709,8 @@ void Foam::reconstructedDistanceFunction::updateContactAngle
             (
                 convertToRad*acap.theta(U.boundaryField()[patchi],nHatp)
             );
-            scalarField projDist = acap.patch().nf() & acap.patch().delta();
-            scalarField diff = projDist-(1/acap.patch().deltaCoeffs());
+            scalarField projDist(acap.patch().nf() & acap.patch().delta());
+            scalarField diff(projDist-(1/acap.patch().deltaCoeffs()));
 
             RDFbf[patchi] = projDist*cos(theta)
                          +  RDFbf[patchi].patchInternalField();

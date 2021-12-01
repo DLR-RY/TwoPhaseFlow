@@ -46,8 +46,6 @@ Foam::singleComponentSatProp::singleComponentSatProp
     ),
     singleComponentSatPropCoeffs_(dict),
     mesh_(mesh),
-    Tmin_(modelDict().get<scalar>("Tmin")),
-    Tmax_(modelDict().get<scalar>("Tmax")),
     TSat_
     (
         IOobject
@@ -89,7 +87,9 @@ Foam::singleComponentSatProp::singleComponentSatProp
         mesh,
         dimEnergy/dimMass,
         calculatedFvPatchScalarField::typeName
-    )
+    ),
+    Tmin_(modelDict().get<scalar>("Tmin")),
+    Tmax_(modelDict().get<scalar>("Tmax"))
 {
 }
 

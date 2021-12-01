@@ -317,7 +317,7 @@ void Foam::reconstruction::plicRDF::centreAndNormalBC()
     const fvBoundaryMesh& boundary = mesh_.boundary();
 
     // we need a surfaceVectorField to compute theta
-    surfaceVectorField normalf = fvc::interpolate(normal_);
+    surfaceVectorField normalf(fvc::interpolate(normal_));
 
     forAll(boundary, patchi)
     {

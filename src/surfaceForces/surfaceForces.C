@@ -63,10 +63,12 @@ Foam::scalar Foam::surfaceForces::capillaryDt
     const volScalarField& rho2
 )
 {
-    volScalarField  interface = pos0(alpha1_ - 0.001)*pos0(0.999 - alpha1_);
-    volScalarField deltaX =
+    volScalarField interface(pos0(alpha1_ - 0.001)*pos0(0.999 - alpha1_));
+    volScalarField deltaX
+    (
         interface*fvc::average(mag(mesh_.delta()))
-        + neg0(interface-0.5)*dimensionedScalar("0",dimLength,GREAT);
+      + neg0(interface-0.5)*dimensionedScalar("0",dimLength,GREAT)
+    );
 
     dimensionedScalar smallSigma("smallSigma",dimensionSet(1,0,-2, 0, 0),SMALL);
 
@@ -83,10 +85,12 @@ Foam::scalar Foam::surfaceForces::capillaryDt
     const dimensionedScalar rho2
 )
 {
-    volScalarField  interface = pos0(alpha1_ - 0.001)*pos0(0.999 - alpha1_);
-    volScalarField deltaX =
+    volScalarField  interface(pos0(alpha1_ - 0.001)*pos0(0.999 - alpha1_));
+    volScalarField deltaX
+    (
         interface*fvc::average(mag(mesh_.delta()))
-        + neg0(interface-0.5)*dimensionedScalar("0",dimLength,GREAT);
+      + neg0(interface-0.5)*dimensionedScalar("0",dimLength,GREAT)
+    );
     dimensionedScalar smallSigma("smallSigma",dimensionSet(1,0,-2,0,0),SMALL);
 
     dimensionedScalar dt =
