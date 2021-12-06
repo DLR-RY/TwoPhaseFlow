@@ -18,22 +18,22 @@ solvers
 {
     alpha.water
     {
-        nAlphaCorr      2;
-        nAlphaSubCycles 2;
-        cAlpha          2;
+        nAlphaCorr              2;
+        nAlphaSubCycles         1;
+        cAlpha                  2;
 
-        MULESCorr       no;
-        nLimiterIter    5;
+        MULESCorr               no;
+        nLimiterIter            5;
 
-        solver          smoothSolver;
-        smoother        symGaussSeidel;
-        tolerance       1e-8;
-        relTol          0;
-        advectionScheme isoAdvection; //MULESScheme;
-        reconstructionScheme plicRDF; //isoSurface;
-        vof2IsoTol 1e-8;
-        surfCellTol 1e-8;
-        writeVTK true;
+        solver                  smoothSolver;
+        smoother                symGaussSeidel;
+        tolerance               1e-8;
+        relTol                  0;
+        advectionScheme         isoAdvection; //MULESScheme;
+        reconstructionScheme    plicRDF; //isoSurface;
+        snapTol                 1e-6;
+        vof2IsoTol              1e-8;
+        surfCellTol             1e-6;
     }
 
     psiFinal
@@ -78,8 +78,8 @@ solvers
     p_rgh
     {
         solver          GAMG;
-        tolerance       1e-09;
-        relTol          0.001;
+        tolerance       1e-07;
+        relTol          0.000;
         smoother        DIC;
     }
 
@@ -95,15 +95,14 @@ solvers
             smoother        DICGaussSeidel;
             nPreSweeps      2;
         }
-        tolerance       1e-09;
+        tolerance       1e-08;
         relTol          0;
         maxIter         100;
     }
 
     "(U|h|T.*|k|epsilon|R)"
     {
-        solver           PBiCGStab; //PBiCGStab;
-        //smoother        symGaussSeidel;
+        solver           PBiCGStab;
         preconditioner   DILU;
         tolerance        1e-10;
         relTol           0.;
@@ -123,7 +122,7 @@ solvers
 PIMPLE
 {
     momentumPredictor   yes;
-    nCorrectors         4;
+    nCorrectors         6;
     nNonOrthogonalCorrectors 0;
 }
 
