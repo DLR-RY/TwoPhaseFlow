@@ -29,8 +29,8 @@ jobs:
         pip install oftest scipy casefoam
         openfoam2106 -c "py.test  --writeNSteps=1 run/"
         openfoam2106 -c "py.test -m 'not slow'"
-    - uses: actions/upload-artifact@v2
-    - name: test
+    - name: upload logs
+      uses: actions/upload-artifact@v2
       with:
         name: logs
         path: logs/ # or path/to/artifact
