@@ -41,6 +41,7 @@ python -m venv env
 pip install oftest
 
 py.test # runs the tests
+py.test --writeNSteps=1 run/ # test all testcases in run
 ```
 
 ## Authors
