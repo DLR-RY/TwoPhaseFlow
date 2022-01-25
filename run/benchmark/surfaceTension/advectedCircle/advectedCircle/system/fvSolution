@@ -71,8 +71,8 @@ solvers
 
     U
     {
-        solver          PBiCGStab;
-        preconditioner  DILU;
+        solver          smoothSolver;
+        smoother        symGaussSeidel;
         tolerance       1e-20;
         relTol          0;
         minIter 10;
@@ -80,8 +80,8 @@ solvers
 
     UFinal
     {
-        solver          PBiCGStab;
-        preconditioner  DILU;
+        solver          smoothSolver;
+        smoother        symGaussSeidel;
         tolerance       1e-20;
         relTol          0;
         minIter 10;
