@@ -41,6 +41,7 @@ processor*
 logs
 AlphaInit
 controlDict.orig
+*.msh
 
 # Build directories - anywhere
 linux*Clang*/
