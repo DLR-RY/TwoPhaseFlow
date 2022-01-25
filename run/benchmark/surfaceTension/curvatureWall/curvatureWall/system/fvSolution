@@ -15,19 +15,23 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-	reconstructionScheme plicRDF;
-	//gradAlphaCoeffs
-	iterations 5;
-	interpolateNormal false;
+reconstructionScheme plicRDF;
+//gradAlphaCoeffs
+iterations 5;
+interpolateNormal false;
 
-	vof2IsoTol 1e-8;
-	surfCellTol 1e-8;
-	writeVTK false;
-    tol 1e-9;
-    relTol 1e-16;
+vof2IsoTol 1e-8;
+surfCellTol 1e-8;
+writeVTK false;
+tol 1e-9;
+relTol 1e-16;
 
 
-
+reconstruction
+{
+    nIter 1;
+    setAlphaMethod cutCellImpFunc;
+}
 
 PIMPLE
 {

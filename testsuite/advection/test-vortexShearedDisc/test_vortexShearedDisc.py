@@ -32,7 +32,7 @@ def load_errorfile():
     return err
 
 
-class TestDiscUniFlow:
+class TestVortexShearedDisc:
     def test_completed(self, run_reset_case):
         log = oftest.path_log()
         assert oftest.case_status(log) == "completed"  # checks if run completes

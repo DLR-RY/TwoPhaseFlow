@@ -194,7 +194,7 @@ int main(int argc, char *argv[])
                     << abort(FatalError);
     }
 
-    word functionType (initAlphaFieldDict.lookup("function"));
+    word functionType (initAlphaFieldDict.lookup("type"));
     bool twoDim = (functionType == "cylinder");
     Info << "twoDim = " << twoDim << endl;
     Info << "functionType = " << functionType << endl;
@@ -229,7 +229,7 @@ int main(int argc, char *argv[])
             (
                 implicitFunction::New
                 (
-                    word(initAlphaFieldDict.lookup("function")),
+                    word(initAlphaFieldDict.lookup("type")),
                     initAlphaFieldDict
                 )
             );

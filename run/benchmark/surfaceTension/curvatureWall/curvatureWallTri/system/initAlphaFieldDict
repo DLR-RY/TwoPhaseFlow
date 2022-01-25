@@ -15,7 +15,7 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 field alpha1;
-function cylinder;
+type cylinder;
 radius 0.5773502691896258;
 origin (0 1 0);
 direction (0 0 1);

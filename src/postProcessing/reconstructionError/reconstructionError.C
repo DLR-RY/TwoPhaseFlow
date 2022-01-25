@@ -108,12 +108,12 @@ void Foam::reconstructionError::calcError
     (
         implicitFunction::New
         (
-            word(dict.lookup("function")),
+            word(dict.lookup("type")),
             dict
         )
     );
 
-    word type (dict.lookup("function"));
+    word type (dict.lookup("type"));
     scalar exactCurv = 0;
     if(type == "sphere")
     {

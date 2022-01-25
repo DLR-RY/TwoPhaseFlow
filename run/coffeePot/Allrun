@@ -6,7 +6,7 @@ cd ${0%/*} || exit 1    # Run from this directory
 
 restore0Dir
 cp system/meshDict.solid system/meshDict
-runApplication -s solid cartesian2DMesh > log.meshSolid
+runApplication -s solid cartesian2DMesh
 mv constant/polyMesh constant/solid/
 
 cp system/meshDict.fluid system/meshDict
@@ -30,6 +30,13 @@ runApplication -s solid renumberMesh -region solid -overwrite
 runApplication -s fluid renumberMesh -region fluid -overwrite
 
 runApplication  decomposePar -allRegions
-runParallel $(getApplication)
+
+if notTest "$@"
+then
+    runParallel $(getApplication)
+else
+    mpirun -oversubscribe -np 4 $(getApplication) -parallel  > log.$(getApplication)
+fi
+
 
 #------------------------------------------------------------------------------

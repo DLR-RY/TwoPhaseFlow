@@ -18,6 +18,7 @@ Requires OpenFOAM v1812:
 ```
 https://www.openfoam.com/download/release-history.php
 ```
+The branch of2106 works with of2106
 
 ### Installing
 
@@ -25,6 +26,7 @@ https://www.openfoam.com/download/release-history.php
 git clone https://github.com/DLR-RY/TwoPhaseFlow
 cd TwoPhaseFlow
 ./Allwmake
+./get-gmsh.sh # will install gmsh version 306 as gmshv306
 # for AMR
 git submodule update --init --recursive
 cd modules/multiDimAMR/

@@ -15,7 +15,7 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 field alpha.water;
-function cylinder;
+type cylinder;
 origin (-1 0 0);
 direction (0 1 0);
 radius 0.2;

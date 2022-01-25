@@ -33,8 +33,8 @@ update_tri = dict() #{'system/blockMeshDict': {}} # do nothing
 
 def replaceString(Nx):
     return {
-    'triSquare.geo': {'#!stringManipulation': {'replaceNx': '%s' % Nx,
-                                               'replaceNz': '%s' % Nx  }}}
+    'triSquare.geo': {'#!stringManipulation': {'nx=10': f"nx={Nx}"}}}
+
 res = np.logspace(math.log10(25),math.log10(600),10)
 res = res.astype(int)
 # dictionary of data to update

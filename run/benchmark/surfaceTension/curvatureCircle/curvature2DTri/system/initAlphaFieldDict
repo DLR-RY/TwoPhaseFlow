@@ -16,7 +16,7 @@ FoamFile
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 field "alpha1";
-function cylinder;
+type cylinder;
 radius 0.5;
 direction (0 1 0);
 origin (1.0 0 1.0);

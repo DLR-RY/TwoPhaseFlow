@@ -25,7 +25,11 @@ FoamFile
 	writeVTK false;
     tol 1e-8;
 
-
+reconstruction
+{
+    nIter 1;
+    setAlphaMethod cutCellImpFunc;
+}
 
 
 PIMPLE

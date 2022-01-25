@@ -17,7 +17,7 @@ FoamFile
 
 field "alpha.phase1";
 //function cylinder;
-function sphere;
+type sphere;
 radius 0.25;
 direction (0 1 0);
 origin (0.5 0.5 0.5);

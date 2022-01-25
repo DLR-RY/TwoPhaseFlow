@@ -21,21 +21,21 @@ FoamFile
     {
         type            wall;
         inGroups        1(wall);
-        nFaces          2;
-        startFace       298;
+        nFaces          1;
+        startFace       99;
     }
     outlet
     {
         type            patch;
-        nFaces          2;
-        startFace       300;
+        nFaces          1;
+        startFace       100;
     }
     frontAndBack
     {
         type            empty;
         inGroups        1(empty);
-        nFaces          600;
-        startFace       302;
+        nFaces          400;
+        startFace       101;
     }
 )
 

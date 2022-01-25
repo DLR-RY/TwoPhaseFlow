@@ -16,7 +16,7 @@ FoamFile
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 field "alpha1";
-function sphere;
+type sphere;
 radius 0.75;
 origin (1.0 1.0 1.0);
 

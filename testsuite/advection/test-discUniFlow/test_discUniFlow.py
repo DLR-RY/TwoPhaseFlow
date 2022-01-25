@@ -1,7 +1,7 @@
 import os
 import pytest
 import oftest
-from oftest import run_case
+from oftest import run_case, clean_case
 
 @pytest.fixture(scope='class') # descruct all tests
 def load_errorfiles():
@@ -37,3 +37,6 @@ class TestDiscUniFlow:
         assert  max_err_shape <= 0.0122
         assert  max_err_mass <= 1e-13
         assert  max_err_bound <= 1e-8
+
+    def test_clean(clean_case):
+        pass

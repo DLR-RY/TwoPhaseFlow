@@ -38,6 +38,9 @@ CasesTri
 polyMesh/*
 0.[0-9]* [1-9]* *e-*
 processor*
+logs
+AlphaInit
+controlDict.orig
 
 # Build directories - anywhere
 linux*Clang*/
