@@ -38,23 +38,26 @@ Foam::accelerationModel::New
     Info<< "Selecting surfaceTension model "
         << accelerationModelTypeName << endl;
 
-    componentsConstructorTable::iterator cstrIter =
-        componentsConstructorTablePtr_
-            ->find(accelerationModelTypeName);
+    auto* ctorPtr = componentsConstructorTable(accelerationModelTypeName);
 
-    if (cstrIter == componentsConstructorTablePtr_->end())
+    if (!ctorPtr)
     {
-        FatalErrorIn
+        FatalErrorInLookup
         (
-            "accelerationModel::New"
-        )   << "Unknown accelerationModel type "
-            << accelerationModelTypeName << endl << endl
-            << "Valid  accelerationModels are : " << endl
-            << componentsConstructorTablePtr_->sortedToc()
-            << exit(FatalError);
+            "massSourceTermModel",
+            accelerationModelTypeName,
+            *componentsConstructorTablePtr_
+        ) << exit(FatalError);
     }
 
-    return autoPtr<accelerationModel>(cstrIter()( dict,mesh));
+    return autoPtr<accelerationModel>
+    (
+        ctorPtr
+        (
+            dict,
+            mesh
+        )
+    );
 }
 
 

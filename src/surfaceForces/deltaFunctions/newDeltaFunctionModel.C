@@ -33,23 +33,26 @@ Foam::deltaFunctionModel::New
     Info<< "Selecting surfaceTension model "
         << deltaFunctionModelTypeName << endl;
 
-    componentsConstructorTable::iterator cstrIter =
-        componentsConstructorTablePtr_
-            ->find(deltaFunctionModelTypeName);
+    auto* ctorPtr = componentsConstructorTable(deltaFunctionModelTypeName);
 
-    if (cstrIter == componentsConstructorTablePtr_->end())
+    if (!ctorPtr)
     {
-        FatalErrorIn
+        FatalErrorInLookup
         (
-            "deltaFunctionModel::New"
-        )   << "Unknown deltaFunctionModel type "
-            << deltaFunctionModelTypeName << endl << endl
-            << "Valid  deltaFunctionModels are : " << endl
-            << componentsConstructorTablePtr_->sortedToc()
-            << exit(FatalError);
+            "massSourceTermModel",
+            deltaFunctionModelTypeName,
+            *componentsConstructorTablePtr_
+        ) << exit(FatalError);
     }
 
-    return autoPtr<deltaFunctionModel>(cstrIter()( dict,alpha1));
+    return autoPtr<deltaFunctionModel>
+    (
+        ctorPtr
+        (
+            dict,
+            alpha1
+        )
+    );
 }
 
 

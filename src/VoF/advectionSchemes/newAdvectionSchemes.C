@@ -50,29 +50,22 @@ Foam::advectionSchemes::New
         ).subDict("solvers").subDict(alpha1.name()).lookup("advectionScheme")
      );
 
-    //word advectionSchemesTypeName = word(advectionSchemesCoeffs_.lookup("advectionScheme"));
-
-
     Info<< "Selecting advectionSchemes: "
         << advectionSchemesTypeName << endl;
 
-    componentsConstructorTable::iterator cstrIter =
-        componentsConstructorTablePtr_
-            ->find(advectionSchemesTypeName);
+    auto* ctorPtr = componentsConstructorTable(advectionSchemesTypeName);
 
-    if (cstrIter == componentsConstructorTablePtr_->end())
+    if (!ctorPtr)
     {
-        FatalErrorIn
+        FatalErrorInLookup
         (
-            "advectionSchemes::New"
-        )   << "Unknown advectionSchemes type "
-            << advectionSchemesTypeName << endl << endl
-            << "Valid  advectionSchemess are : " << endl
-            << componentsConstructorTablePtr_->sortedToc()
-            << exit(FatalError);
+            "advectionSchemes",
+            advectionSchemesTypeName,
+            *componentsConstructorTablePtr_
+        ) << exit(FatalError);
     }
 
-    return autoPtr<advectionSchemes>(cstrIter()( alpha1, phi,U));
+    return autoPtr<advectionSchemes>(ctorPtr( alpha1, phi,U));
 }
 
 

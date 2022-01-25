@@ -41,33 +41,32 @@ Foam::energySourceTermModel::New
     Info<< "Selecting energySourceTermModel model "
         << energySourceTermModelTypeName << endl;
 
-    componentsConstructorTable::iterator cstrIter =
-        componentsConstructorTablePtr_
-            ->find(energySourceTermModelTypeName);
 
-    if (cstrIter == componentsConstructorTablePtr_->end())
+    auto* ctorPtr = componentsConstructorTable(energySourceTermModelTypeName);
+
+    if (!ctorPtr)
     {
-        FatalErrorIn
+        FatalErrorInLookup
         (
-            "energySourceTermModel::New"
-        )   << "Unknown energySourceTermModel type "
-            << energySourceTermModelTypeName << endl << endl
-            << "Valid  energySourceTermModels are : " << endl
-            << componentsConstructorTablePtr_->sortedToc()
-            << exit(FatalError);
+            "energySourceTermModel",
+            energySourceTermModelTypeName,
+            *componentsConstructorTablePtr_
+        ) << exit(FatalError);
     }
 
-    return
-    autoPtr<energySourceTermModel>(cstrIter()
+    return autoPtr<energySourceTermModel>
     (
-        phase1,
-        phase2,
-        turbModel,
-        p,
-        satModel,
-        surf,
-        dict
-    ));
+        ctorPtr
+        (
+            phase1,
+            phase2,
+            turbModel,
+            p,
+            satModel,
+            surf,
+            dict
+        )
+    );
 }
 
 

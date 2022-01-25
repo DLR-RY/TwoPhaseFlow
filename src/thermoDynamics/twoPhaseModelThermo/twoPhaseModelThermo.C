@@ -255,6 +255,17 @@ Foam::tmp<Foam::scalarField> Foam::twoPhaseModelThermo::Cv
       + phase2_().boundaryField()[patchi]*phase2_->thermo().Cv(p, T, patchi);
 }
 
+Foam::tmp<Foam::scalarField> Foam::twoPhaseModelThermo::rhoEoS
+(
+    const scalarField& p,
+    const scalarField& T,
+    const labelList& cells
+) const
+{
+    NotImplemented;
+    return nullptr;
+}
+
 
 Foam::tmp<Foam::volScalarField> Foam::twoPhaseModelThermo::gamma() const
 {
