@@ -2,20 +2,14 @@
 // new U and phi for propagating alpha1 in all but the first outer iteration
 if (oCorr != 0)
 {
-//     // We are recalculating alpha1 from the its old time value
-       alpha1 = alpha1.oldTime();
-//     // Temporarily storing new U and phi values in prevIter storage
-//     U.storePrevIter();
-//     phi.storePrevIter();
 
-//     // Overwriting new U and phi values with mixture of old and new values
-//     phi = 0.5*(phi + phi.oldTime());
-//     U = 0.5*(U + U.oldTime());
+       alpha1 = alpha1.oldTime();
+
 }
 
 tmp<surfaceScalarField> talphaPhi1(alphaPhi10);
-volScalarField tCpl = mixture.thermo1().Cp();
-volScalarField tCpv = mixture.thermo2().Cp();
+volScalarField tCpl(mixture.thermo1().Cp());
+volScalarField tCpv(mixture.thermo2().Cp());
 
 if (nAlphaSubCycles > 1)
 {
@@ -92,12 +86,6 @@ else
     #include "alphaEqn.H"
 }
 
-// if (oCorr != 0)
-// {
-//     // Restoring new U and phi values temporarily saved in prevIter() above
-//     U = U.prevIter();
-//     phi = phi.prevIter();
-// }
 
 rho = alpha1*rho1 + alpha2*rho2;
 

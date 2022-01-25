@@ -30,7 +30,8 @@ License
 #include "fvc.H"
 #include "leastSquareGrad.H"
 #include "addToRunTimeSelectionTable.H"
-#include "alphaContactAngleFvPatchScalarField.H"
+#include "alphaContactAngleTwoPhaseFvPatchScalarField.H"
+#include "profiling.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
@@ -48,6 +49,7 @@ namespace reconstruction
 
 void Foam::reconstruction::plicRDF::interpolateNormal()
 {
+    addProfilingInFunction(geometricVoF);
     scalar dt = mesh_.time().deltaTValue();
     zoneDistribute& exchangeFields = zoneDistribute::New(mesh_);
 
@@ -161,6 +163,7 @@ void Foam::reconstruction::plicRDF::interpolateNormal()
 
 void Foam::reconstruction::plicRDF::gradSurf(const volScalarField& phi)
 {
+    addProfilingInFunction(geometricVoF);
     leastSquareGrad<scalar> lsGrad("polyDegree1", mesh_.geometricD());
     zoneDistribute& exchangeFields = zoneDistribute::New(mesh_);
 
@@ -207,6 +210,7 @@ void Foam::reconstruction::plicRDF::gradSurf(const volScalarField& phi)
 
 void Foam::reconstruction::plicRDF::setInitNormals(bool interpolate)
 {
+    addProfilingInFunction(geometricVoF);
     zoneDistribute& exchangeFields = zoneDistribute::New(mesh_);
 
     interfaceLabels_.clear();
@@ -241,6 +245,7 @@ void Foam::reconstruction::plicRDF::calcResidual
     List<normalRes>& normalResidual
 )
 {
+    addProfilingInFunction(geometricVoF);
     zoneDistribute& exchangeFields = zoneDistribute::New(mesh_);
     exchangeFields.setUpCommforZone(interfaceCell_,false);
 
@@ -305,6 +310,7 @@ void Foam::reconstruction::plicRDF::calcResidual
 
 void Foam::reconstruction::plicRDF::centreAndNormalBC()
 {
+    addProfilingInFunction(geometricVoF);
     scalar convertToRad = Foam::constant::mathematical::pi/180.0;
 
     // check if face is cut
@@ -317,11 +323,11 @@ void Foam::reconstruction::plicRDF::centreAndNormalBC()
     const fvBoundaryMesh& boundary = mesh_.boundary();
 
     // we need a surfaceVectorField to compute theta
-    surfaceVectorField normalf = fvc::interpolate(normal_);
+    surfaceVectorField normalf(fvc::interpolate(normal_));
 
     forAll(boundary, patchi)
     {
-        if (isA<alphaContactAngleFvPatchScalarField>(abf[patchi]))
+        if (isA<alphaContactAngleTwoPhaseFvPatchScalarField>(abf[patchi]))
         {
             forAll(normalf.boundaryFieldRef()[patchi],i)
             {
@@ -338,12 +344,12 @@ void Foam::reconstruction::plicRDF::centreAndNormalBC()
 
     forAll(boundary, patchi)
     {
-        if (isA<alphaContactAngleFvPatchScalarField>(abf[patchi]))
+        if (isA<alphaContactAngleTwoPhaseFvPatchScalarField>(abf[patchi]))
         {
-            alphaContactAngleFvPatchScalarField& acap =
-                const_cast<alphaContactAngleFvPatchScalarField&>
+            alphaContactAngleTwoPhaseFvPatchScalarField& acap =
+                const_cast<alphaContactAngleTwoPhaseFvPatchScalarField&>
                 (
-                    refCast<const alphaContactAngleFvPatchScalarField>
+                    refCast<const alphaContactAngleTwoPhaseFvPatchScalarField>
                     (
                         abf[patchi]
                     )
@@ -483,6 +489,7 @@ Foam::reconstruction::plicRDF::plicRDF
 
 void Foam::reconstruction::plicRDF::reconstruct(bool forceUpdate)
 {
+    addProfilingInFunction(geometricVoF);
     zoneDistribute& exchangeFields = zoneDistribute::New(mesh_);
     const bool uptodate = alreadyReconstructed(forceUpdate);
 
@@ -649,6 +656,7 @@ void Foam::reconstruction::plicRDF::reconstruct(bool forceUpdate)
 
 void Foam::reconstruction::plicRDF::mapAlphaField() const
 {
+    addProfilingInFunction(geometricVoF);
     // without it we seem to get a race condition
     mesh_.C();
 

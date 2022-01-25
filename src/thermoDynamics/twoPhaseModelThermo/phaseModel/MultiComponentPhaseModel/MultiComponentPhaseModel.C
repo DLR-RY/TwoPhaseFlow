@@ -188,9 +188,9 @@ Foam::MultiComponentPhaseModel<BasePhaseModel, phaseThermo>::YiEqn
     }
 
     const volScalarField& alpha = *this;
-    const surfaceScalarField alphaRhoPhi = this->alphaPhi()*fvc::interpolate(this->rho());
+    const surfaceScalarField alphaRhoPhi(this->alphaPhi()*fvc::interpolate(this->rho()));
     const volScalarField& rho = this->rho();
-    const volScalarField continuityError = fvc::ddt(alpha, rho) + fvc::div(alphaRhoPhi);
+    const volScalarField continuityError(fvc::ddt(alpha, rho) + fvc::div(alphaRhoPhi));
 
     return
     (

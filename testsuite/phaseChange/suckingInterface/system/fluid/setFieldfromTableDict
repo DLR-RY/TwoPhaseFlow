@@ -23,7 +23,7 @@ hasHeaderLine false;
 timeColumn 0;
 valueColumns (1);
 
-function plane;
+type plane;
 origin (0 0 0);
 normal (1 0 0);
 

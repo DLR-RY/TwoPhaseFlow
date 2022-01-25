@@ -118,6 +118,7 @@ void Foam::advection::isoAdvection::limitFluxes
     const SuType& Su
 )
 {
+    addProfilingInFunction(geometricVoF);
     DebugInFunction << endl;
 
     const scalar aTol = 1.0e-12;          // Note: tolerances
@@ -223,6 +224,7 @@ void Foam::advection::isoAdvection::boundFlux
     const SuType& Su
 )
 {
+    addProfilingInFunction(geometricVoF);
     DebugInFunction << endl;
     scalar rDeltaT = 1/mesh_.time().deltaTValue();
 
@@ -374,6 +376,7 @@ void Foam::advection::isoAdvection::boundFlux
 template<class SpType, class SuType>
 void Foam::advection::isoAdvection::advect(const SpType& Sp, const SuType& Su)
 {
+    addProfilingInFunction(geometricVoF);
     DebugInFunction << endl;
 
     if (mesh_.topoChanging())

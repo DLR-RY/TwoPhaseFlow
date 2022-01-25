@@ -46,6 +46,7 @@ namespace reconstruction
 
 void Foam::reconstruction::gradAlpha::gradSurf(const volScalarField& phi)
 {
+    addProfilingInFunction(geometricVoF);
     leastSquareGrad<scalar> lsGrad("polyDegree1",mesh_.geometricD());
 
     zoneDistribute& exchangeFields = zoneDistribute::New(mesh_);
@@ -123,6 +124,7 @@ Foam::reconstruction::gradAlpha::gradAlpha
 
 void Foam::reconstruction::gradAlpha::reconstruct(bool forceUpdate)
 {
+    addProfilingInFunction(geometricVoF);
     const bool uptodate = alreadyReconstructed(forceUpdate);
 
     if (uptodate && !forceUpdate)
@@ -194,6 +196,7 @@ void Foam::reconstruction::gradAlpha::reconstruct(bool forceUpdate)
 
 void Foam::reconstruction::gradAlpha::mapAlphaField() const
 {
+    addProfilingInFunction(geometricVoF);
     // Without this line, we seem to get a race condition
     mesh_.C();
 

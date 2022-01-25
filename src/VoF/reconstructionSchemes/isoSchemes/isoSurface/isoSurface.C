@@ -22,7 +22,6 @@ License
 
 #include "isoSurface.H"
 #include "addToRunTimeSelectionTable.H"
-#include "implicitFunction.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
@@ -60,7 +59,7 @@ Foam::reconstruction::isoSurface::isoSurface
     cutCell_(mesh_,ap_),
 
     // Tolerances and solution controls
-    iso_(modelDict().lookupOrAddDefault<scalar>("iso", 0.5,false,false))
+    iso_(modelDict().lookupOrDefault<scalar>("iso", 0.5))
 {
 }
 

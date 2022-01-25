@@ -1,4 +1,5 @@
 EXE_INC = \
+    -I$(FOAM_UTILITIES)/preProcessing/setAlphaField/alphaFieldFunctions/lnInclude \
     -I$(LIB_SRC)/finiteVolume/lnInclude \
     -I$(LIB_SRC)/meshTools/lnInclude \
     -I$(LIB_SRC)/lagrangian/basic/lnInclude \
@@ -34,6 +35,7 @@ EXE_INC = \
     -I../turbulence/VoFphaseCompressibleTurbulenceModels/lnInclude
 
 LIB_LIBS = \
+    -lalphaFieldFunctions \
     -lfiniteVolume \
     -ldynamicMesh \
     -lmeshTools \
