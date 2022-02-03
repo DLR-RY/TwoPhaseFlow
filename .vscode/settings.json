@@ -1,12 +1,14 @@
 {
     "files.associations": {
         "*.H": "cpp",
-        "*.C": "cpp"
+        "*.C": "cpp",
+        "random": "cpp"
     },
     "C_Cpp.intelliSenseEngine": "Tag Parser",
     "python.testing.pytestArgs": [
         "."
     ],
     "python.testing.unittestEnabled": false,
-    "python.testing.pytestEnabled": true
+    "python.testing.pytestEnabled": true,
+    "python.formatting.provider": "black"
 }
