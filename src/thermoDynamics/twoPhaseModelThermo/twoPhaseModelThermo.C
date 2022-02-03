@@ -356,14 +356,15 @@ Foam::tmp<Foam::scalarField> Foam::twoPhaseModelThermo::kappa
 ) const
 {
     return
-        phase1_().boundaryField()[patchi]*phase1_->thermo().alphahe(patchi)
-      + phase2_().boundaryField()[patchi]*phase2_->thermo().alphahe(patchi);
+        phase1_().boundaryField()[patchi]*phase1_->thermo().kappa(patchi)
+      + phase2_().boundaryField()[patchi]*phase2_->thermo().kappa(patchi);
 }
+
 
 Foam::tmp<Foam::volScalarField> Foam::twoPhaseModelThermo::alphahe() const
 {
-    return phase1_()*phase1_->thermo().kappa()
-         + phase2_()*phase2_->thermo().kappa();
+    return phase1_()*phase1_->thermo().alphahe()
+         + phase2_()*phase2_->thermo().alphahe();
 }
 
 
