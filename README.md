@@ -34,7 +34,8 @@ cd modules/multiDimAMR/
 ```
 ### running testsuite
 
-assuming you have installed python version >= 3.6 (miniconda is a great option)
+make sure that the desired openfoam installation is sourced e.g. v1812 and that 
+python is installed with a version >= 3.6 (miniconda is a great option, but anaconda works as well)
 
 ```
 python -m venv env # creats virtual python enviroments (optional step)
