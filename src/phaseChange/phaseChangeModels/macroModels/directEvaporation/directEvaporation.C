@@ -77,7 +77,6 @@ Foam::directEvaporation::directEvaporation
 
 void Foam::directEvaporation::TSource1(fvScalarMatrix& T1Eqn)
 {
-    Info << " Tsource " << endl;
     const volScalarField& TSat = satModel_.TSat();
     const volScalarField& T1 = phase1_.thermo().T();
 
@@ -109,7 +108,6 @@ void Foam::directEvaporation::TSource2(fvScalarMatrix& T2Eqn)
 
 void Foam::directEvaporation::energySource(volScalarField& Q)
 {
-    Info << " energySource " << endl;
     const volScalarField& T1 = phase1_.thermo().T();
     const fvMesh& mesh = T1.mesh();
 

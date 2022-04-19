@@ -109,6 +109,12 @@ int main(int argc, char *argv[])
 
         ++runTime;
 
+        if(overwrite)
+        {
+            runTime.setTime(runTime.value() - runTime.deltaTValue(), 1);
+            runTime.writeAndEnd();
+        }
+
         Info<< "Time = " << runTime.timeName() << nl << endl;
 
         // --- PIMPLE loop
