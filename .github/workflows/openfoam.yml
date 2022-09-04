@@ -27,3 +27,10 @@ jobs:
         python -m pip install --upgrade pip
         pip install oftest scipy casefoam
         openfoam2106 -c "py.test -m 'not slow'"
+        
+    - name: upload logs
+      if: ${{ failure() }}
+      uses: actions/upload-artifact@v2
+      with:
+        name: logs
+        path: logs
