@@ -9,4 +9,5 @@ chmod u+x Allrun
 
 ./Allrun
 
+
 python getResults.py

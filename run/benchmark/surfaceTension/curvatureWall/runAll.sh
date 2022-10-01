@@ -9,4 +9,11 @@ chmod u+x Allrun
 
 ./Allrun
 
+python genCasesTri.py
+
+cat Allrun | tr -d "&" > tmp
+mv tmp Allrun
+chmod u+x Allrun
+
+./Allrun
 python getResults.py

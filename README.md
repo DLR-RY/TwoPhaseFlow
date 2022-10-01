@@ -22,26 +22,27 @@ The branch of2106 works with of2106
 
 ### Installing
 
-```
-git clone https://github.com/DLR-RY/TwoPhaseFlow
-cd TwoPhaseFlow
-./Allwmake
-./get-gmsh.sh # will install gmsh version 306 as gmshv306
-# for AMR
-git submodule update --init --recursive
-cd modules/multiDimAMR/
-./Allwmake
+```bash
+    git clone https://github.com/DLR-RY/TwoPhaseFlow
+    cd TwoPhaseFlow
+    ./Allwmake
+    ./get-gmsh.sh # will install gmsh version 306 as gmshv306
+    # for AMR
+    git submodule update --init --recursive
+    cd modules/multiDimAMR/
+    ./Allwmake
 ```
 ### running testsuite
 
-assuming you have installed python version >= 3.6 (miniconda is a great option)
+make sure that the desired openfoam installation is sourced e.g. v1812 and that 
+python is installed with a version >= 3.6 (miniconda is a great option, but anaconda works as well)
 
-```
-python -m venv env
-pip install oftest
+```bash
+    python -m venv env # creats virtual python enviroments (optional step)
+    pip install oftest
 
-py.test # runs the tests
-py.test --writeNSteps=1 run/ # test case in run folder
+    py.test # runs the tests
+    py.test --writeNSteps=1 run/ # test all testcases in run
 ```
 
 ## Authors
@@ -55,14 +56,14 @@ AMR with multiple regions does not work in version of1812 but it is fixed in new
 
 To fix this apply the patch (assumes openfoam is already source):
 
-```
-cp  patches/multiRegionAMR.patch $WM_PROJECT_DIR
-cp  patches/tableBase.patch $WM_PROJECT_DIR
-cp  patches/surfaceFieldValue.patch $WM_PROJECT_DIR
-cd $WM_PROJECT_DIR
-git apply multiRegionAMR.patch
-git apply tableBase.patch
-git apply surfaceFieldValue.patch
+```bash
+    cp  patches/multiRegionAMR.patch $WM_PROJECT_DIR
+    cp  patches/tableBase.patch $WM_PROJECT_DIR
+    cp  patches/surfaceFieldValue.patch $WM_PROJECT_DIR
+    cd $WM_PROJECT_DIR
+    git apply multiRegionAMR.patch
+    git apply tableBase.patch
+    git apply surfaceFieldValue.patch
 
 ```
 details see:
@@ -73,3 +74,30 @@ https://develop.openfoam.com/Development/openfoam/-/issues/1753
 ## License
 
 This project is licensed under the GPL v3 License - see the [LICENSE.md](LICENSE.md) file for details
+
+
+
+## running Benchmarks
+
+```bash
+    ./get-gmsh.sh # install gmsh
+    pip install casefoam
+
+```
+
+The run/benchmark cases are run with
+
+
+```bash
+    cd run/benchmark/phaseChange/suckingInterface/
+    python genCases.py # generates the study based and template case (here StefanProblem)
+    ./Allrun # runs all the created testcases
+    python getResults.py # to see results
+```
+
+Alternatively, the runAll.sh can be executed in the folder.
+
+Note:
+
+that some cases use the slurm queuing system and call `sbatch Allrun_Slurm` in the Allrun script, so you might need to modify it in the template case
+
