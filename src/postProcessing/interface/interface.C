@@ -49,7 +49,6 @@ Foam::interface::interface
 
     reconstructionSchemes& surf = mesh_.lookupObjectRef<reconstructionSchemes>("reconstructionScheme");
 
-    // why do we need this?
     surf.reconstruct(false);
 
     cutCellPLIC cellCut(mesh_);
