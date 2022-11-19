@@ -39,13 +39,13 @@ Foam::singleComponentSatProp::New
     Info<< "Selecting saturation model "
         << singleComponentSatPropTypeName << endl;
 
-    auto* ctorPtr = componentsConstructorTable(singleComponentSatPropTypeName);
+    auto ctorPtr = componentsConstructorTable(singleComponentSatPropTypeName);
 
     if (!ctorPtr)
     {
         FatalErrorInLookup
         (
-            "massSourceTermModel",
+            "singleComponentSatProp",
             singleComponentSatPropTypeName,
             *componentsConstructorTablePtr_
         ) << exit(FatalError);

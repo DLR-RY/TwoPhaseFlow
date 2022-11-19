@@ -42,7 +42,7 @@ Foam::energySourceTermModel::New
         << energySourceTermModelTypeName << endl;
 
 
-    auto* ctorPtr = componentsConstructorTable(energySourceTermModelTypeName);
+    auto ctorPtr = componentsConstructorTable(energySourceTermModelTypeName);
 
     if (!ctorPtr)
     {

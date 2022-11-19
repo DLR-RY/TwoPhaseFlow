@@ -44,13 +44,13 @@ Foam::surfaceTensionForceModel::New
     Info<< "Selecting surfaceTension model "
         << surfaceTensionForceModelTypeName << endl;
 
-    auto* ctorPtr = componentsConstructorTable(surfaceTensionForceModelTypeName);
+    auto ctorPtr = componentsConstructorTable(surfaceTensionForceModelTypeName);
 
     if (!ctorPtr)
     {
         FatalErrorInLookup
         (
-            "massSourceTermModel",
+            "surfaceTensionForceModel",
             surfaceTensionForceModelTypeName,
             *componentsConstructorTablePtr_
         ) << exit(FatalError);

@@ -37,7 +37,7 @@ Foam::macroModel::New
     Info<< "Selecting macroModel model "
         << macroModelTypeName << endl;
 
-    auto* ctorPtr = componentsConstructorTable(macroModelTypeName);
+    auto ctorPtr = componentsConstructorTable(macroModelTypeName);
 
     if (!ctorPtr)
     {

@@ -41,7 +41,7 @@ Foam::massSourceTermModel::New
     Info<< "Selecting massSourceTermModel model "
         << massSourceTermModelTypeName << endl;
 
-    auto* ctorPtr = componentsConstructorTable(massSourceTermModelTypeName);
+    auto ctorPtr = componentsConstructorTable(massSourceTermModelTypeName);
 
     if (!ctorPtr)
     {
