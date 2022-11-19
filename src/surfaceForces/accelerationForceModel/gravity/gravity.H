@@ -35,7 +35,7 @@ SourceFiles
 #include "autoPtr.H"
 #include "uniformDimensionedFields.H"
 
-#include "accelerationModel.H"
+#include "accelerationForceModel.H"
 #include "alphaCSF.H"
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -47,7 +47,7 @@ namespace Foam
 \*---------------------------------------------------------------------------*/
 
 class gravity
-    : public accelerationModel
+    : public accelerationForceModel
 {
 
         //- const access dict

@@ -27,7 +27,7 @@ License
 namespace Foam
 {
     defineTypeNameAndDebug(gravity, 0);
-    addToRunTimeSelectionTable(accelerationModel,gravity, components);
+    addToRunTimeSelectionTable(accelerationForceModel,gravity, components);
 }
 
 
@@ -39,7 +39,7 @@ Foam::gravity::gravity
     const fvMesh& mesh
 )
 :
-    accelerationModel
+    accelerationForceModel
     (
         typeName,
         dict,

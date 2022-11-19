@@ -17,60 +17,49 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "accelerationModel.H"
+#include "accelerationForceModel.H"
 
-// * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
-namespace Foam
-{
-    defineTypeNameAndDebug(accelerationModel, 0);
-    defineRunTimeSelectionTable(accelerationModel, components);
-}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-// * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
-
-Foam::accelerationModel::accelerationModel
+Foam::autoPtr<Foam::accelerationForceModel>
+Foam::accelerationForceModel::New
 (
-    const word& type,
     const dictionary& dict,
     const fvMesh& mesh
 )
-:
-    accf_
-    (
-        IOobject
-        (
-            "ghf",
-            mesh.time().timeName(),
-            mesh
-        ),
-        mesh,
-        dimensionedScalar("accf_", dimAcceleration*dimLength, 0.0)
-    ),
-    acc_
-    (
-        IOobject
-        (
-            "gh",
-            mesh.time().timeName(),
-            mesh
-        ),
-        mesh,
-        dimensionedScalar("acc_", dimAcceleration*dimLength, 0.0)
-    )
 {
 
+    word accelerationForceModelTypeName
+    (
+        dict.getCompat<word>
+        (
+            "accelerationForceModel",
+            {{"accelerationModel", 1.1}}
+        )
+    );
+
+    Info<< "Selecting surfaceTension model "
+        << accelerationForceModelTypeName << endl;
+
+    componentsConstructorTable::iterator cstrIter =
+        componentsConstructorTablePtr_
+            ->find(accelerationForceModelTypeName);
+
+    if (cstrIter == componentsConstructorTablePtr_->end())
+    {
+        FatalErrorIn
+        (
+            "accelerationForceModel::New"
+        )   << "Unknown accelerationForceModel type "
+            << accelerationForceModelTypeName << endl << endl
+            << "Valid  accelerationForceModels are : " << endl
+            << componentsConstructorTablePtr_->sortedToc()
+            << exit(FatalError);
+    }
+
+    return autoPtr<accelerationForceModel>(cstrIter()( dict,mesh));
 }
-
-
-// * * * * * * * * * * * * * * Public Access Member Functions  * * * * * * * //
-
-
-void Foam::accelerationModel::calculateAcc()
-{
-    notImplemented("bool Foam::accelerationModel::calculateAcc()");;
-}
-
 
 
 // ************************************************************************* //
