@@ -67,7 +67,7 @@ surfaceForces
 {
   sigma 1;
   surfaceTensionForceModel fitParaboloid;
-  accelerationModel gravity;
+  accelerationForceModel gravity;
   gravity (0 0 0);
   deltaFunctionModel alphaCSF;
 }

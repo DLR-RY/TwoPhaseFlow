@@ -67,7 +67,7 @@ surfaceForces
 {
   sigma 1;
   surfaceTensionForceModel RDF;
-  accelerationModel gravity;
+  accelerationForceModel gravity;
   deltaFunctionModel alphaCSF;
 }
 

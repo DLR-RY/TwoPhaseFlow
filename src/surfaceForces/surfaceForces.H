@@ -44,7 +44,7 @@ SourceFiles
 #include "surfaceTensionModel.H"
 #include "surfaceTensionForceModel.H"
 #include "deltaFunctionModel.H"
-#include "accelerationModel.H"
+#include "accelerationForceModel.H"
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -71,7 +71,7 @@ private:
 
         autoPtr<surfaceTensionForceModel> surfTenForceModel_;
 
-        autoPtr<accelerationModel> accModel_;
+        autoPtr<accelerationForceModel> accModel_;
 
 
     // Private Member Functions

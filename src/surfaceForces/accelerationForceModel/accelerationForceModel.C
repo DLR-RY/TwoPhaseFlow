@@ -17,19 +17,19 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "accelerationModel.H"
+#include "accelerationForceModel.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
 {
-    defineTypeNameAndDebug(accelerationModel, 0);
-    defineRunTimeSelectionTable(accelerationModel, components);
+    defineTypeNameAndDebug(accelerationForceModel, 0);
+    defineRunTimeSelectionTable(accelerationForceModel, components);
 }
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::accelerationModel::accelerationModel
+Foam::accelerationForceModel::accelerationForceModel
 (
     const word& type,
     const dictionary& dict,
@@ -66,9 +66,9 @@ Foam::accelerationModel::accelerationModel
 // * * * * * * * * * * * * * * Public Access Member Functions  * * * * * * * //
 
 
-void Foam::accelerationModel::calculateAcc()
+void Foam::accelerationForceModel::calculateAcc()
 {
-    notImplemented("bool Foam::accelerationModel::calculateAcc()");;
+    notImplemented("bool Foam::accelerationForceModel::calculateAcc()");;
 }
 
 

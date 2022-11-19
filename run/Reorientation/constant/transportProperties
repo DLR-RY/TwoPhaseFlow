@@ -39,7 +39,7 @@ surfaceForces
 {
   sigma 0.0153;
   surfaceTensionForceModel gradAlpha; // RDF fitParaboloid gradAlpha
-  accelerationModel gravity;
+  accelerationForceModel gravity;
   deltaFunctionModel alphaCSF;
 }
 

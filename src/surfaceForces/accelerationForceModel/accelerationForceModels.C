@@ -17,40 +17,44 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "accelerationModel.H"
+#include "accelerationForceModel.H"
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-Foam::autoPtr<Foam::accelerationModel>
-Foam::accelerationModel::New
+Foam::autoPtr<Foam::accelerationForceModel>
+Foam::accelerationForceModel::New
 (
     const dictionary& dict,
     const fvMesh& mesh
 )
 {
 
-    word accelerationModelTypeName
+    word accelerationForceModelTypeName
     (
-        dict.lookup("accelerationModel")
+        dict.getCompat<word>
+        (
+            "accelerationForceModel",
+            {{"accelerationModel", 1.1}}
+        )
     );
 
     Info<< "Selecting surfaceTension model "
-        << accelerationModelTypeName << endl;
+        << accelerationForceModelTypeName << endl;
 
-    auto* ctorPtr = componentsConstructorTable(accelerationModelTypeName);
+    auto ctorPtr = componentsConstructorTable(accelerationForceModelTypeName);
 
     if (!ctorPtr)
     {
         FatalErrorInLookup
         (
-            "massSourceTermModel",
-            accelerationModelTypeName,
+            "accelerationForceModel",
+            accelerationForceModelTypeName,
             *componentsConstructorTablePtr_
         ) << exit(FatalError);
     }
 
-    return autoPtr<accelerationModel>
+    return autoPtr<accelerationForceModel>
     (
         ctorPtr
         (
