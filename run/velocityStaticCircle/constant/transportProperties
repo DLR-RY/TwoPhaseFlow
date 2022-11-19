@@ -39,7 +39,7 @@ surfaceForces
   sigma 1;
   surfaceTensionForceModel constantCurvature; //RDF RDFleastSquare fitParaboloid gradAlpha heightFunction
   curv 10;
-  accelerationModel gravity;
+  accelerationForceModel gravity;
   deltaFunctionModel alphaCSF;
 }
 

@@ -39,7 +39,7 @@ surfaceForces
 // 100 times lower
   sigma 0.00059; // sigma 0.00;
   surfaceTensionForceModel RDF;
-  accelerationModel gravity;
+  accelerationForceModel gravity;
   deltaFunctionModel alphaCSF;
 }
 

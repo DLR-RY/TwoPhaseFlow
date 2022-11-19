@@ -17,45 +17,60 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "accelerationModel.H"
+#include "accelerationForceModel.H"
 
+// * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+namespace Foam
+{
+    defineTypeNameAndDebug(accelerationForceModel, 0);
+    defineRunTimeSelectionTable(accelerationForceModel, components);
+}
 
-Foam::autoPtr<Foam::accelerationModel>
-Foam::accelerationModel::New
+// * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
+
+Foam::accelerationForceModel::accelerationForceModel
 (
+    const word& type,
     const dictionary& dict,
     const fvMesh& mesh
 )
+:
+    accf_
+    (
+        IOobject
+        (
+            "ghf",
+            mesh.time().timeName(),
+            mesh
+        ),
+        mesh,
+        dimensionedScalar("accf_", dimAcceleration*dimLength, 0.0)
+    ),
+    acc_
+    (
+        IOobject
+        (
+            "gh",
+            mesh.time().timeName(),
+            mesh
+        ),
+        mesh,
+        dimensionedScalar("acc_", dimAcceleration*dimLength, 0.0)
+    )
 {
 
-    word accelerationModelTypeName
-    (
-        dict.lookup("accelerationModel")
-    );
-
-    Info<< "Selecting surfaceTension model "
-        << accelerationModelTypeName << endl;
-
-    componentsConstructorTable::iterator cstrIter =
-        componentsConstructorTablePtr_
-            ->find(accelerationModelTypeName);
-
-    if (cstrIter == componentsConstructorTablePtr_->end())
-    {
-        FatalErrorIn
-        (
-            "accelerationModel::New"
-        )   << "Unknown accelerationModel type "
-            << accelerationModelTypeName << endl << endl
-            << "Valid  accelerationModels are : " << endl
-            << componentsConstructorTablePtr_->sortedToc()
-            << exit(FatalError);
-    }
-
-    return autoPtr<accelerationModel>(cstrIter()( dict,mesh));
 }
+
+
+// * * * * * * * * * * * * * * Public Access Member Functions  * * * * * * * //
+
+
+void Foam::accelerationForceModel::calculateAcc()
+{
+    notImplemented("bool Foam::accelerationForceModel::calculateAcc()");;
+}
+
 
 
 // ************************************************************************* //

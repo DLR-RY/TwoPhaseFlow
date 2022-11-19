@@ -16,19 +16,19 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::accelerationModel
+    Foam::accelerationForceModel
 
 Description
     abstract base class of the acceleration model
 
 SourceFiles
-    accelerationModel.C
-    newAccelerationModel.C
+    accelerationForceModel.C
+    newaccelerationForceModel.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef accelerationModel_H
-#define accelerationModel_H
+#ifndef accelerationForceModel_H
+#define accelerationForceModel_H
 
 #include "typeInfo.H"
 #include "runTimeSelectionTables.H"
@@ -47,10 +47,10 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                Class accelerationModel Declaration
+                Class accelerationForceModel Declaration
 \*---------------------------------------------------------------------------*/
 
-class accelerationModel
+class accelerationForceModel
 {
 protected:
 
@@ -65,15 +65,15 @@ private:
     // Private Member Functions
 
         //- Disallow copy construct
-        accelerationModel(const accelerationModel&);
+        accelerationForceModel(const accelerationForceModel&);
 
         //- Disallow default bitwise assignment
-        void operator=(const accelerationModel&);
+        void operator=(const accelerationForceModel&);
 
 public:
 
     //- Runtime type information
-    TypeName("accelerationModel");
+    TypeName("accelerationForceModel");
 
 
     // Declare run-time constructor selection table
@@ -81,7 +81,7 @@ public:
         declareRunTimeSelectionTable
         (
             autoPtr,
-            accelerationModel,
+            accelerationForceModel,
             components,
             (
                 const dictionary& dict,
@@ -93,7 +93,7 @@ public:
     // Selectors
 
         //- Return a reference to the selected phaseChange model
-        static autoPtr<accelerationModel> New
+        static autoPtr<accelerationForceModel> New
         (
             const dictionary& dict,
             const fvMesh& mesh
@@ -102,7 +102,7 @@ public:
     // Constructors
 
         //- Construct from components
-        accelerationModel
+        accelerationForceModel
         (
             const word& type,
             const dictionary& dict,
@@ -110,7 +110,7 @@ public:
         );
 
     //- Destructor
-    virtual ~accelerationModel()
+    virtual ~accelerationForceModel()
     {}
 
     // Member Functions
