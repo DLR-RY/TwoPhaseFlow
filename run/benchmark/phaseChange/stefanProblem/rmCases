@@ -1,0 +1,16 @@
+# Script to remove all cases and bring folder to original structure
+rm -rf Cases/isoSurface*
+rm -rf Cases/plicRDF*
+
+mv Cases/baseCase/* Cases/
+rm -rf Cases/baseCase
+rm Allrun Allclean rmCases
+while true; do
+    read -p "Delete Cases directory? All changes in Cases will be lost. [y/N] " yn
+    case $yn in
+        [Yy]* ) rm -rf Cases; break;;
+        [Nn]* ) exit;;
+        * ) exit;;
+    esac
+done
+rm -rf Cases

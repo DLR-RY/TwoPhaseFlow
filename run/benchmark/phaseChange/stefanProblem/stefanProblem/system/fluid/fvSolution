@@ -83,7 +83,7 @@ solvers
         preconditioner  DIC;
         relTol           0.001;
         smoother         GaussSeidel;
-        minIter 10;
+        minIter 3;
     }
 
     p_rghFinal
@@ -91,7 +91,7 @@ solvers
         $p_rgh;
         tolerance        1e-9;
         relTol           0;
-        minIter 10;
+        minIter 3;
     }
 
 /*    e
@@ -114,13 +114,15 @@ solvers
 
     "(U|h|T.*|k|epsilon|R)"
     {
-        solver           smoothSolver; //PBiCGStab;
-        smoother        symGaussSeidel;
+        // solver           smoothSolver; //PBiCGStab;
+        // smoother        symGaussSeidel;
+        solver           PBiCGStab;
+        preconditioner   DILU;
         //preconditioner   DILU;
         tolerance        1e-7;
-        relTol           0.;
-        minIter          15;
-        maxIter          50;
+        relTol           0.0;
+        minIter          2;
+        maxIter          10;
     }
 
     "(U|h|T.*|k|epsilon|R)Final"
@@ -128,14 +130,15 @@ solvers
         $U;
         tolerance        1e-7;
         relTol           0;
-        maxIter          50;
+        minIter          2;
+        maxIter          10;
     }
 }
 
 PIMPLE
 {
     momentumPredictor   yes;
-    nCorrectors         8;
+    nCorrectors         2;
     nNonOrthogonalCorrectors 0;
 }
 
