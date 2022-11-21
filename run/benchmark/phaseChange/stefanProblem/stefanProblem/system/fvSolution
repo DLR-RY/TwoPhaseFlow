@@ -30,8 +30,8 @@ solvers
         smoother        symGaussSeidel;
         tolerance       1e-8;
         relTol          0;
-        advectionScheme asasd;
-        reconstructionScheme plicRDFN;
+        advectionScheme isoAdvector;
+        reconstructionScheme plicRDF;
         vof2IsoTol 1e-8;
         surfCellTol 1e-8;
         writeVTK true;
