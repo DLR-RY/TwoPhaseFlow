@@ -15,6 +15,5 @@ runApplication $(getApplication)
 cp postProcessing/volumeFractionError/0/volumeFractionError.dat volumeFractionError.dat
 rm -r postProcessing
 runApplication decomposePar
-runParallel -s par $(getApplication)
+mpirun -oversubscribe -np 4 $(getApplication) -parallel  > log.$(getApplication).par
 cp postProcessing/volumeFractionError/0/volumeFractionError.dat volumeFractionErrorPar.dat
-

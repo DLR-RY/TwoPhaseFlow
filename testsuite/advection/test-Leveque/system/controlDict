@@ -63,7 +63,7 @@ functions
 		type        volumeFractionError;
 		libs        ("libpostProcess.so");
 		field       alpha.water;
-		function    sphere;
+		functionType    sphere;
 		radius      0.15;
 		origin          (0.35 0.35 0.35);
 		writeControl    adjustableRunTime;

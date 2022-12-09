@@ -1,7 +1,8 @@
 import os
 import pytest
 import oftest
-from oftest import run_case, clean_case
+
+from oftest import run_reset_case, clean_case
 
 @pytest.fixture(scope='class') # descruct all tests
 def load_errorfiles():
@@ -16,11 +17,11 @@ def load_errorfiles():
 
 class TestDiscUniFlow:
 
-    def test_completed(self,run_case):
+    def test_completed(self,run_reset_case):
         log = oftest.path_log()
         assert oftest.case_status(log) == 'completed' # checks if run completes
 
-    def test_parallel(self,run_case,load_errorfiles):
+    def test_parallel(self,run_reset_case,load_errorfiles):
         err_serial, err_parrallel = load_errorfiles
         # exlude last two lines
         error = abs(err_parrallel.iloc[:,:-2]) - abs(err_serial.iloc[:,:-2])
@@ -28,7 +29,7 @@ class TestDiscUniFlow:
 
         assert max_error < 1e-14
 
-    def test_accuracy(self,run_case,load_errorfiles):
+    def test_accuracy(self,run_reset_case,load_errorfiles):
         err_serial, err_parrallel = load_errorfiles
 
         max_err_shape =  abs(err_serial.iloc[:,1].max())

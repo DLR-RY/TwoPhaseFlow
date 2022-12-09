@@ -40,7 +40,7 @@ dynamicAlphaContactAngleVoxVoinovFvPatchScalarField
     const DimensionedField<scalar, volMesh>& iF
 )
 :
-    alphaContactAngleFvPatchScalarField(p, iF),
+    alphaContactAngleTwoPhaseFvPatchScalarField(p, iF),
     theta0_(0.0),
     ct_(0.0)
 {}
@@ -55,7 +55,7 @@ dynamicAlphaContactAngleVoxVoinovFvPatchScalarField
     const fvPatchFieldMapper& mapper
 )
 :
-    alphaContactAngleFvPatchScalarField(gcpsf, p, iF, mapper),
+    alphaContactAngleTwoPhaseFvPatchScalarField(gcpsf, p, iF, mapper),
     theta0_(gcpsf.theta0_),
     ct_(gcpsf.ct_)
 {}
@@ -69,7 +69,7 @@ dynamicAlphaContactAngleVoxVoinovFvPatchScalarField
     const dictionary& dict
 )
 :
-    alphaContactAngleFvPatchScalarField(p, iF, dict),
+    alphaContactAngleTwoPhaseFvPatchScalarField(p, iF, dict),
     theta0_(readScalar(dict.lookup("theta0"))),
     ct_(readScalar(dict.lookup("ct")))
 {
@@ -83,7 +83,7 @@ dynamicAlphaContactAngleVoxVoinovFvPatchScalarField
     const dynamicAlphaContactAngleVoxVoinovFvPatchScalarField& gcpsf
 )
 :
-    alphaContactAngleFvPatchScalarField(gcpsf),
+    alphaContactAngleTwoPhaseFvPatchScalarField(gcpsf),
     theta0_(gcpsf.theta0_),
     ct_(gcpsf.ct_)
 {}
@@ -96,7 +96,7 @@ dynamicAlphaContactAngleVoxVoinovFvPatchScalarField
     const DimensionedField<scalar, volMesh>& iF
 )
 :
-    alphaContactAngleFvPatchScalarField(gcpsf, iF),
+    alphaContactAngleTwoPhaseFvPatchScalarField(gcpsf, iF),
     theta0_(gcpsf.theta0_),
     ct_(gcpsf.ct_)
 {}
@@ -194,7 +194,7 @@ Foam::dynamicAlphaContactAngleVoxVoinovFvPatchScalarField::theta
 
 void Foam::dynamicAlphaContactAngleVoxVoinovFvPatchScalarField::write(Ostream& os) const
 {
-    alphaContactAngleFvPatchScalarField::write(os);
+    alphaContactAngleTwoPhaseFvPatchScalarField::write(os);
     os.writeKeyword("theta0") << theta0_ << token::END_STATEMENT << nl;
     os.writeKeyword("ct") << ct_ << token::END_STATEMENT << nl;
     writeEntry("value", os);

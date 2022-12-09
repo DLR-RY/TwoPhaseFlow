@@ -1,0 +1,98 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  plus                                  |
+|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+
+isoAdvection 1;
+application     multiRegionPhaseChangeFlow;
+
+startFrom       latestTime;
+
+startTime       0;
+
+stopAt          endTime;
+
+endTime         0.5;
+
+deltaT          1e-7;
+
+writeControl    adjustableRunTime;
+
+writeInterval   0.1;
+
+purgeWrite      0;
+
+writeFormat     ascii;
+
+writePrecision  8;
+
+writeCompression off;
+
+timeFormat      general;
+
+timePrecision   10;
+
+runTimeModifiable yes;
+
+adjustTimeStep  yes;
+
+maxCo           0.1;
+maxAlphaCo      0.1;
+maxCapillaryNum 1e8;
+maxDi           10;
+// needed for the explicit time step criteria of explicitGrad
+maxDeltaT       1e-1;
+// requires for accurate results of the explicit scheme
+//maxDeltaT       1e-4;
+
+functions
+{
+
+    massFlux
+    {
+        type            volFieldValue;
+        libs            ("libfieldFunctionObjects.so");
+
+        writeControl    timeStep;
+        writeInterval   10;
+        writeFields     false;
+        log             true;
+        region          fluid;
+
+        operation       volIntegrate;
+
+        fields
+        (
+            psi0_
+        );
+
+    }
+
+    energyFluxes
+    {
+        type            interfaceEnergyFluxes;
+        libs            ("libpostProcess.so");
+
+        // Write at same frequency as fields
+        writeControl    timeStep;
+        writeInterval   10;
+        region fluid;
+    }
+
+
+}
+
+// ************************************************************************* //

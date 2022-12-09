@@ -69,9 +69,10 @@ functions
     surfaces
     {
         type            surfaces;
-        functionObjectLibs
+        libs
         (
-            "libsampling.so"
+            sampling
+            postProcess
         );
 
         // Write at same frequency as fields
@@ -84,15 +85,13 @@ functions
         (
             alpha.water
         );
-        interpolationScheme cellPoint;
+        interpolationScheme cell;
         surfaces
         (
             constantIso
             {
-                type        isoSurfaceCell;
-                isoField    alpha.water;
-                isoValue    0.5;
-                interpolate true;
+                type        interface;
+                interpolate false;
             }
         );
     }

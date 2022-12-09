@@ -41,7 +41,7 @@ compdynamicAlphaContactAngleVoxVoinovFvPatchScalarField
     const DimensionedField<scalar, volMesh>& iF
 )
 :
-    alphaContactAngleFvPatchScalarField(p, iF),
+    alphaContactAngleTwoPhaseFvPatchScalarField(p, iF),
     init_(true),
     theta0_(0.0),
     ct_(0.0),
@@ -58,7 +58,7 @@ compdynamicAlphaContactAngleVoxVoinovFvPatchScalarField
     const fvPatchFieldMapper& mapper
 )
 :
-    alphaContactAngleFvPatchScalarField(gcpsf, p, iF, mapper),
+    alphaContactAngleTwoPhaseFvPatchScalarField(gcpsf, p, iF, mapper),
     init_(true),
     theta0_(gcpsf.theta0_),
     ct_(gcpsf.ct_),
@@ -74,7 +74,7 @@ compdynamicAlphaContactAngleVoxVoinovFvPatchScalarField
     const dictionary& dict
 )
 :
-    alphaContactAngleFvPatchScalarField(p, iF, dict),
+    alphaContactAngleTwoPhaseFvPatchScalarField(p, iF, dict),
     init_(true),
     theta0_(readScalar(dict.lookup("theta0"))),
     ct_(readScalar(dict.lookup("ct"))),
@@ -90,7 +90,7 @@ compdynamicAlphaContactAngleVoxVoinovFvPatchScalarField
     const compdynamicAlphaContactAngleVoxVoinovFvPatchScalarField& gcpsf
 )
 :
-    alphaContactAngleFvPatchScalarField(gcpsf),
+    alphaContactAngleTwoPhaseFvPatchScalarField(gcpsf),
     init_(true),
     theta0_(gcpsf.theta0_),
     ct_(gcpsf.ct_),
@@ -105,7 +105,7 @@ compdynamicAlphaContactAngleVoxVoinovFvPatchScalarField
     const DimensionedField<scalar, volMesh>& iF
 )
 :
-    alphaContactAngleFvPatchScalarField(gcpsf, iF),
+    alphaContactAngleTwoPhaseFvPatchScalarField(gcpsf, iF),
     init_(true),
     theta0_(gcpsf.theta0_),
     ct_(gcpsf.ct_),
@@ -195,7 +195,7 @@ Foam::compdynamicAlphaContactAngleVoxVoinovFvPatchScalarField::theta
 
 void Foam::compdynamicAlphaContactAngleVoxVoinovFvPatchScalarField::write(Ostream& os) const
 {
-    alphaContactAngleFvPatchScalarField::write(os);
+    alphaContactAngleTwoPhaseFvPatchScalarField::write(os);
     os.writeKeyword("theta0") << theta0_ << token::END_STATEMENT << nl;
     os.writeKeyword("ct") << ct_ << token::END_STATEMENT << nl;
     os.writeKeyword("muFieldName") << muName_ << token::END_STATEMENT << nl;

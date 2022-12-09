@@ -71,7 +71,7 @@ def expected():
 
 @pytest.fixture  # descruct all tests
 def load_errorfile():
-    
+
     solutionDir = 'surfaces'
     file = 'alpha.water_constantIso.raw'
     dir_name = os.path.dirname(os.path.abspath(__file__))
@@ -133,13 +133,13 @@ c_fitParaboloid128 = simMod(128, "fitParaboloid")
 parameters = [
     c_gradAlpha32,
     c_gradAlpha64,
-    c_gradAlpha128,
+    pytest.param(c_gradAlpha128, marks=pytest.mark.slow),
     c_RDF32,
     c_RDF64,
-    c_RDF128,
+    pytest.param(c_RDF128, marks=pytest.mark.slow),
     c_fitParaboloid32,
     c_fitParaboloid64,
-    c_fitParaboloid128
+    pytest.param(c_fitParaboloid128, marks=pytest.mark.slow),
 ]
 
 results = {
@@ -169,6 +169,7 @@ results = {
 def test_sinWave(run_reset_case, expected, load_errorfile):
 
     log = oftest.path_log()
+    assert oftest.case_status(log) == "completed"  # checks if run completes
     err = load_errorfile
     scheme = run_reset_case.meta_data["STM"]
     res = run_reset_case.meta_data["Res"]
@@ -179,7 +180,6 @@ def test_sinWave(run_reset_case, expected, load_errorfile):
     results["STM"].append(scheme)
     results["Res"].append(res)
 
-    assert oftest.case_status(log) == "completed"  # checks if run completes
 
 
 def test_results():

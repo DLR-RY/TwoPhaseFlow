@@ -1,15 +1,9 @@
 {
-    // autoPtr<phaseSystem::massTransferTable>
-    //     massTransferPtr(fluid.massTransfer());
-
-    // phaseSystem::massTransferTable&
-    //     massTransfer(massTransferPtr());
 
     PtrList<volScalarField>& Y1 = mixture.phase1().Y();
     PtrList<volScalarField>& Y2 = mixture.phase2().Y();
-    // why alphaEff ?
-    volScalarField muEff = turbulence.muEff(); //mixture.phase1().rho();
-    // volScalarField muEff2 = turbulence.alphaEff(); //mixture.phase2().rho();
+ 
+    volScalarField muEff(turbulence.muEff());
     if (!Y1.empty())
     {
         label inertIndex1 = mixture.phase1().inertIndex();
@@ -21,13 +15,13 @@
 
             if (Y1iEqn.valid())
             {
-                Y1iEqn =
-                (
-                    Y1iEqn
+                // Y1iEqn =
+                // (
+                //     Y1iEqn
                 //  ==
                 //    *massTransfer[Y1[i].name()]
                 //   + fvOptions(alpha1, rho1, Y1[i])
-                );
+                // );
 
                 Y1iEqn->relax();
                 Y1iEqn->solve(mesh.solver("Yi"));
