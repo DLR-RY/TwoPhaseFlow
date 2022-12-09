@@ -42,11 +42,9 @@ Foam::accelerationForceModel::New
     Info<< "Selecting surfaceTension model "
         << accelerationForceModelTypeName << endl;
 
-    componentsConstructorTable::iterator cstrIter =
-        componentsConstructorTablePtr_
-            ->find(accelerationForceModelTypeName);
+    auto* ctorPtr = componentsConstructorTable(accelerationForceModelTypeName);
 
-    if (cstrIter == componentsConstructorTablePtr_->end())
+    if (!ctorPtr)
     {
         FatalErrorIn
         (
@@ -58,7 +56,7 @@ Foam::accelerationForceModel::New
             << exit(FatalError);
     }
 
-    return autoPtr<accelerationForceModel>(cstrIter()( dict,mesh));
+    return autoPtr<accelerationForceModel>(ctorPtr( dict,mesh));
 }
 
 

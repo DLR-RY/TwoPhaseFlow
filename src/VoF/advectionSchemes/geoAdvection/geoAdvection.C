@@ -37,6 +37,7 @@ License
 #include "cellSet.H"
 #include "meshTools.H"
 #include "OBJstream.H"
+#include "processorPolyPatch.H"
 
 #include "addToRunTimeSelectionTable.H"
 

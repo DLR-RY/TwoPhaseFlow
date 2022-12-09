@@ -8,8 +8,8 @@ EXE_INC = \
     -I$(LIB_SRC)/thermophysicalModels/specie/lnInclude \
     -I$(LIB_SRC)/transportModels/twoPhaseMixture/lnInclude \
     -I$(LIB_SRC)/transportModels/compressible/compressibleTransportModel \
-    -I$(LIB_SRC)/transportModels/interfaceProperties/lnInclude
-
+    -I$(LIB_SRC)/transportModels/interfaceProperties/lnInclude \
+    -I$(LIB_SRC)/transportModels/twoPhaseProperties/alphaContactAngle/alphaContactAngle
 
 LIB_LIBS = \
     -lfiniteVolume \

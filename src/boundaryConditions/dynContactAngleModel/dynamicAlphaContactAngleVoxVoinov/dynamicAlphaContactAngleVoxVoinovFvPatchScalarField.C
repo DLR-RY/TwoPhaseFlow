@@ -23,6 +23,7 @@ License
 
 \*---------------------------------------------------------------------------*/
 
+#include "dimensionedScalarFwd.H"
 #include "dynamicAlphaContactAngleVoxVoinovFvPatchScalarField.H"
 #include "addToRunTimeSelectionTable.H"
 #include "fvPatchFieldMapper.H"
@@ -142,15 +143,9 @@ Foam::dynamicAlphaContactAngleVoxVoinovFvPatchScalarField::theta
     word phase1Name (wordList(transportProperties.lookup("phases"))[0]);
     word phase2Name (wordList(transportProperties.lookup("phases"))[1]);
 
-    const volScalarField& alpha =
-        this->db().objectRegistry::lookupObject<volScalarField>
-        (
-            IOobject::groupName("alpha", phase1Name)
-        );
+    dimensionedScalar rho1(transportProperties.subDict(phase1Name).get<dimensionedScalar>("rho"));
 
-    dimensionedScalar rho1(transportProperties.subDict(phase1Name).lookup("rho"));
-
-    dimensionedScalar sigmap(transportProperties.lookup("sigma"));
+    dimensionedScalar sigmap(transportProperties.get<dimensionedScalar>("sigma"));
 
     const fvPatchScalarField&  nu1p = nu1.boundaryField()[patchi];
 

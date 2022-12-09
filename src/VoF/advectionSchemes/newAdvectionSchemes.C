@@ -65,7 +65,7 @@ Foam::advectionSchemes::New
         ) << exit(FatalError);
     }
 
-    return autoPtr<advectionSchemes>(ctorPtr( alpha1, phi,U));
+    return autoPtr<advectionSchemes>(ctorPtr(alpha1, phi,U));
 }
 
 

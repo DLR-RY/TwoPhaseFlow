@@ -147,7 +147,7 @@ Foam::compdynamicAlphaContactAngleVoxVoinovFvPatchScalarField::theta
         "thermophysicalProperties"
     );
 
-    dimensionedScalar sigmap(thermophysicalProperties.lookup("sigma"));
+    dimensionedScalar sigmap(thermophysicalProperties.get<dimensionedScalar>("sigma"));
 
     const fvPatchScalarField&  mu1p = mu1.boundaryField()[patchi];
 
