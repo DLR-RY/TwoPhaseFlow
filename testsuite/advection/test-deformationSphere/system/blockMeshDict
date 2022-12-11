@@ -16,7 +16,7 @@ FoamFile
 
 #include "simulationParameter"
 
-convertToMeters 1;
+scale 1;
 
 x1 0;
 x2 1;

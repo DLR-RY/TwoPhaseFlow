@@ -15,7 +15,7 @@ FoamFile
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 
-convertToMeters 0.001;
+scale 0.001;
 
 vertices // testZelle is 80 mm hoch galube ich
 (
