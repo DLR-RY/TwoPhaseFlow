@@ -66,7 +66,7 @@ MultiComponentPhaseModel
         mesh.solverDict("Yi")
     )
 {
-    thermoPtr_.set
+    thermoPtr_.reset
     (
         phaseThermo::New
         (

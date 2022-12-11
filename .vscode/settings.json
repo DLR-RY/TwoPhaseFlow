@@ -2,9 +2,9 @@
     "files.associations": {
         "*.H": "cpp",
         "*.C": "cpp",
-        "random": "cpp"
+        "random": "cpp",
+        "vector": "cpp"
     },
-    "C_Cpp.intelliSenseEngine": "Tag Parser",
     "python.testing.pytestArgs": [
         "."
     ],

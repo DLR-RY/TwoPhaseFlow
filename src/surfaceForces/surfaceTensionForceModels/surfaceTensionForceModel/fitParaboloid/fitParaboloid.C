@@ -37,6 +37,7 @@ License
 #include "cutFacePLIC.H"
 #include "cutCellIso.H"
 #include "reconstructedDistanceFunction.H"
+#include "processorPolyPatch.H"
 
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //

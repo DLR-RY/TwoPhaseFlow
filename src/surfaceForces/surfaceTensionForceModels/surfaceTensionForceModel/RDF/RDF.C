@@ -35,6 +35,8 @@ License
 #include "wedgePolyPatch.H"
 #include "indexedOctree.H"
 #include "treeDataPoint.H"
+#include "processorPolyPatch.H"
+#include "syncTools.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 

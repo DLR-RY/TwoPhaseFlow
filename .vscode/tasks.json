@@ -11,6 +11,15 @@
             "group": "build"
         },
         {
+            "type": "shell",
+            "label": "Allwmake",
+            "command": "./Allwmake",
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": "build"
+        },
+        {
             "type": "cppbuild",
             "label": "C/C++: cpp build active file",
             "command": "/usr/bin/cpp",
