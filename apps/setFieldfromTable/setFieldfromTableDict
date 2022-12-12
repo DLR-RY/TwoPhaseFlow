@@ -23,13 +23,13 @@ hasHeaderLine false;
 timeColumn 0;
 valueColumns (1);
 
-function composedFunction;
+type composedFunction;
 mode add;
 composedFunctions
 {
     plane
     {
-        function plane;
+        type plane;
         centre (0 1. 0);
         normal (0 1 0);
 
@@ -37,7 +37,7 @@ composedFunctions
 
     sphere
     {
-        function impSphere;
+        type impSphere;
         radius 0.4;
         centre (0.5 0.8 0.5);
         scale 1;
@@ -45,7 +45,7 @@ composedFunctions
 
     sphere2
     {
-        function impSphere;
+        type impSphere;
         radius 0.4;
         centre (0.5 0.5 0.5);
     }

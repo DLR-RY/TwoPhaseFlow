@@ -20,7 +20,7 @@ License
 #include "fitParaboloid.H"
 #include "addToRunTimeSelectionTable.H"
 
-#include "alphaContactAngleFvPatchScalarField.H"
+#include "alphaContactAngleTwoPhaseFvPatchScalarField.H"
 #include "mathematicalConstants.H"
 #include "surfaceInterpolate.H"
 #include "fvcDiv.H"
@@ -37,6 +37,7 @@ License
 #include "cutFacePLIC.H"
 #include "cutCellIso.H"
 #include "reconstructedDistanceFunction.H"
+#include "processorPolyPatch.H"
 
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
@@ -176,11 +177,11 @@ void Foam::fitParaboloid::correctContactAngle
     const fvBoundaryMesh& boundary = mesh.boundary();
 
     // we need a surfaceVectorField to compute theta
-    surfaceVectorField normalf = fvc::interpolate(normal);
+    surfaceVectorField normalf(fvc::interpolate(normal));
 
     forAll(boundary, patchi)
     {
-        if (isA<alphaContactAngleFvPatchScalarField>(abf[patchi]))
+        if (isA<alphaContactAngleTwoPhaseFvPatchScalarField>(abf[patchi]))
         {
             forAll(normalf.boundaryFieldRef()[patchi],i)
             {
@@ -197,12 +198,12 @@ void Foam::fitParaboloid::correctContactAngle
 
     forAll(boundary, patchi)
     {
-        if (isA<alphaContactAngleFvPatchScalarField>(abf[patchi]))
+        if (isA<alphaContactAngleTwoPhaseFvPatchScalarField>(abf[patchi]))
         {
-            alphaContactAngleFvPatchScalarField& acap =
-                const_cast<alphaContactAngleFvPatchScalarField&>
+            alphaContactAngleTwoPhaseFvPatchScalarField& acap =
+                const_cast<alphaContactAngleTwoPhaseFvPatchScalarField&>
                 (
-                    refCast<const alphaContactAngleFvPatchScalarField>
+                    refCast<const alphaContactAngleTwoPhaseFvPatchScalarField>
                     (
                         abf[patchi]
                     )
@@ -262,7 +263,7 @@ void Foam::fitParaboloid::correctContactAngle
                 }
                 else
                 {
-                    cbf[patchi][i] == vector::zero;
+                    cbf[patchi][i] = vector::zero;
                 }
             }
             acap.evaluate();

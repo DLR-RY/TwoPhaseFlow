@@ -39,12 +39,12 @@ c_plicRDF128 = simMod(128, "plicRDF")  # 0.001494
 
 
 parameters = [
-    c_isoAlpha32,  
-    c_isoAlpha64,  
-    c_isoAlpha128, 
-    c_plicRDF32,   
-    c_plicRDF64,   
-    c_plicRDF128,  
+    c_isoAlpha32,
+    c_isoAlpha64,
+    pytest.param(c_isoAlpha128, marks=pytest.mark.slow),
+    c_plicRDF32,
+    c_plicRDF64,
+    pytest.param(c_plicRDF128, marks=pytest.mark.slow)
 ]
 
 
@@ -73,6 +73,7 @@ results = {
 )
 def test_deformation(run_reset_case, load_errorfiles):
     log = oftest.path_log()
+    assert oftest.case_status(log) == "completed"  # checks if run completes
     err = load_errorfiles
     max_err_shape = abs(err.iloc[1, 1].max())
     max_err_mass = abs(err.iloc[:, 2].max())
@@ -90,10 +91,9 @@ def test_deformation(run_reset_case, load_errorfiles):
     results["Res"].append(grid_res)
 
     exp_res = oftest.expected_results([3,4],(scheme,grid_res))
-    assert max_err_shape == pytest.approx(exp_res["err_shape"],rel=0.01)
+    assert max_err_shape <= exp_res["err_shape"]*1.01
     assert max_err_mass <= 1e-13
     assert max_err_bound <= 5e-5
-    assert oftest.case_status(log) == "completed"  # checks if run completes
 
 
 def test_write_results():

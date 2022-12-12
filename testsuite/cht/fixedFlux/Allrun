@@ -1,0 +1,22 @@
+#!/bin/sh
+cd ${0%/*} || exit 1    # Run from this directory
+
+# Source tutorial run functions
+. $WM_PROJECT_DIR/bin/tools/RunFunctions
+
+runApplication blockMesh
+runApplication topoSet
+
+# Restore initial fields
+restore0Dir
+
+runApplication splitMeshRegions -cellZones -overwrite
+rm -r constant/polyMesh
+
+runApplication initAlphaField -region fluid
+
+touch cht.foam
+
+runApplication $(getApplication)
+
+#------------------------------------------------------------------------------

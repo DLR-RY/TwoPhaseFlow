@@ -57,7 +57,7 @@ Description
 #include "advectionSchemes.H"
 #include "surfaceForces.H"
 
-#include "alphaContactAngleFvPatchScalarField.H"
+#include "alphaContactAngleTwoPhaseFvPatchScalarField.H"
 
 #include "singleComponentPhaseChange.H"
 

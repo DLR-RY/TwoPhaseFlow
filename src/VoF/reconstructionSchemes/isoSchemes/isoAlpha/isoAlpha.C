@@ -28,6 +28,7 @@ License
 #include "isoAlpha.H"
 #include "addToRunTimeSelectionTable.H"
 #include "cutCellPLIC.H"
+#include "profiling.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
@@ -76,6 +77,7 @@ Foam::reconstruction::isoAlpha::isoAlpha
 
 void Foam::reconstruction::isoAlpha::reconstruct(bool forceUpdate)
 {
+    addProfilingInFunction(geometricVoF);
     const bool uptodate = alreadyReconstructed(forceUpdate);
 
     if (uptodate && !forceUpdate)

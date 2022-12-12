@@ -31,8 +31,8 @@ License
 Foam::point Foam::cutCellImpFunc::bisection(point p0, point p1)
 {
     // return
-    vector start = p0;
-    vector end = p1;
+    //vector start = p0;
+    //vector end = p1;
     scalar a = func_.value(p0);
     scalar b = func_.value(p1);
     if (a * b > 0)
@@ -413,7 +413,9 @@ Foam::label Foam::cutCellImpFunc::calcSubCell
 
         VOF_ = subCellVolume_ / mesh_.V()[cellI_];
 
-        scalar error = GREAT;
+        // DEBUGGING
+        //scalar error = GREAT;
+        
         DynamicList<point> interfacePoints(1000);
         DynamicList<point> interfaceLocalFacePoints(1000);
 
@@ -539,9 +541,10 @@ Foam::label Foam::cutCellImpFunc::calcSubCell
             subCellVolume_
         );
         scalar newVoF = subCellVolume_ / mesh_.V()[cellI_];
-        error = (newVoF-VOF_)/newVoF;
         VOF_ = newVoF;
 
+        // DEBUGGING
+        // error = (newVoF-VOF_)/newVoF;
         // Info << "error " << error << endl;
         // Info << "celli " << cellI <<  " VOF_ " << VOF_ << endl;
 

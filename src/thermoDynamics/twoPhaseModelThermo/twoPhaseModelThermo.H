@@ -265,6 +265,18 @@ public:
                 const label patchi
             ) const;
 
+            //- Heat capacity using pressure and temperature [J/kg/K]
+            virtual tmp<scalarField> Cp
+            (
+                const scalarField& p,
+                const scalarField& T,
+                const labelList& cells
+            ) const   
+            {
+                NotImplemented;
+                return tmp<scalarField>::New(p);
+            }
+
             //- Heat capacity at constant volume [J/kg/K]
             virtual tmp<volScalarField> Cv() const;
 
@@ -274,6 +286,14 @@ public:
                 const scalarField& p,
                 const scalarField& T,
                 const label patchi
+            ) const;
+
+            //- Density from pressure and temperature
+            virtual tmp<scalarField> rhoEoS
+            (
+                const scalarField& p,
+                const scalarField& T,
+                const labelList& cells
             ) const;
 
             //- Gamma = Cp/Cv []
@@ -329,6 +349,12 @@ public:
             (
                 const label patchi
             ) const;
+
+            //- Thermal diffusivity for energy of mixture [kg/m/s]
+            virtual tmp<volScalarField> alphahe() const;
+
+            //- Thermal diffusivity for energy of mixture for patch [kg/m/s]
+            virtual tmp<scalarField> alphahe(const label patchi) const;
 
             //- Effective thermal diffusivity of mixture [J/m/s/K]
             virtual tmp<volScalarField> kappaEff

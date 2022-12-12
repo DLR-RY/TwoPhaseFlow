@@ -17,7 +17,7 @@ FoamFile
 
 field       alpha.phase1;
 type        plane;
-direction   (0 1 0);
+normal   (0 1 0);
 
 origin      (0 1e-6 0);
 

@@ -115,11 +115,6 @@ Foam::advection::MULESScheme::MULESScheme
          alpha1_.mesh(),
          dimensionedScalar("nHatf", dimArea, 0.0)
      )
-
-
-
-
-
 {
 
     //- Reference to mesh
@@ -132,20 +127,44 @@ Foam::advection::MULESScheme::MULESScheme
 
     MULESCorr_ = (alphaControls.lookupOrDefault<Switch>("MULESCorr", false));
 
-// Apply the compression correction from the previous iteration
-// Improves efficiency for steady-simulations but can only be applied
-// once the alpha field is reasonably steady, i.e. fully developed
+    // Apply the compression correction from the previous iteration
+    // Improves efficiency for steady-simulations but can only be applied
+    // once the alpha field is reasonably steady, i.e. fully developed
     alphaApplyPrevCorr_ =
-     (
-         alphaControls.lookupOrDefault<Switch>("alphaApplyPrevCorr", false)
-     );
- //Isotropic compression coefficient
+    (
+        alphaControls.lookupOrDefault<Switch>("alphaApplyPrevCorr", false)
+    );
+    
+    //Isotropic compression coefficient
     icAlpha_ =
-     (
-         alphaControls.lookupOrDefault<scalar>("icAlpha", 0)
-     );
+    (
+        alphaControls.lookupOrDefault<scalar>("icAlpha", 0)
+    );
 
     cAlpha_ = readScalar(alphaControls.lookup("cAlpha"));
+
+    // Shear compression coefficient
+    scAlpha_ =
+    (
+        alphaControls.getOrDefault<scalar>("scAlpha", 0)
+    );
+
+    IOobject alphaPhi10Header
+    (
+        IOobject::groupName("alphaPhi0", alpha1.group()),
+        mesh_.time().timeName(),
+        mesh_,
+        IOobject::READ_IF_PRESENT,
+        IOobject::AUTO_WRITE
+    );
+
+    alphaRestart_ =
+        alphaPhi10Header.typeHeaderOk<surfaceScalarField>(true);
+
+    if (alphaRestart_)
+    {
+        Info << "Restarting alpha" << endl;
+    }
 
 
 }
@@ -159,19 +178,18 @@ Foam::advection::MULESScheme::~MULESScheme()
 
 // * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * * //
 
-
-// ************************************************************************* //
-void Foam::advection::MULESScheme::advect()
+template<class SpType, class SuType>
+void Foam::advection::MULESScheme::advect(const SpType& Sp, const SuType& Su)
 {
     updateNHatf();
 
     word alphaScheme("div(phi,alpha)");
     word alpharScheme("div(phirb,alpha)");
 
+    // Set the off-centering coefficient according to ddt scheme
     scalar ocCoeff = 0;
     {
-
-        tmp<fv::ddtScheme<scalar>> ddtAlpha
+        tmp<fv::ddtScheme<scalar>> tddtAlpha
         (
             fv::ddtScheme<scalar>::New
             (
@@ -179,18 +197,17 @@ void Foam::advection::MULESScheme::advect()
                 mesh_.ddtScheme("ddt(alpha)")
             )
         );
-
-        // Set the off-centering coefficient according to ddt scheme
+        const fv::ddtScheme<scalar>& ddtAlpha = tddtAlpha();
 
         if
         (
-            isType<fv::EulerDdtScheme<scalar>>(ddtAlpha())
-         || isType<fv::localEulerDdtScheme<scalar>>(ddtAlpha())
+            isType<fv::EulerDdtScheme<scalar>>(ddtAlpha)
+         || isType<fv::localEulerDdtScheme<scalar>>(ddtAlpha)
         )
         {
             ocCoeff = 0;
         }
-        else if (isType<fv::CrankNicolsonDdtScheme<scalar>>(ddtAlpha()))
+        else if (isType<fv::CrankNicolsonDdtScheme<scalar>>(ddtAlpha))
         {
             if (nAlphaSubCycles_ > 1)
             {
@@ -200,9 +217,16 @@ void Foam::advection::MULESScheme::advect()
                     << exit(FatalError);
             }
 
-            ocCoeff =
-                refCast<const fv::CrankNicolsonDdtScheme<scalar>>(ddtAlpha())
-               .ocCoeff();
+            if
+            (
+                alphaRestart_
+             || mesh_.time().timeIndex() > mesh_.time().startTimeIndex() + 1
+            )
+            {
+                ocCoeff =
+                    refCast<const fv::CrankNicolsonDdtScheme<scalar>>(ddtAlpha)
+                   .ocCoeff();
+            }
         }
         else
         {
@@ -212,6 +236,7 @@ void Foam::advection::MULESScheme::advect()
         }
     }
 
+    // Set the time blending factor, 1 for Euler
     scalar cnCoeff = 1.0/(1.0 + ocCoeff);
 
     // Standard face-flux compression coefficient
@@ -222,6 +247,13 @@ void Foam::advection::MULESScheme::advect()
     {
         phic *= (1.0 - icAlpha_);
         phic += (cAlpha_*icAlpha_)*fvc::interpolate(mag(U_));
+    }
+
+    // Add the optional shear compression contribution
+    if (scAlpha_ > 0)
+    {
+        phic +=
+            scAlpha_*mag(mesh_.delta() & fvc::interpolate(symm(fvc::grad(U_))));
     }
 
     surfaceScalarField::Boundary& phicBf =
@@ -262,6 +294,10 @@ void Foam::advection::MULESScheme::advect()
                 phiCN,
                 upwind<scalar>(mesh_, phiCN)
             ).fvmDiv(phiCN, alpha1_)
+       // - fvm::Sp(fvc::ddt(dimensionedScalar("1", dimless, 1), mesh)
+       //           + fvc::div(phiCN), alpha1)
+         ==
+            Su + fvm::Sp(Sp , alpha1_)
         );
 
         alpha1Eqn.solve();
@@ -278,7 +314,15 @@ void Foam::advection::MULESScheme::advect()
         if (alphaApplyPrevCorr_)
         {
             Info<< "Applying the previous iteration compression flux" << endl;
-            MULES::correct(alpha1_, alphaPhi_, talphaPhiCorr0_, 1, 0);
+            MULES::correct
+            (
+                geometricOneField(),
+                alpha1_,
+                alphaPhi_,
+                talphaPhiCorr0_,
+                oneField(),
+                zeroField()
+            );
 
             alphaPhi_ += talphaPhiCorr0_;
         }
@@ -288,7 +332,6 @@ void Foam::advection::MULESScheme::advect()
 
         alpha2_ = 1.0 - alpha1_;
 
-       // mixture.correct();
         updateNHatf();
     }
 
@@ -297,256 +340,25 @@ void Foam::advection::MULESScheme::advect()
     {
         surfaceScalarField phir(phic*nHatf_);
 
-        tmp<surfaceScalarField> talphaPhiUn
-            (
-                fvc::flux
-                (
-                    phi_,
-                    alpha1_,
-                    alphaScheme
-                )
-            + fvc::flux
-                (
-                    -fvc::flux(-phir, alpha2_, alpharScheme),
-                    alpha1_,
-                    alpharScheme
-                )
-            );
-
-        // Calculate the Crank-Nicolson off-centred alpha flux
-//            if (ocCoeff > 0)
-//            {
-//                talphaPhiUn =
-//                    cnCoeff*talphaPhiUn + (1.0 - cnCoeff)*alphaPhi_.oldTime();
-//            }
-
-        if (MULESCorr_)
-        {
-            tmp<surfaceScalarField> talphaPhiCorr(talphaPhiUn - alphaPhi_);
-            volScalarField alpha10("alpha10", alpha1_);
-
-            MULES::correct(alpha1_, talphaPhiUn, talphaPhiCorr.ref(), 1, 0);
-
-            // Under-relax the correction for all but the 1st corrector
-            if (aCorr == 0)
-            {
-                alphaPhi_ += talphaPhiCorr();
-            }
-            else
-            {
-                alpha1_ = 0.5*alpha1_ + 0.5*alpha10;
-                alphaPhi_ += 0.5*talphaPhiCorr();
-            }
-        }
-        else
-        {
-            alphaPhi_ = talphaPhiUn;
-
-            MULES::explicitSolve(alpha1_, phiCN, alphaPhi_, 1, 0);
-        }
-
-        alpha2_ = 1.0 - alpha1_;
-
-        // mixture.correct();
-         updateNHatf();
-    }
-
-    if (alphaApplyPrevCorr_ && MULESCorr_)
-    {
-        talphaPhiCorr0_ = alphaPhi_ - talphaPhiCorr0_;
-    }
-
-    if
-    (
-        word(mesh_.ddtScheme("ddt(rho,U)"))
-     == fv::EulerDdtScheme<vector>::typeName
-    )
-    {
-//            rhoPhi = alphaPhi_*(rho1 - rho2) + phiCN*rho2;
-    }
-    else
-    {
-        if (ocCoeff > 0)
-        {
-            // Calculate the end-of-time-step alpha flux
-            alphaPhi_ = (alphaPhi_ - (1.0 - cnCoeff)*alphaPhi_.oldTime())/cnCoeff;
-        }
-
-        // Calculate the end-of-time-step mass flux
-        //rhoPhi = alphaPhi_*(rho1 - rho2) + phi_*rho2;
-    }
-
-    Info<< "Phase-1 volume fraction = "
-        << alpha1_.weightedAverage(mesh_.Vsc()).value()
-        << "  Min(" << alpha1_.name() << ") = " << min(alpha1_).value()
-        << "  Max(" << alpha1_.name() << ") = " << max(alpha1_).value()
-        << endl;
-}
-
-void Foam::advection::MULESScheme::advect(const volScalarField::Internal& Sp,const volScalarField::Internal& Su)
-{
-    updateNHatf();
-
-    word alphaScheme("div(phi,alpha)");
-    word alpharScheme("div(phirb,alpha)");
-
-    scalar ocCoeff = 0;
-    {
-
-        tmp<fv::ddtScheme<scalar>> ddtAlpha
+        tmp<surfaceScalarField> talphaPhi1Un
         (
-            fv::ddtScheme<scalar>::New
+            fvc::flux
             (
-                mesh_,
-                mesh_.ddtScheme("ddt(alpha)")
+                phi_,
+                cnCoeff*alpha1_ + (1.0 - cnCoeff)*alpha1_.oldTime(),
+                alphaScheme
+            )
+          + fvc::flux
+            (
+               -fvc::flux(-phir, alpha2_, alpharScheme),
+                alpha1_,
+                alpharScheme
             )
         );
 
-        // Set the off-centering coefficient according to ddt scheme
-
-        if
-        (
-            isType<fv::EulerDdtScheme<scalar>>(ddtAlpha())
-         || isType<fv::localEulerDdtScheme<scalar>>(ddtAlpha())
-        )
-        {
-            ocCoeff = 0;
-        }
-        else if (isType<fv::CrankNicolsonDdtScheme<scalar>>(ddtAlpha()))
-        {
-            if (nAlphaSubCycles_ > 1)
-            {
-                FatalErrorInFunction
-                    << "Sub-cycling is not supported "
-                       "with the CrankNicolson ddt scheme"
-                    << exit(FatalError);
-            }
-
-            ocCoeff =
-                refCast<const fv::CrankNicolsonDdtScheme<scalar>>(ddtAlpha())
-               .ocCoeff();
-        }
-        else
-        {
-            FatalErrorInFunction
-                << "Only Euler and CrankNicolson ddt schemes are supported"
-                << exit(FatalError);
-        }
-    }
-
-    scalar cnCoeff = 1.0/(1.0 + ocCoeff);
-
-    // Standard face-flux compression coefficient
-    surfaceScalarField phic(cAlpha_*mag(phi_/mesh_.magSf()));
-
-    // Add the optional isotropic compression contribution
-    if (icAlpha_ > 0)
-    {
-        phic *= (1.0 - icAlpha_);
-        phic += (cAlpha_*icAlpha_)*fvc::interpolate(mag(U_));
-    }
-
-    surfaceScalarField::Boundary& phicBf =
-        phic.boundaryFieldRef();
-
-    // Do not compress interface at non-coupled boundary faces
-    // (inlets, outlets etc.)
-    forAll(phic.boundaryField(), patchi)
-    {
-        fvsPatchScalarField& phicp = phicBf[patchi];
-
-        if (!phicp.coupled())
-        {
-            phicp == 0;
-        }
-    }
-
-    tmp<surfaceScalarField> phiCN(phi_);
-
-    // Calculate the Crank-Nicolson off-centred volumetric flux
-    if (ocCoeff > 0)
-    {
-        phiCN = cnCoeff*phi_ + (1.0 - cnCoeff)*phi_.oldTime();
-    }
-
-    if (MULESCorr_)
-    {
-        fvScalarMatrix alpha1Eqn
-        (
-            (
-                LTS_
-              ? fv::localEulerDdtScheme<scalar>(mesh_).fvmDdt(alpha1_)
-              : fv::EulerDdtScheme<scalar>(mesh_).fvmDdt(alpha1_)
-            )
-          + fv::gaussConvectionScheme<scalar>
-            (
-                mesh_,
-                phiCN,
-                upwind<scalar>(mesh_, phiCN)
-            ).fvmDiv(phiCN, alpha1_)
-             ==
-                 Su + fvm::Sp(Sp , alpha1_)
-        );
-
-        alpha1Eqn.solve();
-
-        Info<< "Phase-1 volume fraction = "
-            << alpha1_.weightedAverage(mesh_.Vsc()).value()
-            << "  Min(" << alpha1_.name() << ") = " << min(alpha1_).value()
-            << "  Max(" << alpha1_.name() << ") = " << max(alpha1_).value()
-            << endl;
-
-        tmp<surfaceScalarField> talphaPhiUD(alpha1Eqn.flux());
-        alphaPhi_ = talphaPhiUD();
-
-        if (alphaApplyPrevCorr_)
-        {
-            Info<< "Applying the previous iteration compression flux" << endl;
-            MULES::correct(alpha1_, alphaPhi_, talphaPhiCorr0_, 1, 0);
-
-            alphaPhi_ += talphaPhiCorr0_;
-        }
-
-        // Cache the upwind-flux
-        talphaPhiCorr0_ = talphaPhiUD;
-
-        alpha2_ = 1.0 - alpha1_;
-
-       // mixture.correct();
-        updateNHatf();
-    }
-
-
-    for (int aCorr=0; aCorr<nAlphaCorr_; aCorr++)
-    {
-        surfaceScalarField phir(phic*nHatf_);
-
-        tmp<surfaceScalarField> talphaPhiUn
-            (
-                fvc::flux
-                (
-                    phi_,
-                    alpha1_,
-                    alphaScheme
-                )
-            + fvc::flux
-                (
-                    -fvc::flux(-phir, alpha2_, alpharScheme),
-                    alpha1_,
-                    alpharScheme
-                )
-            );
-
-        // Calculate the Crank-Nicolson off-centred alpha flux
-//            if (ocCoeff > 0)
-//            {
-//                talphaPhiUn =
-//                    cnCoeff*talphaPhiUn + (1.0 - cnCoeff)*alphaPhi_.oldTime();
-//            }
-
         if (MULESCorr_)
         {
-            tmp<surfaceScalarField> talphaPhiCorr(talphaPhiUn - alphaPhi_);
+            tmp<surfaceScalarField> talphaPhi1Corr(talphaPhi1Un - alphaPhi_);
             volScalarField alpha10("alpha10", alpha1_);
 
             MULES::correct
@@ -557,44 +369,41 @@ void Foam::advection::MULESScheme::advect(const volScalarField::Internal& Sp,con
                 alphaPhi_,
                 Sp,
                 Su,
-                1,
-                0
+                oneField(),
+                zeroField()
             );
 
             // Under-relax the correction for all but the 1st corrector
             if (aCorr == 0)
             {
-                alphaPhi_ += talphaPhiCorr();
+                alphaPhi_ += talphaPhi1Corr();
             }
             else
             {
                 alpha1_ = 0.5*alpha1_ + 0.5*alpha10;
-                alphaPhi_ += 0.5*talphaPhiCorr();
+                alphaPhi_ += 0.5*talphaPhi1Corr();
             }
         }
         else
         {
-
-            alphaPhi_ = talphaPhiUn;
-
+            alphaPhi_ = talphaPhi1Un;
 
             MULES::explicitSolve
             (
-               geometricOneField(),
-               alpha1_,
-               phiCN,
-               alphaPhi_,
-               Sp,
-               Su,
-               1,
-               0
+                geometricOneField(),
+                alpha1_,
+                phiCN,
+                alphaPhi_,
+                Sp,
+                Su,
+                oneField(),
+                zeroField()
             );
         }
 
         alpha2_ = 1.0 - alpha1_;
 
-        // mixture.correct();
-         updateNHatf();
+        updateNHatf();
     }
 
     if (alphaApplyPrevCorr_ && MULESCorr_)
@@ -606,20 +415,23 @@ void Foam::advection::MULESScheme::advect(const volScalarField::Internal& Sp,con
     (
         word(mesh_.ddtScheme("ddt(rho,U)"))
      == fv::EulerDdtScheme<vector>::typeName
+     || word(mesh_.ddtScheme("ddt(rho,U)"))
+     == fv::localEulerDdtScheme<vector>::typeName
     )
     {
-//            rhoPhi = alphaPhi_*(rho1 - rho2) + phiCN*rho2;
+        // rhoPhi = alphaPhi_*(rho1 - rho2) + phiCN*rho2;
     }
     else
     {
         if (ocCoeff > 0)
         {
             // Calculate the end-of-time-step alpha flux
-            alphaPhi_ = (alphaPhi_ - (1.0 - cnCoeff)*alphaPhi_.oldTime())/cnCoeff;
+            alphaPhi_ =
+                (alphaPhi_ - (1.0 - cnCoeff)*alphaPhi_.oldTime())/cnCoeff;
         }
 
         // Calculate the end-of-time-step mass flux
-        //rhoPhi = alphaPhi_*(rho1 - rho2) + phi_*rho2;
+        // rhoPhi = alphaPhi10*(rho1f - rho2f) + phi*rho2f;
     }
 
     Info<< "Phase-1 volume fraction = "
@@ -629,4 +441,3 @@ void Foam::advection::MULESScheme::advect(const volScalarField::Internal& Sp,con
         << endl;
 
 }
-

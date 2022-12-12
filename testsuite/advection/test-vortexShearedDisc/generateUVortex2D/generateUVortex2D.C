@@ -60,10 +60,10 @@ int main(int argc, char *argv[])
 
     scalar PI = Foam::constant::mathematical::pi;
     {
-        scalarField X = mesh.C().component(0);
-        scalarField Z = mesh.C().component(2);
-        scalarField u = -sin(2.0*PI*Z)*pow(sin(PI*X),2.0);
-        scalarField w = sin(2.0*PI*X)*pow(sin(PI*Z),2.0);
+        scalarField X(mesh.C().component(0));
+        scalarField Z(mesh.C().component(2));
+        scalarField u(-sin(2.0*PI*Z)*pow(sin(PI*X),2.0));
+        scalarField w(sin(2.0*PI*X)*pow(sin(PI*Z),2.0));
         forAll(U,ci)
         {
             U[ci] = u[ci]*vector(1.0,0.0,0.0) + 0.0*vector(0.0,1.0,0.0) + w[ci]*vector(0.0,0.0,1.0);
@@ -86,10 +86,10 @@ int main(int argc, char *argv[])
     );
 
     {
-        const scalarField x = mesh.points().component(0);
-        const scalarField y = mesh.points().component(1);
-        const scalarField z = mesh.points().component(2);
-        scalarField psi = (1.0/PI)*pow(sin(PI*x),2.0)*pow(sin(PI*z),2.0);
+        const scalarField x(mesh.points().component(0));
+        const scalarField y(mesh.points().component(1));
+        const scalarField z(mesh.points().component(2));
+        scalarField psi((1.0/PI)*pow(sin(PI*x),2.0)*pow(sin(PI*z),2.0));
         forAll(phi,fi)
         {
             phi[fi] = 0.0;
