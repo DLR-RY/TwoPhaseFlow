@@ -114,14 +114,14 @@ solvers
 
     "(U|h|T.*|k|epsilon|R)"
     {
-        solver          PBiCGStab;
-        preconditioner  DILU;
-        //olver           smoothSolver;;
-        //smoother        symGaussSeidel;
+        solver          smoothSolver;
+        // solver           PBiCGStab;
+        smoother        DILU;
+        //preconditioner   DILU;
         tolerance        1e-7;
-        relTol           0.;
-        minIter          15;
-        maxIter          50;
+        relTol           0.0;
+        minIter          2;
+        maxIter          10;
     }
 
     "(U|h|T.*|k|epsilon|R)Final"
