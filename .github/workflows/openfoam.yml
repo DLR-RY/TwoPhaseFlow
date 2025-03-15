@@ -13,13 +13,22 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-    - name: setup  openfoam
-      run: |
-        curl -s https://dl.openfoam.com/add-debian-repo.sh | sudo bash
-        sudo apt-get install libglu1-mesa
-        wget -q -O - https://dl.openfoam.com/add-debian-repo.sh | sudo bash
-        sudo apt-get update
-        sudo apt-get install openfoam2406-default
+    - name: Set up OpenFOAM
+      uses: gerlero/setup-openfoam@v1
+      with:
+        openfoam-version: 2406
+
+    - name: Install dependencies
+      uses: gerlero/apt-install@v1
+      with:
+        packages: >-
+          libomp-16-dev
+          python3
+          python3-dev
+          build-essential
+          libopenmpi-dev
+          openmpi-bin
+
     - name: compile library
       run: |
         export WM_NCOMPPROCS=2
