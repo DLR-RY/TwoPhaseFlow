@@ -14,6 +14,7 @@ surfaceTensionForceModels/surfaceTensionForceModel/constantCurvature/constantCur
 accelerationForceModel/accelerationForceModel.C
 accelerationForceModel/accelerationForceModels.C
 accelerationForceModel/gravity/gravity.C
+accelerationForceModel/improvedGravity/improvedGravity.C
 
 deltaFunctions/deltaFunctionModel.C
 deltaFunctions/newDeltaFunctionModel.C

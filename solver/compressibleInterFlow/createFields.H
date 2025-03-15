@@ -65,10 +65,6 @@ dimensionedScalar pMin
 mesh.setFluxRequired(p_rgh.name());
 mesh.setFluxRequired(alpha1.name());
 
-
-//#include "readGravitationalAcceleration.H"
-//#include "readhRef.H"
-//#include "gh.H"
 IOdictionary thermophysicalProperties
 (
     IOobject
@@ -81,7 +77,11 @@ IOdictionary thermophysicalProperties
     )
 );
 
-
+#include "createAlphaFluxes.H"
+autoPtr<advectionSchemes> advector
+(
+    advectionSchemes::New(alpha1,phi,U)
+);
 
 surfaceForces surfForces(alpha1,phi,U,thermophysicalProperties);
 
@@ -105,11 +105,7 @@ surfaceScalarField rhoPhi
 
 volScalarField dgdt(alpha1*fvc::div(phi));
 
-#include "createAlphaFluxes.H"
-autoPtr<advectionSchemes> advector
-(
-    advectionSchemes::New(alpha1,phi,U)
-);
+
 
 // Construct compressible turbulence model
 compressibleInterPhaseTransportModel turbulence

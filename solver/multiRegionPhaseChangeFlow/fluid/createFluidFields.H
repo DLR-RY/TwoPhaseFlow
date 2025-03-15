@@ -252,6 +252,12 @@ forAll(fluidRegions, i)
 
     );
 
+    advectionSchemesFluid.set
+    (
+        i,
+        advectionSchemes::New(thermoFluid[i].alpha1(),phiFluid[i],UFluid[i])
+    );
+
     surfForcesFluid.set
     (
         i,
@@ -370,11 +376,7 @@ forAll(fluidRegions, i)
     //     *neg0(thermoFluid[i].alpha1() - (1.0 - 1e-4))
     //     + pos0(thermoFluid[i].alpha1() - (1.0 - 1e-4));
 
-    advectionSchemesFluid.set
-    (
-        i,
-        advectionSchemes::New(thermoFluid[i].alpha1(),phiFluid[i],UFluid[i])
-    );
+
 
     Info<< "    Adding turbulence \n" << endl;
     turbulenceFluid.set

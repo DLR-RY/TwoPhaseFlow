@@ -175,6 +175,11 @@ public:
         //- Reconstruct the interface
         virtual void reconstruct(bool forceUpdate = true) = 0;
 
+        const volScalarField& alpha1() const
+        {
+            return alpha1_;
+        }
+
         //- const-Reference to interface normals
         const volVectorField& normal() const
         {

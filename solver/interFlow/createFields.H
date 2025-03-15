@@ -89,16 +89,14 @@ IOdictionary transportProperties
     )
 );
 
-
+autoPtr<advectionSchemes> advector
+(
+    advectionSchemes::New(alpha1,phi,U)
+);
 
 surfaceForces surfForces(alpha1,phi,U,transportProperties);
 
-
-//#include "readGravitationalAcceleration.H"
-//#include "readhRef.H"
-//#include "gh.H"
 const volScalarField& gh = surfForces.acc();
-
 
 
 volScalarField p
@@ -142,10 +140,7 @@ mesh.setFluxRequired(alpha1.name());
 #include "createMRF.H"
 #include "createFvOptions.H"
 
-autoPtr<advectionSchemes> advector
-(
-    advectionSchemes::New(alpha1,phi,U)
-);
+
 
 
 
