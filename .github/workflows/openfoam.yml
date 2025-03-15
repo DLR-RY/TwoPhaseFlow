@@ -44,6 +44,7 @@ jobs:
         python -m pip install --upgrade pip
         pip install oftest scipy casefoam
         ls
+        ls -l
         py.test --writeNSteps=1 run/
         py.test -m 'not slow'
         
