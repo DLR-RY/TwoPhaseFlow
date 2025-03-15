@@ -2,9 +2,9 @@ name: openfoam
 
 on:
   push:
-    branches: [ "of2312+" ]
+    branches: [ "of2312*" ]
   pull_request:
-    branches: [ "of2312+" ]
+    branches: [ "of2312*" ]
 
 jobs:
   build-and-test:
@@ -44,7 +44,6 @@ jobs:
         python -m pip install --upgrade pip
         pip install oftest scipy casefoam
         ls
-        ls -l
         py.test --writeNSteps=1 run/
         py.test -m 'not slow'
         
