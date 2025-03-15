@@ -40,10 +40,12 @@ jobs:
       run: |
         export WM_NCOMPPROCS=2
         ./Allwmake
-        ./get-gmsh.sh
+
     - name: test
       run: |
         python -m pip install --upgrade pip
+        echo $FOAM_USER_APPBIN
+        ./get-gmsh.sh
         pip install oftest scipy casefoam
         ls
         py.test --writeNSteps=1 run/
