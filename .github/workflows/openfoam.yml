@@ -2,9 +2,9 @@ name: openfoam
 
 on:
   push:
-    branches: [ of2206 ]
+    branches: [ of2406 ]
   pull_request:
-    branches: [ of2206 ]
+    branches: [ of2406 ]
 
 jobs:
   build-and-test:
@@ -19,18 +19,18 @@ jobs:
         sudo apt-get install libglu1-mesa
         wget -q -O - https://dl.openfoam.com/add-debian-repo.sh | sudo bash
         sudo apt-get update
-        sudo apt-get install openfoam2206-default
+        sudo apt-get install openfoam2406-default
     - name: compile library
       run: |
         export WM_NCOMPPROCS=2
-        openfoam2206 -c ./Allwmake
-        openfoam2206 -c ./get-gmsh.sh
+        openfoam2406 -c ./Allwmake
+        openfoam2406 -c ./get-gmsh.sh
     - name: test
       run: |
         python -m pip install --upgrade pip
         pip install oftest scipy casefoam
-        openfoam2206 -c "py.test  --writeNSteps=1 run/"
-        openfoam2206 -c "py.test -m 'not slow'"
+        openfoam2406 -c "py.test  --writeNSteps=1 run/"
+        openfoam2406 -c "py.test -m 'not slow'"
         
     - name: upload logs
       if: ${{ failure() }}
