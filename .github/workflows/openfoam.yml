@@ -23,13 +23,16 @@ jobs:
       with:
         openfoam-version: ${{ matrix.openfoam-version }}
 
+    - name: Set up Python 3.11
+      uses: actions/setup-python@v4
+      with:
+        python-version: 3.11
+
     - name: Install dependencies
       uses: gerlero/apt-install@v1
       with:
         packages: >-
-          libomp-16-dev
-          python3
-          python3-dev
+          libglu1
           build-essential
           libopenmpi-dev
           openmpi-bin
@@ -38,10 +41,12 @@ jobs:
       run: |
         export WM_NCOMPPROCS=2
         ./Allwmake
-        ./get-gmsh.sh
+
     - name: test
       run: |
         python -m pip install --upgrade pip
+        echo $FOAM_USER_APPBIN
+        ./get-gmsh.sh
         pip install oftest scipy casefoam
         ls
         ls -l
