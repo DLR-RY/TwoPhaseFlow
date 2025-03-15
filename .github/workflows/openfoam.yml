@@ -32,6 +32,7 @@ jobs:
       uses: gerlero/apt-install@v1
       with:
         packages: >-
+          libglu1
           build-essential
           libopenmpi-dev
           openmpi-bin
