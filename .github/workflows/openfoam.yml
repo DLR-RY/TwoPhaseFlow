@@ -2,9 +2,9 @@ name: openfoam
 
 on:
   push:
-    branches: [ of2312+ ]
+    branches: [ "of2312+" ]
   pull_request:
-    branches: [ of2312+ ]
+    branches: [ "of2312+" ]
 
 jobs:
   build-and-test:
