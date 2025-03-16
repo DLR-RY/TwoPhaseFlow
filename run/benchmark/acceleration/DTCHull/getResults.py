@@ -6,7 +6,16 @@ import numpy as np
 
 
 
-caseStructure = [['IFLocalEuler','IFEuler']]
+caseStructure = [
+    [
+        "InterFoam_gravity_LocalEuler",
+        "InterFoam_gravity_Euler",
+        "InterFlow_gravity_LocalEuler",
+        "InterFlow_gravity_Euler",
+        "InterFlow_improvedGravity_LocalEuler",
+        "InterFlow_improvedGravity_Euler",
+    ]
+]
 
 baseCase = 'Cases'
 

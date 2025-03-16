@@ -20,8 +20,15 @@ solvers
 {
     "alpha.water.*"
     {
+        // interFlow parameters
+        advectionScheme      geoAdvection;
+        reconstructionScheme isoAlpha;
+        vof2IsoTol 1e-6;
+        surfCellTol 1e-6;
+        writeVTK false;
+
         nAlphaCorr      2;
-        nAlphaSubCycles 1;
+        nAlphaSubCycles $NALPHASUBCYCLES;
         cAlpha          1;
         icAlpha         0;
 
@@ -54,7 +61,7 @@ solvers
     {
         solver          GAMG;
         smoother        DIC;
-        tolerance       1e-7;
+        tolerance       1e-8;
         relTol          0.01;
     };
 

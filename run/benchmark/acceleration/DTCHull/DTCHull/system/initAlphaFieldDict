@@ -1,8 +1,8 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  v2406                                 |
-|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|  \\    /   O peration     | Version:  2.2.0                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
 FoamFile
@@ -10,18 +10,14 @@ FoamFile
     version     2.0;
     format      ascii;
     class       dictionary;
-    object      simulationParameters;
+    location    "system";
+    object      setAlphaFieldDict;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-DDTSCHEME         localEuler;
-CFL               5;
-AlphaCFL          2.5;  
-SOLVER            interFlow;
-ENDTIME           4000;
-DELTAT            1;
-WRITEINTERVAL     100;
-GRAVITYMODEL      improvedGravity;
-NALPHASUBCYCLES   5;
+field alpha.water;
+type plane;
+normal (0 0 -1);
+origin (0 0 0.244);
 
 // ************************************************************************* //

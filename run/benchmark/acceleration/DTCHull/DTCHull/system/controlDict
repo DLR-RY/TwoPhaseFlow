@@ -48,6 +48,8 @@ runTimeModifiable yes;
 
 adjustTimeStep  yes;
 
+maxCapillaryNum  1e8;
+
 maxCo               $CFL;
 maxAlphaCo          $AlphaCFL;
 
