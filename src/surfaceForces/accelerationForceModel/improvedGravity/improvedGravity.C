@@ -119,20 +119,42 @@ void Foam::improvedGravity::calculateAcc()
     {
         const label ownerCell(own[facei]);
         const label neiCell(nei[facei]);
-        if (isSurfCell[ownerCell])
+        bool OwnHasSurfCell = isSurfCell[ownerCell];
+        bool NeiHasSurfCell = isSurfCell[neiCell];
+
+        if ( OwnHasSurfCell )
         {
             Ci = faceCentre[ownerCell];
-            if (isSurfCell[neiCell])
-            {
-                Ci += faceCentre[neiCell];
-                Ci *= 0.5;
-            }
         }
-        else if (isSurfCell[neiCell])
+        else if ( NeiHasSurfCell )
         {
             Ci = faceCentre[neiCell];
         }
-        accfIn[facei] = (g.value() & Ci) -  ghRef.value();
+        else if ( OwnHasSurfCell && NeiHasSurfCell )
+        {
+            Ci = (faceCentre[ownerCell] + faceCentre[neiCell]) * 0.5;
+        }
+
+        // accfIn is neighbour cells contain a freesurface
+        if ( OwnHasSurfCell || NeiHasSurfCell )
+        {
+            accfIn[facei] = (g.value() & Ci) - ghRef.value();
+        }
+
+        // if (isSurfCell[ownerCell])
+        // {
+        //     Ci = faceCentre[ownerCell];
+        //     if (isSurfCell[neiCell])
+        //     {
+        //         Ci += faceCentre[neiCell];
+        //         Ci *= 0.5;
+        //     }
+        // }
+        // else if (isSurfCell[neiCell])
+        // {
+        //     Ci = faceCentre[neiCell];
+        // }
+        // accfIn[facei] = (g.value() & Ci) -  ghRef.value();
     }
 
     // Setting boundary accf_ values
@@ -149,36 +171,37 @@ void Foam::improvedGravity::calculateAcc()
 
             if (isSurfCell[ownerCell])
             {
-                // Reconstructing height on patch from intersection with interface
-                // in owner cell
-                advectFace.calcSubFace
-                (
-                    globalFacei,
-                    faceNormal[ownerCell],
-                    faceCentre[ownerCell]
-                );
-                DynamicList<point> edgePoints(advectFace.surfacePoints());
-                point Ci(Zero);
-                forAll(edgePoints, pointi)
-                {
-                    Ci += edgePoints[pointi];
-                }
-                if (edgePoints.size() == 2)
-                {
-                    Ci /= edgePoints.size();
-                    Info << "Info: face " << globalFacei << " has two edge points" << endl;
-                    Info << "Info: owner cell " << ownerCell << endl;
-                    Info << "Info: Ci " << Ci << endl;
-                }
-                else
-                {
-                    Ci = faceCentre[ownerCell];
-                    Info << "Warning: Reconstructed face-interface intersection line on face " << globalFacei << " has points: " << edgePoints << endl;
-                    Info << "Info: face " << globalFacei << " has two edge points" << endl;
-                    Info << "Info: owner cell " << ownerCell << endl;
-                    Info << "Info: Ci " << Ci << endl;
-                }
-                accfbi[facei] = (g.value() & Ci) - ghRef.value();
+                // // Reconstructing height on patch from intersection with interface
+                // // in owner cell
+                // advectFace.calcSubFace
+                // (
+                //     globalFacei,
+                //     faceNormal[ownerCell],
+                //     faceCentre[ownerCell]
+                // );
+                // DynamicList<point> edgePoints(advectFace.surfacePoints());
+                // point Ci(Zero);
+                // forAll(edgePoints, pointi)
+                // {
+                //     Ci += edgePoints[pointi];
+                // }
+                // if (edgePoints.size() == 2)
+                // {
+                //     Ci /= edgePoints.size();
+                //     // Info << "Info: face " << globalFacei << " has two edge points" << endl;
+                //     // Info << "Info: owner cell " << ownerCell << endl;
+                //     // Info << "Info: Ci " << Ci << endl;
+                // }
+                // else
+                // {
+                //     Ci = faceCentre[ownerCell];
+                //     // Info << "Warning: Reconstructed face-interface intersection line on face " << globalFacei << " has points: " << edgePoints << endl;
+                //     // Info << "Info: face " << globalFacei << " has two edge points" << endl;
+                //     // Info << "Info: owner cell " << ownerCell << endl;
+                //     // Info << "Info: Ci " << Ci << endl;
+                // }
+                // accfbi[facei] = (g.value() & Ci) - ghRef.value();
+                accfbi[facei] = (g.value() & faceCentre[ownerCell]) - ghRef.value();
             }
             //  else special case where owner has alpha = 1 and adjacent boundary
             // cell has alpha = 0. Use Cf of shared face but how?
