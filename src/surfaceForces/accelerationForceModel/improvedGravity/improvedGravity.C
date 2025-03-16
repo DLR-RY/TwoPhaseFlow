@@ -141,20 +141,6 @@ void Foam::improvedGravity::calculateAcc()
             accfIn[facei] = (g.value() & Ci) - ghRef.value();
         }
 
-        // if (isSurfCell[ownerCell])
-        // {
-        //     Ci = faceCentre[ownerCell];
-        //     if (isSurfCell[neiCell])
-        //     {
-        //         Ci += faceCentre[neiCell];
-        //         Ci *= 0.5;
-        //     }
-        // }
-        // else if (isSurfCell[neiCell])
-        // {
-        //     Ci = faceCentre[neiCell];
-        // }
-        // accfIn[facei] = (g.value() & Ci) -  ghRef.value();
     }
 
     // Setting boundary accf_ values
