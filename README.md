@@ -6,7 +6,7 @@ the TwoPhaseFlow Library adds new surface tension and phase change models to Ope
 
 The available models and solvers are documentated in:
 
-https://arxiv.org/abs/2103.00870
+Scheufler, H., & Roenby, J. (2023). TwoPhaseFlow: A Framework for Developing Two Phase Flow Solvers in OpenFOAM. OpenFOAM® Journal, 3, 200–224. https://doi.org/10.51560/ofj.v3.80
 
 ## Getting Started
 
