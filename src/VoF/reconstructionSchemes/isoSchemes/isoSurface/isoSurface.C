@@ -61,6 +61,7 @@ Foam::reconstruction::isoSurface::isoSurface
     // Tolerances and solution controls
     iso_(modelDict().lookupOrDefault<scalar>("iso", 0.5))
 {
+    reconstruct();
 }
 
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
@@ -79,8 +80,26 @@ void Foam::reconstruction::isoSurface::reconstruct(bool forceUpdate)
     {
         return;
     }
+    
     // Interpolating alpha1 cell centre values to mesh points (vertices)
+    if (mesh_.topoChanging())
+    {
+        // Introduced resizing to cope with changing meshes
+        if (ap_.size() != mesh_.nPoints())
+        {
+            ap_.resize(mesh_.nPoints());
+
+        }
+        if (interfaceCell_.size() != mesh_.nCells())
+        {
+            interfaceCell_.resize(mesh_.nCells());
+        }
+    }
     ap_ = volPointInterpolation::New(mesh_).interpolate(alpha1_);
+    
+    DynamicList<List<point>> facePts;
+
+    interfaceLabels_.clear();
 
     forAll(alpha1_,cellI)
     {
