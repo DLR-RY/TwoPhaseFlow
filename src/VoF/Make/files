@@ -10,28 +10,7 @@ cellCuts/cutFace/cutFaceImpFunc.C
 surfaceIterators/surfaceIteratorPLIC.C
 surfaceIterators/surfaceIteratorIso.C
 
-/* Run-time selectable implicitFunctions */
-implicitFunctions/implicitFunction.C
-implicitFunctions/sphere/sphereImplicitFunction.C
-implicitFunctions/sin/sinImplicitFunction.C
-implicitFunctions/ellipsoid/ellipsoidImplicitFunction.C
-implicitFunctions/paraboloid/paraboloidImplicitFunction.C
-implicitFunctions/plane/planeImplicitFunction.C
-implicitFunctions/cylinder/cylinderImplicitFunction.C
-implicitFunctions/composedFunction/composedFunctionImplicitFunction.C
-
-zoneDistribute/zoneStencils/zoneCellStencils.C
-zoneDistribute/zoneStencils/zoneCPCStencil.C
-zoneDistribute/zoneDistribute.C
-zoneDistribute/zoneDistributePoints.C
-
-multiDimPolyFitter/multiDimPolyFunctions/multiDimPolyFunctions.C
-multiDimPolyFitter/multiDimPolyFunctions/polyDegree1.C
-multiDimPolyFitter/multiDimPolyFunctions/polyDegree2.C
 multiDimPolyFitter/multiDimPolyFunctions/paraboloid.C
-multiDimPolyFitter/multiDimPolyFitter.C
-multiDimPolyFitter/leastSquareGrad.C
-multiDimPolyFitter/leastSquareInterpolate.C
 multiDimPolyFitter/leastSquareFitParabolid.C
 
 reconstructedDistanceFunction/reconstructedDistanceFunction.C

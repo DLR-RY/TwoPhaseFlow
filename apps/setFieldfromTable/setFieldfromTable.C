@@ -102,7 +102,7 @@ int main(int argc, char *argv[])
 
     Foam::autoPtr<Foam::implicitFunction> func =  implicitFunction::New
     (
-           setFieldTableDict.get<word>("function"),
+           setFieldTableDict.get<word>("type"),
            setFieldTableDict
     );
 

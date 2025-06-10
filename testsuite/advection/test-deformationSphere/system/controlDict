@@ -63,7 +63,7 @@ functions
 		type volumeFractionError;
 		libs ("libpostProcess.so");
 		field alpha.water;
-		function    sphere;
+		functionType    sphere;
 		radius      0.15;
 		origin      (0.5 0.75 0.25);
 		centre      (0.5 0.75 0.25);

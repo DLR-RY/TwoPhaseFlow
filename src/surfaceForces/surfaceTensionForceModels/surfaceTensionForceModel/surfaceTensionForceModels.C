@@ -44,23 +44,29 @@ Foam::surfaceTensionForceModel::New
     Info<< "Selecting surfaceTension model "
         << surfaceTensionForceModelTypeName << endl;
 
-    componentsConstructorTable::iterator cstrIter =
-        componentsConstructorTablePtr_
-            ->find(surfaceTensionForceModelTypeName);
+    auto ctorPtr = componentsConstructorTable(surfaceTensionForceModelTypeName);
 
-    if (cstrIter == componentsConstructorTablePtr_->end())
+    if (!ctorPtr)
     {
-        FatalErrorIn
+        FatalErrorInLookup
         (
-            "surfaceTensionForceModel::New"
-        )   << "Unknown surfaceTensionForceModel type "
-            << surfaceTensionForceModelTypeName << endl << endl
-            << "Valid  surfaceTensionForceModels are : " << endl
-            << componentsConstructorTablePtr_->sortedToc()
-            << exit(FatalError);
+            "surfaceTensionForceModel",
+            surfaceTensionForceModelTypeName,
+            *componentsConstructorTablePtr_
+        ) << exit(FatalError);
     }
 
-    return autoPtr<surfaceTensionForceModel>(cstrIter()( dict,alpha1, phi, U));
+    return autoPtr<surfaceTensionForceModel>
+    (
+        ctorPtr
+        (
+            dict,
+            alpha1,
+            phi,
+            U
+        )
+    );
+
 }
 
 

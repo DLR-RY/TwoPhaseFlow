@@ -37,7 +37,7 @@ Foam::PurePhaseModel<BasePhaseModel, phaseThermo>::PurePhaseModel
 :
     BasePhaseModel(mesh,dict, phaseName)
 {
-    thermoPtr_.set
+    thermoPtr_.reset
     (
         phaseThermo::New
         (

@@ -39,23 +39,26 @@ Foam::singleComponentSatProp::New
     Info<< "Selecting saturation model "
         << singleComponentSatPropTypeName << endl;
 
-    componentsConstructorTable::iterator cstrIter =
-        componentsConstructorTablePtr_
-            ->find(singleComponentSatPropTypeName);
+    auto ctorPtr = componentsConstructorTable(singleComponentSatPropTypeName);
 
-    if (cstrIter == componentsConstructorTablePtr_->end())
+    if (!ctorPtr)
     {
-        FatalErrorIn
+        FatalErrorInLookup
         (
-            "saturationModel singleComponentSatProp::New"
-        )   << "Unknown singleComponentSatProp type "
-            << singleComponentSatPropTypeName << endl << endl
-            << "Valid  singleComponentSatProps are : " << endl
-            << componentsConstructorTablePtr_->sortedToc()
-            << exit(FatalError);
+            "singleComponentSatProp",
+            singleComponentSatPropTypeName,
+            *componentsConstructorTablePtr_
+        ) << exit(FatalError);
     }
 
-    return autoPtr<singleComponentSatProp>(cstrIter()(mesh,dict));
+    return autoPtr<singleComponentSatProp>
+    (
+        ctorPtr
+        (
+            mesh,
+            dict
+        )
+    );
 }
 
 

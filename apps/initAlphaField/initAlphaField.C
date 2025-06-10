@@ -33,8 +33,6 @@ Author
 \*---------------------------------------------------------------------------*/
 
 #include "fvCFD.H"
-#include "isoCutFace.H"
-#include "isoCutCell.H"
 #include "searchableCylinder.H"
 #include "searchableSurface.H"
 #include "mathematicalConstants.H"

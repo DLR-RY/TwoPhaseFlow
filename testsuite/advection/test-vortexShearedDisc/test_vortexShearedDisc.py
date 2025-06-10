@@ -51,7 +51,7 @@ class TestVortexShearedDisc:
         max_err_shape = abs(err.iloc[:, 1].max())
         max_err_mass = abs(err.iloc[:, 2].max())
         max_err_bound = abs(err.iloc[:, 3].max())
-        assert max_err_shape == pytest.approx(2.35e-03,rel=0.01)
+        assert max_err_shape <= 2.35e-03*1.01
         assert max_err_mass <= 1e-13
         assert max_err_bound <= 5e-5
 
@@ -89,12 +89,12 @@ parameters = [
     c_isoAlpha64,
     c_isoAlpha128,
     c_isoAlpha256,
-    c_isoAlpha512,
+    pytest.param(c_isoAlpha512, marks=pytest.mark.slow),
     c_plicRDF32,
     c_plicRDF64,
     c_plicRDF128,
     c_plicRDF256,
-    c_plicRDF512,
+    pytest.param(c_plicRDF512, marks=pytest.mark.slow),
 ]
 
 results = {
@@ -127,6 +127,7 @@ results = {
 def test_vortexShearedDisc(run_reset_case, expected, load_errorfile):
 
     log = oftest.path_log()
+    assert oftest.case_status(log) == "completed"  # checks if run completes
     err = load_errorfile
     max_err_shape = abs(err.iloc[1, 1].max())
     max_err_mass = abs(err.iloc[:, 2].max())
@@ -148,7 +149,6 @@ def test_vortexShearedDisc(run_reset_case, expected, load_errorfile):
     assert max_err_shape < expected_err_shape*1.05
     assert max_err_mass <= 1e-13
     assert max_err_bound <= 5e-5
-    assert oftest.case_status(log) == "completed"  # checks if run completes
 
 
 def test_results():

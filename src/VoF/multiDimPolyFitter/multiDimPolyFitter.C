@@ -49,7 +49,7 @@ void Foam::multiDimPolyFitter<T>::resetMatrix()
 {
     for (label i=0;i<A_.size();i++)
     {
-        A_.v()[i] = Zero;
+        A_.data()[i] = Zero;
     }
     A_.source() = Zero;
 }

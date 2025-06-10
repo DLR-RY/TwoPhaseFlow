@@ -37,32 +37,30 @@ Foam::macroModel::New
     Info<< "Selecting macroModel model "
         << macroModelTypeName << endl;
 
-    componentsConstructorTable::iterator cstrIter =
-        componentsConstructorTablePtr_
-            ->find(macroModelTypeName);
+    auto ctorPtr = componentsConstructorTable(macroModelTypeName);
 
-    if (cstrIter == componentsConstructorTablePtr_->end())
+    if (!ctorPtr)
     {
-        FatalErrorIn
+        FatalErrorInLookup
         (
-            "macroModel::New"
-        )   << "Unknown macroModel type "
-            << macroModelTypeName << endl << endl
-            << "Valid  macroModels are : " << endl
-            << componentsConstructorTablePtr_->sortedToc()
-            << exit(FatalError);
+            "macroModel",
+            macroModelTypeName,
+            *componentsConstructorTablePtr_
+        ) << exit(FatalError);
     }
 
-    return
-    autoPtr<macroModel>(cstrIter()
+    return autoPtr<macroModel>
     (
-        phase1,
-        phase2,
-        p,
-        satModel,
-        turbModel,
-        dict
-    ));
+        ctorPtr
+        (
+            phase1,
+            phase2,
+            p,
+            satModel,
+            turbModel,
+            dict
+        )
+    );
 }
 
 

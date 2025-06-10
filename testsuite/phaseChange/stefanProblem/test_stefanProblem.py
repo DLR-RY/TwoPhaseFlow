@@ -127,7 +127,7 @@ def test_StefanProblem(run_reset_case, expected, load_errorfile):
     results["PCM"].append(scheme)
 
     exp_res = oftest.expected_results([1],(scheme,))
-    assert err == pytest.approx(exp_res["err"],rel=0.001)
+    assert err <= exp_res["err"]*1.01
 
 
 

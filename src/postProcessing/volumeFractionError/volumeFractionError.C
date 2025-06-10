@@ -74,7 +74,7 @@ Foam::functionObjects::volumeFractionError::volumeFractionError
     Field_(),
     dict_(dict),
     initMass_(0),
-    initCentre_(dict.lookup("origin"))
+    initCentre_(dict.get<vector>("origin"))
 {
 
 
@@ -98,7 +98,7 @@ bool Foam::functionObjects::volumeFractionError::read(const dictionary& dict)
     fvMeshFunctionObject::read(dict);
     writeFile::read(dict);
 
-    Field_ = word(dict.lookup("field"));
+    Field_ = dict.get<word>("field");
 
 
     // set initial mass
@@ -106,7 +106,7 @@ bool Foam::functionObjects::volumeFractionError::read(const dictionary& dict)
     (
         implicitFunction::New
         (
-            word(dict.lookup("function")),
+            dict.get<word>("functionType"),
             dict
         )
     );
@@ -177,7 +177,7 @@ bool Foam::functionObjects::volumeFractionError::write()
 
     const volScalarField& alpha = lookupObject<volScalarField>(Field_);
 
-    vector centre = dict_.lookup("origin");
+    vector centre = dict_.get<vector>("origin");
 
     const volVectorField& U = mesh_.lookupObject<volVectorField>("U");
 
@@ -208,7 +208,7 @@ bool Foam::functionObjects::volumeFractionError::write()
 
     Foam::autoPtr<Foam::implicitFunction> func =  implicitFunction::New
     (
-           word(dict_.lookup("function")),
+           word(dict_.lookup("functionType")),
            dict_
     );
 
@@ -289,7 +289,7 @@ bool Foam::functionObjects::volumeFractionError::write()
 
     if (Pstream::master())
     {
-        writeTime(file());
+        writeCurrentTime(file());
 
         file()
             << token::TAB << E1
