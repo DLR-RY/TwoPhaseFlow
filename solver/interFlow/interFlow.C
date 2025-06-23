@@ -86,13 +86,13 @@ int main(int argc, char *argv[])
                     // gets recompute by surfaces forces
                     // gh = (g & mesh.C()) - ghRef;
                     // ghf = (g & mesh.Cf()) - ghRef;
-                    advector->surf().mapAlphaField();
-                    alpha2 = 1.0 - alpha1;
-                    alpha2.correctBoundaryConditions();
-                    rho == alpha1*rho1 + alpha2*rho2;
-                    rho.correctBoundaryConditions();
-                    rho.oldTime() = rho;
-                    alpha2.oldTime() = alpha2;
+                    // advector->surf().mapAlphaField();
+                    // alpha2 = 1.0 - alpha1;
+                    // alpha2.correctBoundaryConditions();
+                    // rho == alpha1*rho1 + alpha2*rho2;
+                    // rho.correctBoundaryConditions();
+                    // rho.oldTime() = rho;
+                    // alpha2.oldTime() = alpha2;
 
                     MRF.update();
 

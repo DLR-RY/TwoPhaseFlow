@@ -133,13 +133,13 @@ int main(int argc, char *argv[])
                 {
                     MRF.update();
 
-                    advector->surf().mapAlphaField();
-                    alpha2 = 1.0 - alpha1;
-                    alpha2.correctBoundaryConditions();
-                    rho == alpha1*rho1 + alpha2*rho2;
-                    rho.correctBoundaryConditions();
-                    rho.oldTime() = rho;
-                    alpha2.oldTime() = alpha2;
+                    // advector->surf().mapAlphaField();
+                    // alpha2 = 1.0 - alpha1;
+                    // alpha2.correctBoundaryConditions();
+                    // rho == alpha1*rho1 + alpha2*rho2;
+                    // rho.correctBoundaryConditions();
+                    // rho.oldTime() = rho;
+                    // alpha2.oldTime() = alpha2;
 
                     Info<< "Execution time for mesh.update() = "
                         << runTime.elapsedCpuTime() - timeBeforeMeshUpdate
