@@ -35,12 +35,16 @@ lnInclude
 #OpenFOAM
 Cases
 CasesTri
-polyMesh/*
-0.[0-9]* [1-9]* *e-*
+*/polyMesh/*
+0.[0-9]*
+[1-9]*
+*e-*
 processor*
 logs
 AlphaInit
 controlDict.orig
+*.msh
+gmsh-*-Linux64
 
 # Build directories - anywhere
 linux*Clang*/

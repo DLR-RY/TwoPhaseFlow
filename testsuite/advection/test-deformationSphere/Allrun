@@ -14,8 +14,5 @@ runApplication setAlphaField
 runApplication generateUDeform
 
 runApplication decomposePar
-runParallel $(getApplication)
+mpirun -oversubscribe -np 4 $(getApplication) -parallel  > log.$(getApplication)
 cp postProcessing/volumeFractionError/0/volumeFractionError.dat volumeFractionError.dat
-
-
-

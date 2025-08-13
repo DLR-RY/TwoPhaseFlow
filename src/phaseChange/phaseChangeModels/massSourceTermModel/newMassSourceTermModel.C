@@ -41,31 +41,30 @@ Foam::massSourceTermModel::New
     Info<< "Selecting massSourceTermModel model "
         << massSourceTermModelTypeName << endl;
 
-    componentsConstructorTable::iterator cstrIter =
-        componentsConstructorTablePtr_
-            ->find(massSourceTermModelTypeName);
+    auto ctorPtr = componentsConstructorTable(massSourceTermModelTypeName);
 
-    if (cstrIter == componentsConstructorTablePtr_->end())
+    if (!ctorPtr)
     {
-        FatalErrorIn
+        FatalErrorInLookup
         (
-            "massSourceTermModel::New"
-        )   << "Unknown massSourceTermModel type "
-            << massSourceTermModelTypeName << endl << endl
-            << "Valid  massSourceTermModels are : " << endl
-            << componentsConstructorTablePtr_->sortedToc()
-            << exit(FatalError);
+            "massSourceTermModel",
+            massSourceTermModelTypeName,
+            *componentsConstructorTablePtr_
+        ) << exit(FatalError);
     }
 
-    return autoPtr<massSourceTermModel>(cstrIter()
+    return autoPtr<massSourceTermModel>
     (
+        ctorPtr
+        (
         phase1,
         phase2,
         p,
         satModel,
         surf,
         dict
-    ));
+        )
+    );
 }
 
 

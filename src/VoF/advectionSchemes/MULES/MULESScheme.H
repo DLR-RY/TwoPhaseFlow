@@ -38,8 +38,10 @@ SourceFiles
 #include "typeInfo.H"
 #include "advectionSchemes.H"
 #include "volFields.H"
+#include "volFieldsFwd.H"
 #include "dimensionedScalar.H"
 #include "autoPtr.H"
+#include "zeroField.H"
 
 #include "volPointInterpolation.H"
 #include "reconstructionSchemes.H"
@@ -92,8 +94,13 @@ private:
         // Isotropic compression coefficient
         scalar icAlpha_;
 
+        // Shear compression coefficient
+        scalar scAlpha_;
+
         //- Compression coefficient
         scalar cAlpha_;
+
+        bool alphaRestart_;
 
         void alphaEqn();
 
@@ -133,10 +140,28 @@ public:
     virtual ~MULESScheme();
 
 
+    //- Advect the free surface. Updates alpha field, taking into account
+    //  multiple calls within a single time step.
+    template < class SpType, class SuType >
+    void advect(const SpType& Sp, const SuType& Su);
 
-    virtual void advect();
+    //- advection of the interface
+    virtual void advect()
+    {
+        zeroField Sp;
+        zeroField Su;
+        advect<zeroField,zeroField>(Sp,Su);
+    }
 
-    virtual void advect(const volScalarField::Internal& Sp,const volScalarField::Internal& Su);
+    //- advection of the interface with source terms
+    virtual void advect
+    (
+        const volScalarField::Internal& Sp,
+        const volScalarField::Internal& Su
+    )
+    {
+        advect<volScalarField::Internal,volScalarField::Internal>(Sp,Su);
+    }
 
 
 };

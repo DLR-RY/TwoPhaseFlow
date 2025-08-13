@@ -101,14 +101,22 @@ functions
 
     intPsi
     {
-        type            fieldIntegrate;
-        libs ("libpostProcess.so");
+        type            volFieldValue;
+        libs            ("libfieldFunctionObjects.so");
 
-        // Write at same frequency as fields
         writeControl    timeStep;
         writeInterval   1;
-        region fluid;
-        field psi0_;
+        writeFields     false;
+        log             true;
+        region          fluid;
+
+        operation       volIntegrate;
+
+        fields
+        (
+            psi0_
+        );
+
     }
 
 }

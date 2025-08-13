@@ -114,10 +114,8 @@ solvers
 
     "(U|h|T.*|k|epsilon|R)"
     {
-        solver          PBiCGStab;
-        preconditioner  DILU;
-        //olver           smoothSolver;;
-        //smoother        symGaussSeidel;
+        solver           smoothSolver;;
+        smoother        symGaussSeidel;
         tolerance        1e-7;
         relTol           0.;
         minIter          15;

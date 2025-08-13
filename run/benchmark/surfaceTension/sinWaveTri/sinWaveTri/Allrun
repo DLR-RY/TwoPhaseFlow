@@ -5,7 +5,7 @@ cd ${0%/*} || exit 1    # Run from this directory
 . $WM_PROJECT_DIR/bin/tools/RunFunctions
 restore0Dir
 touch sinwavetri.foam
-gmshv306 -3 triSquare.geo
+gmshv493 -3 triSquare.geo
 echo '$End' >> triSquare.msh 
 runApplication gmshToFoam triSquare.msh
 runApplication changeDictionary

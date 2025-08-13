@@ -237,6 +237,18 @@ Foam::tmp<Foam::scalarField> Foam::twoPhaseMixtureThermo::Cv
 }
 
 
+Foam::tmp<Foam::scalarField> Foam::twoPhaseMixtureThermo::rhoEoS
+(
+    const scalarField& p,
+    const scalarField& T,
+    const labelList& cells
+) const
+{
+    NotImplemented;
+    return nullptr;
+}
+
+
 Foam::tmp<Foam::volScalarField> Foam::twoPhaseMixtureThermo::gamma() const
 {
     return alpha1()*thermo1_->gamma() + alpha2()*thermo2_->gamma();

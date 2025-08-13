@@ -23,6 +23,7 @@ License
 
 \*---------------------------------------------------------------------------*/
 
+#include "dimensionedScalarFwd.H"
 #include "dynamicAlphaContactAngleVoxVoinovFvPatchScalarField.H"
 #include "addToRunTimeSelectionTable.H"
 #include "fvPatchFieldMapper.H"
@@ -40,7 +41,7 @@ dynamicAlphaContactAngleVoxVoinovFvPatchScalarField
     const DimensionedField<scalar, volMesh>& iF
 )
 :
-    alphaContactAngleFvPatchScalarField(p, iF),
+    alphaContactAngleTwoPhaseFvPatchScalarField(p, iF),
     theta0_(0.0),
     ct_(0.0)
 {}
@@ -55,7 +56,7 @@ dynamicAlphaContactAngleVoxVoinovFvPatchScalarField
     const fvPatchFieldMapper& mapper
 )
 :
-    alphaContactAngleFvPatchScalarField(gcpsf, p, iF, mapper),
+    alphaContactAngleTwoPhaseFvPatchScalarField(gcpsf, p, iF, mapper),
     theta0_(gcpsf.theta0_),
     ct_(gcpsf.ct_)
 {}
@@ -69,7 +70,7 @@ dynamicAlphaContactAngleVoxVoinovFvPatchScalarField
     const dictionary& dict
 )
 :
-    alphaContactAngleFvPatchScalarField(p, iF, dict),
+    alphaContactAngleTwoPhaseFvPatchScalarField(p, iF, dict),
     theta0_(readScalar(dict.lookup("theta0"))),
     ct_(readScalar(dict.lookup("ct")))
 {
@@ -83,7 +84,7 @@ dynamicAlphaContactAngleVoxVoinovFvPatchScalarField
     const dynamicAlphaContactAngleVoxVoinovFvPatchScalarField& gcpsf
 )
 :
-    alphaContactAngleFvPatchScalarField(gcpsf),
+    alphaContactAngleTwoPhaseFvPatchScalarField(gcpsf),
     theta0_(gcpsf.theta0_),
     ct_(gcpsf.ct_)
 {}
@@ -96,7 +97,7 @@ dynamicAlphaContactAngleVoxVoinovFvPatchScalarField
     const DimensionedField<scalar, volMesh>& iF
 )
 :
-    alphaContactAngleFvPatchScalarField(gcpsf, iF),
+    alphaContactAngleTwoPhaseFvPatchScalarField(gcpsf, iF),
     theta0_(gcpsf.theta0_),
     ct_(gcpsf.ct_)
 {}
@@ -142,15 +143,9 @@ Foam::dynamicAlphaContactAngleVoxVoinovFvPatchScalarField::theta
     word phase1Name (wordList(transportProperties.lookup("phases"))[0]);
     word phase2Name (wordList(transportProperties.lookup("phases"))[1]);
 
-    const volScalarField& alpha =
-        this->db().objectRegistry::lookupObject<volScalarField>
-        (
-            IOobject::groupName("alpha", phase1Name)
-        );
+    dimensionedScalar rho1(transportProperties.subDict(phase1Name).get<dimensionedScalar>("rho"));
 
-    dimensionedScalar rho1(transportProperties.subDict(phase1Name).lookup("rho"));
-
-    dimensionedScalar sigmap(transportProperties.lookup("sigma"));
+    dimensionedScalar sigmap(transportProperties.get<dimensionedScalar>("sigma"));
 
     const fvPatchScalarField&  nu1p = nu1.boundaryField()[patchi];
 
@@ -194,7 +189,7 @@ Foam::dynamicAlphaContactAngleVoxVoinovFvPatchScalarField::theta
 
 void Foam::dynamicAlphaContactAngleVoxVoinovFvPatchScalarField::write(Ostream& os) const
 {
-    alphaContactAngleFvPatchScalarField::write(os);
+    alphaContactAngleTwoPhaseFvPatchScalarField::write(os);
     os.writeKeyword("theta0") << theta0_ << token::END_STATEMENT << nl;
     os.writeKeyword("ct") << ct_ << token::END_STATEMENT << nl;
     writeEntry("value", os);

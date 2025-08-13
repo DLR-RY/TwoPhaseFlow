@@ -39,6 +39,7 @@ License
 #include "meshTools.H"
 #include "OBJstream.H"
 #include "syncTools.H"
+#include "profiling.H"
 
 #include "addToRunTimeSelectionTable.H"
 
@@ -188,6 +189,7 @@ void Foam::advection::isoAdvection::extendMarkedCells
 void Foam::advection::isoAdvection::timeIntegratedFlux()
 {
     // Get time step
+    addProfilingInFunction(geometricVoF);
     const scalar dt = mesh_.time().deltaTValue();
 
     // Create object for interpolating velocity to isoface centres
@@ -553,6 +555,7 @@ void Foam::advection::isoAdvection::checkIfOnProcPatch(const label facei)
 
 void Foam::advection::isoAdvection::applyBruteForceBounding()
 {
+    addProfilingInFunction(geometricVoF);
     bool alpha1Changed = false;
 
     scalar snapAlphaTol = modelDict().lookupOrDefault<scalar>("snapTol", 0);

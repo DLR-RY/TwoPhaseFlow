@@ -77,7 +77,7 @@ bool Foam::sampledInterface::updateGeometry() const
         (
             new fvMeshSubset(fvm)
         );
-        subMeshPtr_().setLargeCellSubset
+        subMeshPtr_().setCellSubset
         (
             labelHashSet(mesh().cellZones()[zoneID_.index()]),
             exposedPatchi

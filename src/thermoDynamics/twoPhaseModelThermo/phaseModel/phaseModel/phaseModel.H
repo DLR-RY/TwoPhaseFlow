@@ -232,6 +232,13 @@ public:
         //- Thermal diffusivity for temperature of phase for patch [J/m/s/K]
         tmp<scalarField> kappa(const label patchi) const;
 
+        //- Thermal diffusivity for energy of mixture [kg/m/s]
+        tmp<volScalarField> alphahe() const;
+
+        //- Thermal diffusivity for energy of mixture for patch [kg/m/s]
+        tmp<scalarField> alphahe(const label patchi) const;
+
+
         //- Effective thermal diffusivity for temperature of phase [J/m/s/K]
         tmp<volScalarField> kappaEff(const volScalarField&) const;
 

@@ -160,7 +160,7 @@ bool Foam::functionObjects::superHeated::write()
 
     if (Pstream::master())
     {
-        writeTime(file());
+        writeCurrentTime(file());
 
         file()
             << token::TAB << maximumValue

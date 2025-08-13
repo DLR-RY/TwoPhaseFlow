@@ -59,8 +59,8 @@ functions
         type            surfaces;
         libs
         (
-            "libsampling.so"
-            "libpostProcess.so"
+            sampling
+            postProcess
         );
 
         // Write at same frequency as fields
@@ -78,7 +78,6 @@ functions
             constantIso
             {
                 type        interface;
-                isoField    alpha.water;
                 interpolate false;
             }
         );

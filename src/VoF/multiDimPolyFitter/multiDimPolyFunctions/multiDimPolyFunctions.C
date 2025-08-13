@@ -43,10 +43,9 @@ Foam::autoPtr<Foam::multiDimPolyFunctions> Foam::multiDimPolyFunctions::New
     const Vector<label> dirs
 )
 {
-    wordConstructorTable::iterator cstrIter =
-        wordConstructorTablePtr_->find(multiDimPolyFunctionsType);
+    auto* ctorPtr = wordConstructorTable(multiDimPolyFunctionsType);
 
-    if (!cstrIter.found())
+    if (!ctorPtr)
     {
         FatalErrorInFunction
             << "Unknown multiDimPolyFunctions type " << multiDimPolyFunctionsType
@@ -56,7 +55,7 @@ Foam::autoPtr<Foam::multiDimPolyFunctions> Foam::multiDimPolyFunctions::New
             << exit(FatalError);
     }
 
-    return autoPtr<multiDimPolyFunctions>(cstrIter()( dirs));
+    return autoPtr<multiDimPolyFunctions>(ctorPtr(dirs));
 }
 
 
