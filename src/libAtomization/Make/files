@@ -1,0 +1,10 @@
+droplet/droplet.C
+droplet/dropletIO.C
+
+dropletCloud/dropletCloud.C
+dropletCloud/breakupModel.C
+dropletCloud/collisionModel.C
+
+phaseCoupling/phaseCoupling.C
+
+LIB = $(FOAM_USER_LIBBIN)/libAtomization
