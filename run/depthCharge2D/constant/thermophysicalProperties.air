@@ -20,7 +20,7 @@ thermoType
     type            heRhoThermo;
     mixture         multiComponentMixture;
     transport       const;
-    thermo          hConst;
+    thermo          eConst;
     equationOfState perfectGas;
     specie          specie;
     energy          sensibleInternalEnergy;
@@ -41,7 +41,7 @@ steam
     }
     thermodynamics
     {
-        Cp          1007;
+        Cv          1554.8;
         Hf          0;
     }
     transport
@@ -59,7 +59,7 @@ air
     }
     thermodynamics
     {
-        Cp          1007;
+        Cv          716;
         Hf          0;
     }
     transport

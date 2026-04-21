@@ -1,3 +1,4 @@
 [submodule "modules/multiDimAMR"]
 	path = modules/multiDimAMR
-	url = https://github.com/HenningScheufler/multiDimAMR.git
+	url = https://github.com/isoAdvector/multiDimAMR.git
+	branch = of2512

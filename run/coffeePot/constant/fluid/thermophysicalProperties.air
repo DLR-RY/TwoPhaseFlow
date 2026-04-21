@@ -19,8 +19,8 @@ thermoType
 {
     type            heRhoThermo;
     mixture         pureMixture;
-    transport       tabulated;
-    thermo          hTabulated;
+    transport       const;  // tabulated
+    thermo          hConst; // hTabulated
     equationOfState perfectGas;
     specie          specie;
     energy          sensibleInternalEnergy;
@@ -37,19 +37,21 @@ mixture
         Cp          2030;
         Hf          0;
         Sf          0;
-        CpFile      "thermo/cp.dat";
-        sampleRate  1;
-        nPoints     100;
-        TMin  1;
-        TMax  1000;
+        // CpFile      "thermo/cp.dat";
+        // sampleRate  1;
+        // nPoints     100;
+        // TMin  1;
+        // TMax  1000;
     }
     transport
     {
-        MuFile         "thermo/mu.dat";
-        KappaFile      "thermo/kappa.dat";
-        nPoints     100;
-        TMin  1;
-        TMax  1000;
+        mu          1e-5;
+        Pr          1;
+        // MuFile         "thermo/mu.dat";
+        // KappaFile      "thermo/kappa.dat";
+        // nPoints     100;
+        // TMin  1;
+        // TMax  1000;
     }
 }
 

@@ -2,7 +2,7 @@
 
     PtrList<volScalarField>& Y1 = mixture.phase1().Y();
     PtrList<volScalarField>& Y2 = mixture.phase2().Y();
-    volScalarField muEff = turbulence.muEff();
+    volScalarField muEff(turbulence.muEff());
     if (!Y1.empty())
     {
         label inertIndex1 = mixture.phase1().inertIndex();

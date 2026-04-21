@@ -17,9 +17,9 @@ FoamFile
 
 defaultFieldValues
 (
-    volScalarFieldValue T 300
-    volScalarFieldValue T.air 300
-    volScalarFieldValue T.water 300
+    volScalarFieldValue T 350
+    volScalarFieldValue T.air 350
+    volScalarFieldValue T.water 350
 );
 
 regions
@@ -29,9 +29,9 @@ regions
         box (-100 -100 -100) (100 0.04 100);
         fieldValues
         (
-            volScalarFieldValue T 373.15
-            volScalarFieldValue T.air 373.15
-            volScalarFieldValue T.water 373.15
+            volScalarFieldValue T 370
+            volScalarFieldValue T.air 370
+            volScalarFieldValue T.water 370
         );
     }
 );

@@ -136,8 +136,10 @@ void Foam::directEvaporation::energySource(volScalarField& Q)
         mag(normal)
     );
 
-    volScalarField scaledEvapSource=
-        interface*dimensionedScalar("0",dimless,1);
+    volScalarField scaledEvapSource
+    (
+        interface*dimensionedScalar("0",dimless,1)
+    );
 
     dimensionedScalar area("area",dimArea,gSum(mag(normal)().internalField()));
     if (area.value() != 0)

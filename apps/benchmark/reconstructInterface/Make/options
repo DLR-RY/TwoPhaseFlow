@@ -1,5 +1,6 @@
 EXE_INC = \
     -I../../../src/VoF/lnInclude \
+    -I$(FOAM_UTILITIES)/preProcessing/setAlphaField/alphaFieldFunctions/lnInclude \
     -I../../../src/postProcessing/lnInclude \
     -I../../../src/surfaceForces/lnInclude \
     -I$(LIB_SRC)/finiteVolume/lnInclude \
@@ -9,6 +10,7 @@ EXE_INC = \
 
 EXE_LIBS = \
     -L$(FOAM_USER_LIBBIN) \
+    -lalphaFieldFunctions \
     -lfiniteVolume \
     -lmeshTools \
     -lsurfMesh \

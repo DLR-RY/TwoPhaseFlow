@@ -28,7 +28,7 @@ License
 #include "wedgePolyPatch.H"
 #include "indexedOctree.H"
 #include "treeDataPoint.H"
-#include "alphaContactAngleFvPatchScalarField.H"
+#include "alphaContactAngleTwoPhaseFvPatchScalarField.H"
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 

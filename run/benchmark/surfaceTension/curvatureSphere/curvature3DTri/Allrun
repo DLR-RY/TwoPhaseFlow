@@ -6,7 +6,7 @@ cd ${0%/*} || exit 1    # Run from this directory
 touch curv3d.foam
 restore0Dir
 
-gmshv306 -3 -optimize_netgen triBlock.geo
+gmshv493 -3 -optimize_netgen triBlock.geo
 echo '$End' >> triBlock.msh 
 #sbatch Allrun_Slurm
 runApplication gmshToFoam triBlock.msh

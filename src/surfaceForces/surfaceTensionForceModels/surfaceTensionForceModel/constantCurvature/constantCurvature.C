@@ -20,7 +20,7 @@ License
 #include "constantCurvature.H"
 #include "addToRunTimeSelectionTable.H"
 
-#include "alphaContactAngleFvPatchScalarField.H"
+#include "alphaContactAngleTwoPhaseFvPatchScalarField.H"
 #include "mathematicalConstants.H"
 #include "surfaceInterpolate.H"
 #include "fvcDiv.H"

@@ -200,7 +200,7 @@ void Foam::reconstructionError::write(const scalar k1, const scalar k2)
 
     if (Pstream::master())
     {
-        writeTime(file());
+        writeCurrentTime(file());
 
         file()
             << token::TAB << LNormalInf_
@@ -229,7 +229,7 @@ void Foam::reconstructionError::write()
 
     if (Pstream::master())
     {
-        writeTime(file());
+        writeCurrentTime(file());
 
         file()
             << token::TAB << LNormalInf_

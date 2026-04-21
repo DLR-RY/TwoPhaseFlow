@@ -1,5 +1,4 @@
 #! /bin/bash
 
-wmake libso solidTabulatedThermo
 wmake libso fluidThermo
 wmake libso twoPhaseModelThermo

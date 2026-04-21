@@ -26,7 +26,7 @@ Class
 
 Description
     A dynamic alphaContactAngle scalar boundary condition
-    (alphaContactAngleFvPatchScalarField)
+    (alphaContactAngleTwoPhaseFvPatchScalarField)
 
 SourceFiles
     dynamicAlphaContactAngleVoxVoinovFvPatchScalarField.C
@@ -38,7 +38,7 @@ SourceFiles
 #ifndef dynamicAlphaContactAngleVoxVoinovFvPatchScalarField_H
 #define dynamicAlphaContactAngleVoxVoinovFvPatchScalarField_H
 
-#include "alphaContactAngleFvPatchScalarField.H"
+#include "alphaContactAngleTwoPhaseFvPatchScalarField.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -51,7 +51,7 @@ namespace Foam
 
 class dynamicAlphaContactAngleVoxVoinovFvPatchScalarField
 :
-    public alphaContactAngleFvPatchScalarField
+    public alphaContactAngleTwoPhaseFvPatchScalarField
 {
     // Private data
 
