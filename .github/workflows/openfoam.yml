@@ -23,29 +23,26 @@ jobs:
     needs: check-commits
     if: needs.check-commits.outputs.has_commits == 'true'
     runs-on: ubuntu-latest
+    container: opencfd/openfoam-dev:2512
 
     steps:
     - uses: actions/checkout@v4
       with:
         submodules: recursive
-    - name: setup openfoam
-      run: |
-        curl -s https://dl.openfoam.com/add-debian-repo.sh | sudo bash
-        sudo apt-get install libglu1-mesa
-        sudo apt-get update
-        sudo apt-get install openfoam2512-default
     - name: compile library
       run: |
+        source /opt/openfoam2512/etc/bashrc
         export WM_NCOMPPROCS=2
-        openfoam2512 -c ./Allwmake
-        openfoam2512 -c "cd modules/multiDimAMR && ./Allwmake"
-        openfoam2512 -c ./get-gmsh.sh
+        ./Allwmake
+        cd modules/multiDimAMR && ./Allwmake
+        cd $GITHUB_WORKSPACE && ./get-gmsh.sh
     - name: test
       run: |
+        source /opt/openfoam2512/etc/bashrc
         python -m pip install --upgrade pip
         pip install oftest scipy casefoam
-        openfoam2512 -c "py.test  --writeNSteps=1 run/"
-        openfoam2512 -c "py.test -m 'not slow'"
+        py.test --writeNSteps=1 run/
+        py.test -m 'not slow'
 
     - name: upload logs
       if: ${{ failure() }}
