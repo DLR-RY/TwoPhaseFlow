@@ -34,7 +34,7 @@ jobs:
 
     steps:
     - name: install dependencies
-      run: apt-get update && apt-get install -y git python3 python3-pip && ln -s /usr/bin/python3 /usr/local/bin/python
+      run: apt-get update && apt-get install -y git python3 python3-pip libglu1-mesa && ln -s /usr/bin/python3 /usr/local/bin/python
     - uses: actions/checkout@v4
       with:
         submodules: recursive
@@ -45,6 +45,9 @@ jobs:
         cd modules/multiDimAMR && ./Allwmake
         cd $GITHUB_WORKSPACE && ./get-gmsh.sh
     - name: test
+      env:
+        OMPI_ALLOW_RUN_AS_ROOT: "1"
+        OMPI_ALLOW_RUN_AS_ROOT_CONFIRM: "1"
       run: |
         pip install --break-system-packages oftest scipy casefoam
         python -m pytest --writeNSteps=1 run/
