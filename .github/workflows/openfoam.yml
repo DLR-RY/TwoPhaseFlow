@@ -1,14 +1,27 @@
 name: openfoam
 
 on:
-  push:
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
+  schedule:
+    - cron: '0 2 * * *'   # 02:00 UTC nightly
+  workflow_dispatch:        # manual trigger as fallback
 
 jobs:
-  build-and-test:
+  check-commits:
+    runs-on: ubuntu-latest
+    outputs:
+      has_commits: ${{ steps.check.outputs.has_commits }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - id: check
+        run: |
+          COUNT=$(git log --oneline --since="24 hours ago" | wc -l)
+          echo "has_commits=$([ $COUNT -gt 0 ] && echo true || echo false)" >> $GITHUB_OUTPUT
 
+  build-and-test:
+    needs: check-commits
+    if: needs.check-commits.outputs.has_commits == 'true'
     runs-on: ubuntu-latest
 
     steps:
