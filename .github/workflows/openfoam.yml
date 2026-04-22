@@ -30,7 +30,7 @@ jobs:
     container: opencfd/openfoam-dev:2512   # keep in sync with OF_VERSION above
     defaults:
       run:
-        shell: bash
+        shell: bash -l {0}   # login shell sources /etc/profile.d/ incl. OpenFOAM setup
 
     steps:
     - name: install git
@@ -40,17 +40,12 @@ jobs:
         submodules: recursive
     - name: compile library
       run: |
-        OF_BASHRC=$(find /usr /opt -name "bashrc" -path "*openfoam*" 2>/dev/null | head -1)
-        echo "Found OpenFOAM bashrc at: $OF_BASHRC"
-        source "$OF_BASHRC"
         export WM_NCOMPPROCS=2
         ./Allwmake
         cd modules/multiDimAMR && ./Allwmake
         cd $GITHUB_WORKSPACE && ./get-gmsh.sh
     - name: test
       run: |
-        OF_BASHRC=$(find /usr /opt -name "bashrc" -path "*openfoam*" 2>/dev/null | head -1)
-        source "$OF_BASHRC"
         python -m pip install --upgrade pip
         pip install oftest scipy casefoam
         py.test --writeNSteps=1 run/
