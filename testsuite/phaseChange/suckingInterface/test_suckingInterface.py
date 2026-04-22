@@ -55,7 +55,7 @@ def load_errorfile():
     sol['analytical'] = sol.apply(lambda x: abs(ana.x(x['time'])), axis=1)
     sol['error'] = (sol['max'] - sol['analytical'])**2
 
-    int_err = integrate.trapz(sol['error'], x=sol['time'])
+    int_err = integrate.trapezoid(sol['error'], x=sol['time'])
     err = 1/0.5*int_err
     return err
 

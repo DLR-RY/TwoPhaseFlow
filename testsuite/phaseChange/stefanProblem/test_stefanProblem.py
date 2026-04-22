@@ -26,6 +26,7 @@ class stefanProblem():
     def beta(self):
         """Solve the transcendental equation."""
         def f(_beta):
+            _beta = float(_beta)
             return _beta*math.exp(_beta**2)*math.erf(_beta) \
                 - cpV*(tWall - tSat)/(np.sqrt(np.pi)*L)
 
@@ -69,7 +70,7 @@ def load_errorfile():
     sol['analytical'] = sol.apply(lambda x: abs(ana.x(x['time'])), axis=1)
     sol['error'] = (sol['max'] - sol['analytical'])**2
 
-    int_err = integrate.trapz(sol['error'], x=sol['time'])
+    int_err = integrate.trapezoid(sol['error'], x=sol['time'])
     err = 1/20*int_err
     return err
 

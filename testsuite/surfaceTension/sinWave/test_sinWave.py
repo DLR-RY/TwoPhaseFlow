@@ -97,7 +97,7 @@ def load_errorfile():
     sol['analytical'] = sol.apply(lambda x: abs(ana.a(x['time'])), axis=1)
     sol['error'] = H0*(sol['max'] - sol['analytical'])**2
 
-    int_err = integrate.trapz(sol['error'], x=sol['time'])
+    int_err = integrate.trapezoid(sol['error'], x=sol['time'])
     err = 1/wavelength*math.sqrt(1/25*int_err)
     return err
 
