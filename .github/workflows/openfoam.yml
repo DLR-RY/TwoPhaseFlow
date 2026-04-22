@@ -5,6 +5,9 @@ on:
     - cron: '0 2 * * *'   # 02:00 UTC nightly
   workflow_dispatch:        # manual trigger as fallback
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   check-commits:
     runs-on: ubuntu-latest
@@ -24,8 +27,9 @@ jobs:
     if: needs.check-commits.outputs.has_commits == 'true'
     runs-on: ubuntu-latest
     container: opencfd/openfoam-dev:2512
-    env:
-      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+    defaults:
+      run:
+        shell: bash
 
     steps:
     - name: install git
