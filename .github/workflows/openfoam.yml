@@ -24,8 +24,12 @@ jobs:
     if: needs.check-commits.outputs.has_commits == 'true'
     runs-on: ubuntu-latest
     container: opencfd/openfoam-dev:2512
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
     steps:
+    - name: install git
+      run: apt-get update && apt-get install -y git
     - uses: actions/checkout@v4
       with:
         submodules: recursive
