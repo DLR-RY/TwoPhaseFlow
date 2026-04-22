@@ -27,7 +27,7 @@ jobs:
     needs: check-commits
     if: needs.check-commits.outputs.has_commits == 'true'
     runs-on: ubuntu-latest
-    container: opencfd/openfoam-dev:${{ env.OF_VERSION }}
+    container: opencfd/openfoam-dev:2512   # keep in sync with OF_VERSION above
     defaults:
       run:
         shell: bash
