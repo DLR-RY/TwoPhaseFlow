@@ -26,7 +26,7 @@ class stefanProblem():
     def beta(self):
         """Solve the transcendental equation."""
         def f(_beta):
-            _beta = float(_beta)
+            _beta = _beta[0]  # fsolve passes a 1-element array; extract scalar for math.*
             return _beta*math.exp(_beta**2)*math.erf(_beta) \
                 - cpV*(tWall - tSat)/(np.sqrt(np.pi)*L)
 
