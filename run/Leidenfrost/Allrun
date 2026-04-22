@@ -1,0 +1,35 @@
+#!/bin/sh
+cd ${0%/*} || exit 1    # Run from this directory
+
+. $WM_PROJECT_DIR/bin/tools/RunFunctions
+
+restore0Dir
+
+runApplication -s fluid blockMesh -region fluid
+runApplication -s solid blockMesh -region solid
+
+touch "$PWD/$(basename "$PWD").foam"
+
+runApplication -s solid changeDictionary -region solid -subDict dictionaryReplacement
+runApplication -s fluid changeDictionary -region fluid -subDict dictionaryReplacement
+
+runApplication initAlphaField -region fluid
+
+runApplication -s solid renumberMesh -region solid -overwrite
+runApplication -s fluid renumberMesh -region fluid -overwrite
+
+runApplication  decomposePar -allRegions
+
+# Pre-run to allow for AMR do fully adapt
+cp system/auxiliaryDicts/controlDict1 system/controlDict
+cp system/auxiliaryDicts/dynamicMeshDict1 constant/fluid/dynamicMeshDict
+runParallel $(getApplication)
+
+mv log.$(getApplication) log.preRunAMR
+
+runParallel -s fluid setFields -region fluid
+
+cp system/auxiliaryDicts/controlDict2 system/controlDict
+cp system/auxiliaryDicts/dynamicMeshDict2 constant/fluid/dynamicMeshDict
+runParallel $(getApplication)
+

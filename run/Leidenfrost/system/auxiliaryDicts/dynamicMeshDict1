@@ -1,0 +1,88 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  plus                                  |
+|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "constant/fluid";
+    object      dynamicMeshDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dynamicFvMesh   dynamicMultiDimRefineBalancedFvMesh;
+
+enableBalancing true;
+allowableImbalance 0.20;
+
+adaptCriteria
+{    
+    type composedAdaptCriteria;
+    operation or;
+    criteria
+    (
+        interface
+        {
+            type fieldBounds;
+            fieldName alpha.water;
+            lowerBound 0.01;
+            upperBound 0.99;
+            nLayer     7;
+        }
+        fluid
+        {
+            type fieldBounds;
+            fieldName alpha.water;
+            lowerBound 0.01;
+            upperBound 1.01;
+            maxCellLevel 1;
+        }
+    );
+}
+
+// How often to refine
+refineInterval  1;
+
+// Have slower than 2:1 refinement
+nBufferLayers   2;
+
+// Refine cells only up to maxRefinement levels
+maxRefinement   4;
+
+// Stop refinement if maxCells reached
+maxCells        10000000;
+
+// Flux field and corresponding velocity field. Fluxes on changed
+// faces get recalculated by interpolating the velocity. Use 'none'
+// on surfaceScalarFields that do not need to be reinterpolated.
+correctFluxes
+(
+    (phi none)
+    (nHatf none)
+    (rhoPhi none)
+    (alphaPhi none)
+    (ghf none)
+    (phi0 none)
+    (dVf_ none)
+    (Kf_  none)
+    (alphaPhi_ none)
+    (acc_ none)
+    (rhoCpLPhi none)
+    (deltaFunction_ none)
+    (alphaPhi10 none)
+    (rhoCpVPhi none)
+    (nHatf_ none)
+    (alphaPhi.air none)
+    (alphaPhi.water none)
+);
+
+// Write the refinement level as a volScalarField
+dumpLevel       true;
+
+
+// ************************************************************************* //

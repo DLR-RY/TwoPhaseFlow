@@ -1,0 +1,38 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  plus                                  |
+|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      balanceParDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+numberOfSubdomains  30;
+
+method		hierarchical;
+
+hierarchicalCoeffs
+{
+    n               ( 6 1 5 );
+    delta           0.001;
+    order           xyz;
+}
+
+constraints
+{
+    refinementHistoryMultiDim
+    {
+        //- Decompose cells such that all cell originating from single cell
+        //  end up on same processor
+        type    refinementHistoryMultiDim;
+    }
+}
+// ************************************************************************* //

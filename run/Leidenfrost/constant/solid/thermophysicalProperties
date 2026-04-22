@@ -1,0 +1,65 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  plus                                  |
+|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "constant/solid";
+    object      thermophysicalProperties;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+thermoType
+{
+    type            heSolidThermo;
+    mixture         pureMixture;
+    transport       constIso;
+    thermo          hConst;
+    equationOfState rhoConst;
+    specie          specie;
+    energy          sensibleEnthalpy;
+}
+
+mixture
+{
+    specie
+    {
+        molWeight   101.96; 	// inconel 718 = 158.36 g/mol
+        					// AlMg3 = 99.90 g/mol
+        					// C45 = 56 g/mol
+        					// saphire = 101.96 g/mol
+    }
+
+    transport
+    {
+        kappa   20;		    // inconel 718 = 15 W/mK
+        					// AlMg3 = 130 W/mK
+        					// C45 = 52 W/mK
+        					// saphire = 20 W/mK        					
+    }
+
+    thermodynamics
+    {
+        Hf      0;
+        Cp      1170;		// inconel 718 = 435 J/KgK
+        					// AlMg3 = 900 J/KgK
+        					// C45 = 480 J/KgK
+        					// Saphire = 1170 J/KgK
+    }
+
+    equationOfState
+    {
+        rho     3980; 		// inconel 718 = 8220 kg/m³
+        					// AlMg3 = 2700 kg/m³
+        					// C45 = 7870 kg/m³
+        					// Saphire = 3980 kg/m³
+    }
+}
+
+// ************************************************************************* //
