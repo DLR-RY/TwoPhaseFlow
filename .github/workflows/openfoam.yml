@@ -34,7 +34,12 @@ jobs:
 
     steps:
     - name: install dependencies
-      run: apt-get update && apt-get install -y git python3 python3-pip libgl1 libglu1-mesa libx11-6 && ln -s /usr/bin/python3 /usr/local/bin/python
+      run: |
+        apt-get update && apt-get install -y \
+          git python3 python3-pip \
+          libgl1 libglu1-mesa \
+          libx11-6 libxrender1 libxext6 libxi6 libxrandr2 libxcursor1 libxinerama1
+        ln -s /usr/bin/python3 /usr/local/bin/python
     - uses: actions/checkout@v4
       with:
         submodules: recursive
