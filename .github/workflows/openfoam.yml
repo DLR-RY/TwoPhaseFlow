@@ -35,10 +35,7 @@ jobs:
     steps:
     - name: install dependencies
       run: |
-        apt-get update && apt-get install -y \
-          git python3 python3-pip \
-          libgl1 libglu1-mesa \
-          libx11-6 libxrender1 libxext6 libxi6 libxrandr2 libxcursor1 libxinerama1
+        apt-get update && apt-get install -y git python3 python3-pip gmsh
         ln -s /usr/bin/python3 /usr/local/bin/python
     - uses: actions/checkout@v4
       with:
@@ -48,7 +45,9 @@ jobs:
         export WM_NCOMPPROCS=2
         ./Allwmake
         cd modules/multiDimAMR && ./Allwmake
-        cd $GITHUB_WORKSPACE && ./get-gmsh.sh
+        # Use apt-installed gmsh instead of the pre-compiled binary from
+        # get-gmsh.sh to avoid dragging in all its GUI shared-library deps
+        ln -sf "$(which gmsh)" "$FOAM_USER_APPBIN/gmshv493"
     - name: test
       env:
         OMPI_ALLOW_RUN_AS_ROOT: "1"
