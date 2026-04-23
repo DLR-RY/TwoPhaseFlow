@@ -9,5 +9,6 @@ rm -rf 0
 rm -rf isoFaces
 rm -rf stefan_problem.foam
 rm -r AlphaInit/
+rm -rf constant/fluid/polyMesh
 
 #------------------------------------------------------------------------------
