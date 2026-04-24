@@ -23,7 +23,17 @@ Class
 
 Description
 
-    Water saturation curve by Roche-Magnus
+    Interface reconstruction method using an isosurface of the volume faction
+    field to reconstruction the interface data, i.e. interface centre and normal
+    inside cells intersected by the isosurface. The default isovalue is 0.5.
+
+    Intended for use with algebraic VoF methods like MULES, which do not
+    reconstruct the interface as part of the solution process.
+    
+    The advantage of an isosurface is that it is continuous across cell faces.
+    The disadvantages are that it does not intersect all cells containing both
+    fluids (0 < alpha < 1), and that the cut cells are not cut into subsections
+    in accordance with their volume fraction.
 
 SourceFiles
     isoSurface.C
