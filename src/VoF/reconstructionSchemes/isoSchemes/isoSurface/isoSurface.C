@@ -96,9 +96,9 @@ void Foam::reconstruction::isoSurface::reconstruct(bool forceUpdate)
             interfaceCell_.resize(mesh_.nCells());
         }
     }
+
     ap_ = volPointInterpolation::New(mesh_).interpolate(alpha1_);
-    
-    DynamicList<List<point>> facePts;
+
 
     interfaceLabels_.clear();
 
