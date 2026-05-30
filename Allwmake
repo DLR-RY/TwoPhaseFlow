@@ -1,5 +1,5 @@
 #!/bin/bash
-
+. "$WM_PROJECT_DIR"/wmake/scripts/AllwmakeParseArguments
 wmake libso src/VoF
 wmake all src/boundaryConditions
 wmake all src/thermoDynamics
