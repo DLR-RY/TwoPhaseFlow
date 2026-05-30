@@ -1,0 +1,3 @@
+leakyDielectricEHD.C
+
+EXE = $(FOAM_APPBIN)/leakyDielectricEHD
