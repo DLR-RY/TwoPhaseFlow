@@ -164,6 +164,14 @@ Foam::labelList Foam::RDF::getNeibourProcs(const boolList& nextToInterface)
 
 Foam::label Foam::RDF::closestDistToSurface(const point& p)
 {
+    if (FaceCentreField_.empty())
+    {
+        FatalErrorInFunction
+            << "Cannot query the closest reconstructed interface point: "
+            << "the local/received interface-centre list is empty."
+            << abort(FatalError);
+    }
+
     const label& minLabel = findMin(mag(FaceCentreField_-p)());
 
     return minLabel;
@@ -173,6 +181,23 @@ Foam::label Foam::RDF::closestDistToSurface(const point& p)
 
 Foam::scalar Foam::RDF::distanceToSurfacePlane(const point& p)
 {
+    if (FaceCentreField_.empty())
+    {
+        FatalErrorInFunction
+            << "Cannot query the reconstructed interface plane: "
+            << "the local/received interface-centre list is empty."
+            << abort(FatalError);
+    }
+
+    if (FaceNormalField_.size() != FaceCentreField_.size())
+    {
+        FatalErrorInFunction
+            << "Interface-centre and interface-normal list sizes differ: "
+            << FaceCentreField_.size() << " and "
+            << FaceNormalField_.size()
+            << abort(FatalError);
+    }
+
     const label& minLabel = findMin(mag(FaceCentreField_-p)());
 
     vector c1 = FaceCentreField_[minLabel];
@@ -369,6 +394,45 @@ void Foam::RDF::correct()
     }
 
     distributeField<scalar>(neiProcs,KatInterFace);
+
+    if (FaceCentreField_.size() != KatInterFace.size())
+    {
+        FatalErrorInFunction
+            << "Interface-centre and interface-curvature list sizes differ: "
+            << FaceCentreField_.size() << " and " << KatInterFace.size()
+            << abort(FatalError);
+    }
+
+    if (FaceCentreField_.empty())
+    {
+        bool localRDFWork = false;
+
+        forAll(K_, cellI)
+        {
+            if
+            (
+                mag(faceNormal[cellI]) == 0
+             && RDF_.nextToInterface()[cellI]
+            )
+            {
+                localRDFWork = true;
+                break;
+            }
+        }
+
+        if (localRDFWork)
+        {
+            FatalErrorInFunction
+                << "This processor has cells requiring RDF curvature, but "
+                << "received no reconstructed interface centres."
+                << abort(FatalError);
+        }
+
+        K_ = dimensionedScalar("zero", K_.dimensions(), 0.0);
+        K_.correctBoundaryConditions();
+        Kf_ = fvc::interpolate(K_);
+        return;
+    }
 
     Random rndGen(17301893);
 

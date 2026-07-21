@@ -1,9 +1,32 @@
 #!/bin/bash
-cd ${0%/*} || exit 1    # run from this directory
+cd ${0%/*} || exit 1
 
+# Standard wclean calls
+wclean all src/ 2>/dev/null || true
+wclean all libs/ 2>/dev/null || true
+wclean all solver/ 2>/dev/null || true
+wclean all apps/ 2>/dev/null || true
 
-wclean all src/
-wclean all libs/
-wclean all solver/
-wclean all apps/
+# Hard cleanup for interrupted/partial builds
+find . -type d -path "*/Make/linux64*" -prune -exec rm -rf {} +
+find . -type d -name "lnInclude" -prune -exec rm -rf {} +
+find . -type f -name "log.*" -delete
 
+# Remove package outputs for the active OpenFOAM version
+rm -f "$FOAM_USER_LIBBIN"/libVoF.so
+rm -f "$FOAM_USER_LIBBIN"/libdynContactAngleModels.so
+rm -f "$FOAM_USER_LIBBIN"/libdynContactAngleModelComp.so
+rm -f "$FOAM_USER_LIBBIN"/libfluidThermo.so
+rm -f "$FOAM_USER_LIBBIN"/libtwoPhaseModelThermo.so
+rm -f "$FOAM_USER_LIBBIN"/libVoFphaseModelCompressibleTurbulenceModels.so
+rm -f "$FOAM_USER_LIBBIN"/libphaseChange.so
+rm -f "$FOAM_USER_LIBBIN"/libsurfaceForces.so
+rm -f "$FOAM_USER_LIBBIN"/libpostProcess.so
+
+rm -f "$FOAM_USER_APPBIN"/setFieldfromTable
+rm -f "$FOAM_USER_APPBIN"/initAlphaField
+rm -f "$FOAM_USER_APPBIN"/advectorVoF
+rm -f "$FOAM_USER_APPBIN"/reconstructInterface
+rm -f "$FOAM_USER_APPBIN"/multiRegionPhaseChangeFlow
+rm -f "$FOAM_USER_APPBIN"/interFlow
+rm -f "$FOAM_USER_APPBIN"/compressibleInterFlow

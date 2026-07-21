@@ -24,14 +24,14 @@ License
 #include "dictionary.H"
 #include "volFields.H"
 #include "volPointInterpolation.H"
-#include "addToRunTimeSelectionTable.H"
+#include "../../VoF/addIfAbsentToRunTimeSelectionTable.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
 {
     defineTypeNameAndDebug(sampledInterface, 0);
-    addNamedToRunTimeSelectionTable
+    addNamedIfAbsentToRunTimeSelectionTable
     (
         sampledSurface,
         sampledInterface,

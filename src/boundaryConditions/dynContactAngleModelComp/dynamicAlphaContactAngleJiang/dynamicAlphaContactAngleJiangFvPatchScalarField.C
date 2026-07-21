@@ -84,7 +84,7 @@ dynamicAlphaContactAngleJiangFvPatchScalarField
     const dynamicAlphaContactAngleJiangFvPatchScalarField& gcpsf
 )
 :
-    alphaContactAngleTwoPhaseFvPatchScalarField(gcpsf),
+    alphaContactAngleTwoPhaseFvPatchScalarField(gcpsf, gcpsf.internalField()),
     theta0_(gcpsf.theta0_)
 {}
 

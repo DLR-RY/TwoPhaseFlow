@@ -90,7 +90,7 @@ compdynamicAlphaContactAngleVoxVoinovFvPatchScalarField
     const compdynamicAlphaContactAngleVoxVoinovFvPatchScalarField& gcpsf
 )
 :
-    alphaContactAngleTwoPhaseFvPatchScalarField(gcpsf),
+    alphaContactAngleTwoPhaseFvPatchScalarField(gcpsf, gcpsf.internalField()),
     init_(true),
     theta0_(gcpsf.theta0_),
     ct_(gcpsf.ct_),

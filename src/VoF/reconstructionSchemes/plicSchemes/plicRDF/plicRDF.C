@@ -29,7 +29,7 @@ License
 #include "interpolationCellPoint.H"
 #include "fvc.H"
 #include "leastSquareGrad.H"
-#include "addToRunTimeSelectionTable.H"
+#include "addIfAbsentToRunTimeSelectionTable.H"
 #include "alphaContactAngleTwoPhaseFvPatchScalarField.H"
 #include "profiling.H"
 
@@ -40,7 +40,12 @@ namespace Foam
 namespace reconstruction
 {
     defineTypeNameAndDebug(plicRDF, 0);
-    addToRunTimeSelectionTable(reconstructionSchemes,plicRDF, components);
+    addIfAbsentToRunTimeSelectionTable
+    (
+        reconstructionSchemes,
+        plicRDF,
+        components
+    );
 }
 }
 
@@ -559,8 +564,10 @@ void Foam::reconstruction::plicRDF::reconstruct(bool forceUpdate)
         centre_.correctBoundaryConditions();
         List<normalRes> normalResidual(interfaceLabels_.size());
 
-        surfaceVectorField::Boundary nHatb(mesh_.Sf().boundaryField());
-        nHatb *= 1/(mesh_.magSf().boundaryField());
+        // OpenFOAM v2606 deletes copying of GeometricBoundaryField.
+        // nHatb was only used by the old, currently disabled updateContactAngle() call below.
+        // surfaceVectorField::Boundary nHatb(mesh_.Sf().boundaryField());
+        // nHatb *= 1/(mesh_.magSf().boundaryField());
 
         {
             centreAndNormalBC();

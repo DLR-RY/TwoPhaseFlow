@@ -25,9 +25,7 @@ Class
     Foam::surfaceTensionModels::constant
 
 Description
-    Uniform constant surface tension model. Only intended usage:
-    Setting the exact surface tension for circular (2D) and sperhical (3D)
-    interfaces when investigating sources of spurious currents.
+    Uniform constant surface tension model.
 
 Usage
     Example of the surface tension specification:

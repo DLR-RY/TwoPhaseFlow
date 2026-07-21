@@ -28,7 +28,7 @@ License
 #include "gradAlpha.H"
 #include "fvc.H"
 #include "leastSquareGrad.H"
-#include "addToRunTimeSelectionTable.H"
+#include "addIfAbsentToRunTimeSelectionTable.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
@@ -37,7 +37,12 @@ namespace Foam
 namespace reconstruction
 {
     defineTypeNameAndDebug(gradAlpha, 0);
-    addToRunTimeSelectionTable(reconstructionSchemes, gradAlpha, components);
+    addIfAbsentToRunTimeSelectionTable
+    (
+        reconstructionSchemes,
+        gradAlpha,
+        components
+    );
 }
 }
 

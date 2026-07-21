@@ -1,0 +1,41 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "OF-Debug",
+            "type": "cppdbg",
+            "request": "attach",
+            "processId": "${command:pickProcess}",
+            "program": "${env:FOAM_USER_APPBIN}/${fileBasenameNoExtension}",
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ],
+            "preLaunchTask": "wmake-build",
+            "miDebuggerPath": "/usr/bin/gdb"
+        },
+        {
+            "name": "multiRegionPhaseChangeFlow",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${env:FOAM_USER_APPBIN}/multiRegionPhaseChangeFlow",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "/media/henning/ssd1linux/libsAndApps/release/TwoPhaseFlow/testsuite/cht/fixedFlux", //"${input:casepath}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ]
+        }
+    ],
+}

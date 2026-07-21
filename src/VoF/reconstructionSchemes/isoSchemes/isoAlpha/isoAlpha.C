@@ -26,7 +26,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "isoAlpha.H"
-#include "addToRunTimeSelectionTable.H"
+#include "addIfAbsentToRunTimeSelectionTable.H"
 #include "cutCellPLIC.H"
 #include "profiling.H"
 
@@ -37,7 +37,12 @@ namespace Foam
 namespace reconstruction
 {
     defineTypeNameAndDebug(isoAlpha, 0);
-    addToRunTimeSelectionTable(reconstructionSchemes,isoAlpha, components);
+    addIfAbsentToRunTimeSelectionTable
+    (
+        reconstructionSchemes,
+        isoAlpha,
+        components
+    );
 }
 }
 
@@ -99,8 +104,9 @@ void Foam::reconstruction::isoAlpha::reconstruct(bool forceUpdate)
             interfaceCell_.resize(mesh_.nCells());
         }
     }
-
     ap_ = volPointInterpolation::New(mesh_).interpolate(alpha1_);
+
+    DynamicList<List<point>> facePts;
 
     interfaceLabels_.clear();
 

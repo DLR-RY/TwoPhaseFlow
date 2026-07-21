@@ -586,6 +586,41 @@ Foam::reconstructedDistanceFunction::constructRDFOctree
 {
     volScalarField& reconDistFunc = *this;
 
+    if (centre.size() != normals.size())
+    {
+        FatalErrorInFunction
+            << "Reconstructed interface-centre and normal list sizes differ: "
+            << centre.size() << " and " << normals.size()
+            << abort(FatalError);
+    }
+
+    if (centre.empty())
+    {
+        forAll(nextToInterface, celli)
+        {
+            if (nextToInterface[celli])
+            {
+                FatalErrorInFunction
+                    << "Cell " << celli
+                    << " requires an RDF value, but this processor has no "
+                    << "local or received reconstructed interface centres."
+                    << abort(FatalError);
+            }
+
+            reconDistFunc[celli] = 0;
+        }
+
+        forAll(reconDistFunc.boundaryField(), patchI)
+        {
+            if (reconDistFunc.boundaryField().types()[patchI] == "calculated")
+            {
+                reconDistFunc.boundaryFieldRef()[patchI] = 0;
+            }
+        }
+
+        return reconDistFunc;
+    }
+
     Random rndGen(1234567);
 
     // Slightly extended bb. Slightly off-centred just so on symmetric
