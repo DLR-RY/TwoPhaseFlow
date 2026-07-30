@@ -81,6 +81,9 @@ doc/Doxygen/DTAGS
 *.tgz
 *.gtgz
 
+# Ignore VS Code settings
+.vscode/
+
 # irgnore files qtcreator
 *.config
 *.creator.user
